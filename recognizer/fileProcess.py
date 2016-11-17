@@ -5,12 +5,14 @@ Created on 2016年11月17日
 
 @author: superhy
 '''
+
+from gensim.models import word2vec
 import os
 import platform
 import types
 import warnings
+
 from recognizer import cacheIndex
-from cPickle import load
 
 
 root_windows = 'D:\\intent-rec-file\\'
@@ -59,14 +61,36 @@ def listAllFilePathInDirectory(dirPath):
     
     return loadedFilesPath
 
+def loadMedQuesSentences(totalDataPath):
+#     totalDataPath = fileProcess.auto_config_root() + 'med_question_5000each/'
+
+    reLoadEncoding()
+
+    # list all file data path
+    med_qus_categories = cacheIndex.med_question_index.values()
+    dirPath = []
+    dirPath.extend(totalDataPath + category + '/' for category in med_qus_categories)
+    loadedFilesPath = listAllFilePathInDirectory(dirPath)
+    
+    totalSentences = []
+    for filePath in loadedFilesPath:
+        totalSentences.extend(word2vec.LineSentence(filePath))
+    
+    # loaded text encode is 'utf-8'
+    return totalSentences
+
 if __name__ == '__main__':
     
     trainDir = auto_config_root() + 'med_question_5000each/'
     med_qus_categories = cacheIndex.med_question_index.values()
     dirPath = []
-    dirPath.extend(trainDir + category for category in med_qus_categories)
+    dirPath.extend(trainDir + category + '/' for category in med_qus_categories)
     
     loadedFilesPath = listAllFilePathInDirectory(dirPath)
-    for file in loadedFilesPath:
-        print(file)
-    print('num: ' + str(len(loadedFilesPath)))
+#     for file in loadedFilesPath:
+#         print(file)
+    print('files num: ' + str(len(loadedFilesPath)))
+    
+    totalSentences = loadMedQuesSentences(trainDir)
+    print('sentences num: ' + str(len(totalSentences)))
+    print(type(totalSentences[0][0].encode('utf-8')))
