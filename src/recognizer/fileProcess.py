@@ -67,9 +67,12 @@ def loadMedQuesSentences(totalDataPath):
     reLoadEncoding()
 
     # list all file data path
-    med_qus_categories = cacheIndex.med_question_index.values()
+    med_qus_categories = cacheIndex.med_question_index.keys()
     dirPath = []
     dirPath.extend(totalDataPath + category + '/' for category in med_qus_categories)
+    print('load index:')
+    for dir in dirPath:
+        print(dir + ' ')
     loadedFilesPath = listAllFilePathInDirectory(dirPath)
     
     totalSentences = []
@@ -82,7 +85,7 @@ def loadMedQuesSentences(totalDataPath):
 if __name__ == '__main__':
     
     trainDir = auto_config_root() + 'med_question_5000each/'
-    med_qus_categories = cacheIndex.med_question_index.values()
+    med_qus_categories = cacheIndex.med_question_index.keys()
     dirPath = []
     dirPath.extend(trainDir + category + '/' for category in med_qus_categories)
     
