@@ -112,21 +112,21 @@ if __name__ == '__main__':
     '''
     test mid data index in gensim word2vec
     '''
-    fr = open(writeFilePath, 'r')
-    line = fr.readline()
-    print(type(line))
-    test_words = line[line.find('[') + 1:line.find(']')].split(',')
-    print(test_words[len(test_words) - 1])
-       
-    w2vModelPath = fileProcess.auto_config_root() + 'model_cache/gensim/med_qus-5000.vector'
-    model = word2Vec.loadModelfromFile(w2vModelPath)
-       
-    vector = word2Vec.getWordVec(model, test_words[len(test_words) - 1])
-    print(type(vector))
+    #===========================================================================
+    # fr = open(writeFilePath, 'r')
+    # line = fr.readline()
+    # print(type(line))
+    # test_words = line[line.find('[') + 1:line.find(']')].split(',')
+    # print(test_words[len(test_words) - 1])
+    #    
+    # w2vModelPath = fileProcess.auto_config_root() + u'model_cache/gensim/med_qus-5000.vector'
+    # model = word2Vec.loadModelfromFile(w2vModelPath)
+    #    
+    # vector = word2Vec.getWordVec(model, test_words[len(test_words) - 1])
+    # print(type(vector))
+    #===========================================================================
     
     '''
     '''
-    #===========================================================================
-    # trainTestDir = fileProcess.auto_config_root() + u'exp_mid_data/train_test/'
-    # splitTrainTestData(writeFilePath, trainTestDir)
-    #===========================================================================
+    trainTestDir = fileProcess.auto_config_root() + u'exp_mid_data/train_test/'
+    splitTrainTestData(writeFilePath, trainTestDir)
