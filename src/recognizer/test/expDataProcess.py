@@ -5,8 +5,10 @@ Created on 2016年11月20日
 
 @author: super
 '''
+
 import random
 import time
+import warnings
 
 from recognizer import fileProcess, cacheIndex
 from recognizer.embedding import word2Vec
@@ -14,7 +16,10 @@ from recognizer.embedding import word2Vec
 
 _totalDirPath = fileProcess.auto_config_root() + u'med_question_5000each/'
 
-def prodRandomLabeledData(totalDirPath, writeFilePath=None):    
+def prodRandomLabeledData(totalDirPath, writeFilePath=None):
+    
+    fileProcess.reLoadEncoding()
+    
     # load all sentences to be trained
     totalSentences = fileProcess.loadMedQuesSentences(totalDirPath)
     
@@ -49,6 +54,53 @@ def prodRandomLabeledData(totalDirPath, writeFilePath=None):
     
     return totalSentences_labeled
 
+def splitTrainTestData(totalDataPath, trainTestDirPath, split_rate=10):
+    '''
+    @param totalDataPath: string of data path which has all sentence line with labels
+    @param split_rate: positive integer which means number of split pieces, default is 10
+    '''
+    
+    fileProcess.reLoadEncoding()
+    
+    fw = open(totalDataPath, 'r')
+    totalLines = fw.readlines()
+    fw.close()
+    
+    start_split = time.clock()
+    nb_lines = len(totalLines)
+    if nb_lines % split_rate != 0:
+        warnings.warn('split_rate must can divide number of lines!')
+        return None
+    
+    span = nb_lines / split_rate
+#     splitPartLines = []
+    splitTrainTestTuples = []
+    scan_p = 0
+    for i in range(split_rate - 1):
+#         splitPartLines.append(totalLines[scan_p : scan_p + span])
+        print('split from ' + str(0) + ' to ' + str(scan_p) + ', ' + str(scan_p + span) + ' to ' + str(nb_lines))
+        splitTrainTestTuples.append((totalLines[0:scan_p] + totalLines[scan_p + span:nb_lines], totalLines[scan_p : scan_p + span]))
+        scan_p += span
+    end_split = time.clock()
+    print('finish split train and test data in {0}s'.format(end_split - start_split))
+    
+    start_write = time.clock()
+    for i in range(len(splitTrainTestTuples)):
+        writeTrainTestPathTuple = (trainTestDirPath + u'train{0}.txt'.format(i), trainTestDirPath + u'test{0}.txt'.format(i))
+        writeTrainStr = ''.join(splitTrainTestTuples[i][0])
+        writeTestStr = ''.join(splitTrainTestTuples[i][1])
+        
+        fw_train = open(writeTrainTestPathTuple[0], 'w')
+        fw_train.write(writeTrainStr)
+        fw_train.close()
+        fw_test = open(writeTrainTestPathTuple[1], 'w')
+        fw_test.write(writeTestStr)
+        fw_test.close()
+    end_write = time.clock()
+    print('finish produce split train test data file in {0}s'.format(end_write - start_write))
+    
+    return splitTrainTestTuples
+
 if __name__ == '__main__':
     
     writeFilePath = fileProcess.auto_config_root() + u'exp_mid_data/sentences_labeled55000.txt'
@@ -60,15 +112,21 @@ if __name__ == '__main__':
     '''
     test mid data index in gensim word2vec
     '''
+    fr = open(writeFilePath, 'r')
+    line = fr.readline()
+    print(type(line))
+    test_words = line[line.find('[') + 1:line.find(']')].split(',')
+    print(test_words[len(test_words) - 1])
+       
+    w2vModelPath = fileProcess.auto_config_root() + 'model_cache/gensim/med_qus-5000.vector'
+    model = word2Vec.loadModelfromFile(w2vModelPath)
+       
+    vector = word2Vec.getWordVec(model, test_words[len(test_words) - 1])
+    print(type(vector))
+    
+    '''
+    '''
     #===========================================================================
-    # fw = open(writeFilePath, 'r')
-    # line = fw.readline()
-    # test_words = line[line.find('[') + 1:line.find(']')].split(',')
-    # print(test_words[len(test_words) - 1])
-    #  
-    # w2vModelPath = fileProcess.auto_config_root() + 'model_cache/gensim/med_qus-5000.vector'
-    # model = word2Vec.loadModelfromFile(w2vModelPath)
-    #  
-    # vector = word2Vec.getWordVec(model, test_words[len(test_words) - 1])
-    # print(vector)
+    # trainTestDir = fileProcess.auto_config_root() + u'exp_mid_data/train_test/'
+    # splitTrainTestData(writeFilePath, trainTestDir)
     #===========================================================================
