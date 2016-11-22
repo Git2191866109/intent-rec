@@ -6,4 +6,5 @@ encoding//src/recognizer/embedding/word2Vec.py=UTF-8
 encoding//src/recognizer/fileProcess.py=UTF-8
 encoding//src/recognizer/medQuesRec.py=UTF-8
 encoding//src/recognizer/test/expDataProcess.py=UTF-8
+encoding//src/recognizer/test/testMedQuesRec.py=UTF-8
 encoding//src/recognizer/test/testWord2Vec.py=UTF-8

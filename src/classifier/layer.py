@@ -92,18 +92,25 @@ def LSTM_Net(input_shape, nb_classes):
     # set some fixed parameter in Activation layer
     final_activation = 'softmax'
     
-    # produce deep layer model with sequential structure
-    sequence_input = Input(shape=input_shape)  # input layer
-    # hidden layer
-    layer_net = LSTM(output_dim=lstm_output_size)
-    layer_net = Dense(hidden_dims)(layer_net)
-    if dropout_rate > 0:
-        layer_net = Dropout(p=dropout_rate)(layer_net)
-    layer_net = Activation(activation=lstm_activation)(layer_net)
-    # output layer
-    preds = Dense(nb_classes, activation=final_activation)(layer_net)
+    # check input_shape
+    if len(input_shape) > 2 or len(input_shape) < 1:
+        warnings.warn('input_shape is not valid!')
+        return None
     
-    model = Model(sequence_input, preds)
+    # produce deep layer model with sequential structure
+    model = Sequential()
+    # hidden layer
+    if len(input_shape) == 1:
+        model.add(LSTM(output_dim=lstm_output_size, input_dim=input_shape[0]))
+    else:
+        model.add(LSTM(output_dim=lstm_output_size, input_shape=input_shape))
+    model.add(Dense(hidden_dims))
+    if dropout_rate > 0:
+        model.add(Dropout(p=dropout_rate))
+    model.add(Activation(activation=lstm_activation))
+    # output layer     
+    model.add(Dense(nb_classes))
+    model.add(Activation(activation=final_activation))
     # compile the layer model
     model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
     
@@ -123,8 +130,8 @@ def LSTM2CNNs_Net():
 # tools function for layer-net model
 #===============================================================================
 def trainer(model, x_train, y_train,
-            batch_size=4,
-            nb_epoch=50,
+            batch_size=256,
+            nb_epoch=20,
             validation_split=0.1,
             auto_stop=False):
     
@@ -151,7 +158,7 @@ def trainer(model, x_train, y_train,
     return model
 
 def predictor(model, x_test,
-              batch_size=4):
+              batch_size=256):
     
     # predict the test data's classes with trained layer model
     classes = model.predict_classes(x_test, batch_size=batch_size)
