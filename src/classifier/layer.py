@@ -9,9 +9,10 @@ from keras.callbacks import EarlyStopping
 from keras.layers import Input
 from keras.layers.convolutional import Convolution1D
 from keras.layers.core import Flatten, Dense, Dropout, Activation
-from keras.layers.pooling import MaxPooling1D
+from keras.layers.pooling import MaxPooling1D, GlobalMaxPooling1D
 from keras.layers.recurrent import LSTM
-from keras.models import Model
+from keras.models import Model, Sequential
+import warnings
 
 
 #===============================================================================
@@ -26,7 +27,10 @@ def CNNs_Net(input_shape, nb_classes):
     cnn_activation = 'relu'
     subsample_length = 1
     # set some fixed parameter in MaxPooling layer
-    pool_length = 5
+    #===========================================================================
+    # use global max-pooling, need not pool_length
+    # pool_length = 5
+    #===========================================================================
     # set some fixed parameter in Dense layer
     hidden_dims = 80
     # set some fixed parameter in Dropout layer
@@ -39,26 +43,38 @@ def CNNs_Net(input_shape, nb_classes):
     # nb_epoch = 50
     #===========================================================================
     
-    # produce deep layer model with normally structure(not sequential structure)
-    sequence_input = Input(shape=input_shape)  # input layer
-    # hidden layer
-    layer_net = Convolution1D(nb_filter=nb_filter,
-                              filter_length=filter_length,
-                              border_mode=border_mode,
-                              activation=cnn_activation,
-                              subsample_length=subsample_length)(sequence_input)
-    if pool_length == None:
-        pool_length = layer_net.output_shape[1]
-    layer_net = MaxPooling1D(pool_length=pool_length)(layer_net)
-    layer_net = Flatten()(layer_net)
-    layer_net = Dense(hidden_dims)(layer_net)
-    if dropout_rate > 0:
-        layer_net = Dropout(p=dropout_rate)(layer_net)
-    layer_net = Activation(activation=cnn_activation)(layer_net)
-    # output layer
-    preds = Dense(nb_classes, activation=final_activation)(layer_net)
+    # check input_shape
+    if len(input_shape) > 2 or len(input_shape) < 1:
+        warnings.warn('input_shape is not valid!')
+        return None
     
-    model = Model(sequence_input, preds)
+    '''produce deep layer model with sequential structure'''
+    model = Sequential()
+    # hidden layer
+    if len(input_shape) == 1:
+        model.add(Convolution1D(nb_filter=nb_filter,
+                                filter_length=filter_length,
+                                border_mode=border_mode,
+                                activation=cnn_activation,
+                                subsample_length=subsample_length,
+                                input_dim=input_shape[0]))
+    else:
+        model.add(Convolution1D(nb_filter=nb_filter,
+                                filter_length=filter_length,
+                                border_mode=border_mode,
+                                activation=cnn_activation,
+                                subsample_length=subsample_length,
+                                input_shape=input_shape))
+#     if pool_length == None:
+#         pool_length = model.output_shape[1]
+    model.add(GlobalMaxPooling1D())
+    model.add(Dense(hidden_dims))
+    if dropout_rate > 0:
+        model.add(Dropout(p=dropout_rate))
+    model.add(Activation(activation=cnn_activation))
+    # output layer
+    model.add(Dense(nb_classes))
+    model.add(Activation(activation=final_activation))
     # compile the layer model
     model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
     
@@ -76,7 +92,7 @@ def LSTM_Net(input_shape, nb_classes):
     # set some fixed parameter in Activation layer
     final_activation = 'softmax'
     
-    # produce deep layer model with normally structure(not sequential structure)
+    # produce deep layer model with sequential structure
     sequence_input = Input(shape=input_shape)  # input layer
     # hidden layer
     layer_net = LSTM(output_dim=lstm_output_size)

@@ -76,7 +76,7 @@ def splitTrainTestData(totalDataPath, trainTestDirPath, split_rate=10):
 #     splitPartLines = []
     splitTrainTestTuples = []
     scan_p = 0
-    for i in range(split_rate - 1):
+    for i in range(split_rate):
 #         splitPartLines.append(totalLines[scan_p : scan_p + span])
         print('split from ' + str(0) + ' to ' + str(scan_p) + ', ' + str(scan_p + span) + ' to ' + str(nb_lines))
         splitTrainTestTuples.append((totalLines[0:scan_p] + totalLines[scan_p + span:nb_lines], totalLines[scan_p : scan_p + span]))

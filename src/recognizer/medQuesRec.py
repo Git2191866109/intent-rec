@@ -11,6 +11,7 @@ import numpy
 
 from recognizer import fileProcess
 from recognizer.embedding import word2Vec
+from classifier import layer
 
 
 def loadTrainTestMatData(trainTestFileTuples, gensimW2VModelPath):
@@ -73,23 +74,35 @@ def loadTrainTestMatData(trainTestFileTuples, gensimW2VModelPath):
     
     return xy_data, input_shape, nb_classes
 
+def trainNetworkPredictor(x_train, y_train, network = 'CNNs_Net'):
+    pass
+
 if __name__ == '__main__':
     
     '''
     test load train and test data
     '''
-    trainFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test/train0.txt'
-    testFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test/test0.txt'
-    trainTestFileTuples = (trainFilePath, testFilePath)
-    gensimW2VModelPath = fileProcess.auto_config_root() + u'model_cache/gensim/med_qus-5000.vector'
-    
-    xy_data, input_shape, nb_classes = loadTrainTestMatData(trainTestFileTuples, gensimW2VModelPath)
-    
-    print('x_train: {0}'.format(xy_data[0]))
-    print('y_train: {0}'.format(xy_data[1]))
-    print(len(set(xy_data[1])))
-    print('x_test: {0}'.format(xy_data[2]))
-    print('y_test: {0}'.format(xy_data[3]))
-    print(len(set(xy_data[3])))
-    print('input_shape: {0}'.format(input_shape))
-    print('nb_classes: {0}'.format(nb_classes))
+#===============================================================================
+#     trainFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test/train0.txt'
+#     testFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test/test0.txt'
+#     trainTestFileTuples = (trainFilePath, testFilePath)
+#     gensimW2VModelPath = fileProcess.auto_config_root() + u'model_cache/gensim/med_qus-5000.vector'
+#     
+#     xy_data, input_shape, nb_classes = loadTrainTestMatData(trainTestFileTuples, gensimW2VModelPath)
+#     
+#     print('x_train: {0}'.format(xy_data[0]))
+#     print('y_train: {0}'.format(xy_data[1]))
+# #     print(len(set(xy_data[1]])))
+#     print('x_test: {0}'.format(xy_data[2]))
+#     print('y_test: {0}'.format(xy_data[3]))
+# #     print(len(set(xy_data[3])))
+#     print('input_shape: {0}'.format(input_shape))
+#     print('nb_classes: {0}'.format(nb_classes))
+#===============================================================================
+
+    '''
+    '''
+    print(dir(layer))
+    function = getattr(layer, 'CNNs_Net')
+    model = function((100,), 10)
+    print(model)
