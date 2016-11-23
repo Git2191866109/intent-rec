@@ -1,13 +1,14 @@
 # -*- coding: UTF-8 -*-
 
 '''
-Created on 2016年11月21日
+Created on 2016��11��22��
 
 @author: super
 '''
+from src.classifier import layer
 from src.recognizer import fileProcess
 from src.recognizer import medQuesRec
-from src.classifier import layer
+
 
 def testLoadData():
     trainFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test/train0.txt'

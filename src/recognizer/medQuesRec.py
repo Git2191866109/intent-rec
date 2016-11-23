@@ -5,13 +5,12 @@ Created on 2016年11月21日
 
 @author: superhy
 '''
+import numpy
 import time
 
-import numpy
-
-from classifier import layer
-from recognizer import fileProcess
-from recognizer.embedding import word2Vec
+from src.classifier import layer
+from src.recognizer import fileProcess
+from src.recognizer.embedding import word2Vec
 
 
 def loadTrainTestMatData(trainTestFileTuples, gensimW2VModelPath, nb_classes):
@@ -22,9 +21,13 @@ def loadTrainTestMatData(trainTestFileTuples, gensimW2VModelPath, nb_classes):
     testLines = fr_test.readlines()
     fr_train.close()
     fr_test.close()
+    del(fr_train)
+    del(fr_test)
+    
     
     start_load = time.clock()
     gensimW2VModel = word2Vec.loadModelfromFile(gensimW2VModelPath)
+    vector_dim = gensimW2VModel.vector_size
     max_len = 0
     for line in trainLines + testLines:
         words = line[line.find('[') + 1 : line.find(']')].split(',')
@@ -35,7 +38,7 @@ def loadTrainTestMatData(trainTestFileTuples, gensimW2VModelPath, nb_classes):
     for line in trainLines:
         words = line[line.find('[') + 1 : line.find(']')].split(',')
         label = line[line.find(']') + 1: len(line)]
-        lineVecs = numpy.zeros([max_len, gensimW2VModel.vector_size])
+        lineVecs = numpy.zeros([max_len, vector_dim])
         for i in range(len(words)):
             if words[i].decode('utf-8') in gensimW2VModel.vocab:
 #                 lineVecs.append(word2Vec.getWordVec(gensimW2VModel, word))
@@ -46,13 +49,14 @@ def loadTrainTestMatData(trainTestFileTuples, gensimW2VModelPath, nb_classes):
         classesVec = numpy.zeros(nb_classes)
         classesVec[int(label) - 1] = 1
         trainLabelList.append(classesVec)
+    del(trainLines)
         
     testMatList = []
     testLabelList = []
     for line in testLines:
         words = line[line.find('[') + 1 : line.find(']')].split(',')
         label = line[line.find(']') + 1: len(line)]
-        lineVecs = numpy.zeros([max_len, gensimW2VModel.vector_size])
+        lineVecs = numpy.zeros([max_len, vector_dim])
         for i in range(len(words)):
             if words[i].decode('utf-8') in gensimW2VModel.vocab:
 #                 lineVecs.append(word2Vec.getWordVec(gensimW2VModel, word))
@@ -63,16 +67,23 @@ def loadTrainTestMatData(trainTestFileTuples, gensimW2VModelPath, nb_classes):
         classesVec = numpy.zeros(nb_classes)
         classesVec[int(label) - 1] = 1
         testLabelList.append(classesVec)
+    del(testLines)
+    
+    del(gensimW2VModel)
     
     x_train = numpy.asarray(trainMatList)
+    del(trainMatList)
     y_train = numpy.asarray(trainLabelList)
+    del(trainLabelList)
     x_test = numpy.asarray(testMatList)
+    del(testMatList)
     y_test = numpy.asarray(testLabelList)
+    del(testLabelList)
     xy_data = (x_train, y_train, x_test, y_test)
     end_load = time.clock()
     print('finish load train and test numpy array data in {0}s'.format(end_load - start_load))
     
-    input_shape = (max_len, gensimW2VModel.vector_size)
+    input_shape = (max_len, vector_dim)
     
     return xy_data, input_shape
 
@@ -83,7 +94,7 @@ def trainNetworkPredictor(x_train, y_train,
     
     # reflect produce network model
     model = getattr(layer, network)(input_shape, nb_classes)
-    model = layer.trainer(model, x_train, y_train, auto_stop=False)
+    model = layer.trainer(model, x_train, y_train, auto_stop=True)
     
     return model
 

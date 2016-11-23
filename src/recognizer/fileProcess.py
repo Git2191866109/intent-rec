@@ -12,7 +12,7 @@ import platform
 import types
 import warnings
 
-from recognizer import cacheIndex
+import cacheIndex
 
 
 root_windows = 'D:\\intent-rec-file\\'

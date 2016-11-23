@@ -34,7 +34,7 @@ def CNNs_Net(input_shape, nb_classes):
     # set some fixed parameter in Dense layer
     hidden_dims = 80
     # set some fixed parameter in Dropout layer
-    dropout_rate = 0.05
+    dropout_rate = 0.2
     # set some fixed parameter in Activation layer
     final_activation = 'softmax'
     #===========================================================================
@@ -88,7 +88,7 @@ def LSTM_Net(input_shape, nb_classes):
     # set some fixed parameter in Dense layer
     hidden_dims = 80
     # set some fixed parameter in Dropout layer
-    dropout_rate = 0.05
+    dropout_rate = 0.2
     # set some fixed parameter in Activation layer
     final_activation = 'softmax'
     
@@ -131,8 +131,8 @@ def LSTM2CNNs_Net():
 #===============================================================================
 def trainer(model, x_train, y_train,
             batch_size=256,
-            nb_epoch=20,
-            validation_split=0.1,
+            nb_epoch=50,
+            validation_split=0.25,
             auto_stop=False):
     
     #===========================================================================
@@ -141,9 +141,9 @@ def trainer(model, x_train, y_train,
     #===========================================================================
     callbacks = []
     if auto_stop == True:
-        monitor = 'val_loss' if validation_split > 0.0 else 'loss'
-        patience = 5
-        mode = 'min'
+        monitor = 'val_acc' if validation_split > 0.0 else 'acc'
+        patience = 2
+        mode = 'max'
         early_stopping = EarlyStopping(monitor=monitor,
                                        patience=patience,
                                        mode=mode)
@@ -167,7 +167,7 @@ def predictor(model, x_test,
     return classes, proba
 
 def evaluator(model, x_test, y_test,
-              batch_size=4):
+              batch_size=256):
     
     # evaluate the trained layer model
     score = model.evaluate(x_test, y_test, batch_size=batch_size)
