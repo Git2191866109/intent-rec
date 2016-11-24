@@ -5,13 +5,14 @@ Created on 2016年11月18日
 
 @author: superhy
 '''
+import warnings
+
 from keras.callbacks import EarlyStopping
 from keras.layers.convolutional import Convolution1D
 from keras.layers.core import Dense, Dropout, Activation
-from keras.layers.pooling import GlobalMaxPooling1D
+from keras.layers.pooling import GlobalMaxPooling1D, MaxPooling1D
 from keras.layers.recurrent import LSTM, GRU
 from keras.models import Sequential, model_from_json
-import warnings
 
 
 #===============================================================================
@@ -150,8 +151,60 @@ def LSTM_Net(input_shape, nb_classes):
     
     return model
 
-def CNNs_LSTM_Net():
-    pass
+def CNNs_LSTM_Net(input_shape, nb_classes):
+    # set some fixed parameter in Convolution layer
+    nb_filter = 128  # convolution core num       
+    filter_length = 5  # convolution core size
+    border_mode = 'valid'
+    cnn_activation = 'relu'
+    subsample_length = 1
+    # set some fixed parameter in MaxPooling layer
+    pool_length = 4
+    # set some fixed parameter in LSTM layer
+    lstm_output_size = 64
+    lstm_activation = 'tanh'
+    # set some fixed parameter in Dense layer
+    hidden_dims = 40
+    # set some fixed parameter in Dropout layer
+    dropout_rate = 0.25
+    # set some fixed parameter in Activation layer
+    final_activation = 'softmax'
+    
+    # check input_shape
+    if len(input_shape) > 2 or len(input_shape) < 1:
+        warnings.warn('input_shape is not valid!')
+        return None
+    
+    '''produce deep layer model with sequential structure'''
+    model = Sequential()
+    # hidden layer
+    if len(input_shape) == 1:
+        model.add(Convolution1D(nb_filter=nb_filter,
+                                filter_length=filter_length,
+                                border_mode=border_mode,
+                                activation=cnn_activation,
+                                subsample_length=subsample_length,
+                                input_dim=input_shape[0]))
+    else:
+        model.add(Convolution1D(nb_filter=nb_filter,
+                                filter_length=filter_length,
+                                border_mode=border_mode,
+                                activation=cnn_activation,
+                                subsample_length=subsample_length,
+                                input_shape=input_shape))
+    model.add(MaxPooling1D(pool_length=pool_length))
+    model.add(LSTM(output_dim=lstm_output_size, activation=lstm_activation))
+    model.add(Dense(hidden_dims))
+    if dropout_rate > 0:
+        model.add(Dropout(p=dropout_rate))
+    model.add(Activation(activation=cnn_activation))
+    # output layer 
+    model.add(Dense(nb_classes))
+    model.add(Activation(activation=final_activation))   
+    # compile the layer model
+    model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+    
+    return model
 
 def LSTM_CNNs_Net():
     pass
