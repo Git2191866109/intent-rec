@@ -19,16 +19,24 @@ root_windows = 'D:\\intent-rec-file\\'
 root_macos = ''
 root_linux = '/home/superhy/intent-rec-file/'
 
+# server titan-x 225 root_path
+root_server225 = '/home/b3432/huyang/data/intent-rec-file/'
+
 def auto_config_root():
 
     global root_linux
     global root_macos
     global root_windows
+    
+    global root_server225
 
     if platform.system() == 'Windows':
-        return root_windows;
+        return root_windows
     elif platform.system() == 'Linux':
-        return root_linux;
+        if platform.uname()[1] == 'server225':
+            return root_server225
+        else:
+            return root_linux
     else:
         return None
 

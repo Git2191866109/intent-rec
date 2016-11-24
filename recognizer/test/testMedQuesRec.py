@@ -16,12 +16,12 @@ def testLoadData():
     gensimW2VModelPath = fileProcess.auto_config_root() + u'model_cache/gensim/med_qus-5000.vector'
     
     trainTestFileTuples = (trainFilePath, testFilePath)
-    return medQuesRec.loadTrainTestMatData(trainTestFileTuples, gensimW2VModelPath, nb_classes=11)
+    return medQuesRec.loadGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_classes=11)
 
 def testTrainNetPred(xy_data, input_shape):
     x_train = xy_data[0]
     y_train = xy_data[1]
-    model = medQuesRec.trainNetworkPredictor(x_train, y_train, input_shape, nb_classes=11, network='LSTM_Net')
+    model = medQuesRec.trainNetworkPredictor(x_train, y_train, input_shape, nb_classes=11, network='CNNs_Net')
     
     return model
 

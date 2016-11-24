@@ -13,7 +13,7 @@ from recognizer import fileProcess
 from recognizer.embedding import word2Vec
 
 
-def loadTrainTestMatData(trainTestFileTuples, gensimW2VModelPath, nb_classes):
+def loadGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_classes):
     
     fr_train = open(trainTestFileTuples[0], 'r')
     fr_test = open(trainTestFileTuples[1], 'r')
@@ -87,15 +87,37 @@ def loadTrainTestMatData(trainTestFileTuples, gensimW2VModelPath, nb_classes):
     
     return xy_data, input_shape
 
+def loadGensimSumVecData(trainTestFileTuples, gensimW2VModelPath, nb_classes):
+    pass
+
 def trainNetworkPredictor(x_train, y_train,
                           input_shape,
                           nb_classes,
-                          network='CNNs_Net'):
+                          network='CNNs_Net',
+                          storagePath=None):
     
     # reflect produce network model
+    start_train = time.clock()
     model = getattr(layer, network)(input_shape, nb_classes)
     model = layer.trainer(model, x_train, y_train, auto_stop=False)
+    end_train = time.clock()
+    print('finish train layer model in {0}s'.format(end_train - start_train))
     
+    if storagePath != None:
+        layer.storageModel(model, storagePath)
+        print('layer model has been stored in path: {0}.'.format(storagePath))
+    
+    return model
+
+def loadNetworkPredictor(storagePath):
+    '''
+    @param @recompile:  if recompile the loaded layer model
+        if u just use the model to predict, you need not to recompile the model
+        if u want to evaluate the model, u should set the parameter: recompile as True
+    '''
+    
+    model = layer.loadStoredModel(storagePath, recompile=True)
+    print('load layer model from path: {0}.'.format(storagePath))
     return model
 
 def runNetworkPredictor(network_model, x_test):
@@ -118,7 +140,7 @@ if __name__ == '__main__':
     trainTestFileTuples = (trainFilePath, testFilePath)
     gensimW2VModelPath = fileProcess.auto_config_root() + u'model_cache/gensim/med_qus-5000.vector'
      
-    xy_data, input_shape = loadTrainTestMatData(trainTestFileTuples, gensimW2VModelPath, 11)
+    xy_data, input_shape = loadGensimMatData(trainTestFileTuples, gensimW2VModelPath, 11)
      
     print('x_train: {0}'.format(xy_data[0]))
     print(xy_data[0].shape)
