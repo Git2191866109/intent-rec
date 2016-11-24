@@ -1,5 +1,6 @@
 eclipse.preferences.version=1
 encoding//src/classifier/layer.py=UTF-8
+encoding//src/classifier/svm.py=UTF-8
 encoding//src/classifier/test/testLayer.py=UTF-8
 encoding//src/recognizer/cacheIndex.py=UTF-8
 encoding//src/recognizer/embedding/word2Vec.py=UTF-8
@@ -8,3 +9,4 @@ encoding//src/recognizer/medQuesRec.py=UTF-8
 encoding//src/recognizer/test/expDataProcess.py=UTF-8
 encoding//src/recognizer/test/testMedQuesRec.py=UTF-8
 encoding//src/recognizer/test/testWord2Vec.py=UTF-8
+encoding/run_test.py=UTF-8

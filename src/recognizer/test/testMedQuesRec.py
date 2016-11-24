@@ -5,9 +5,10 @@ Created on 2016年11月21日
 
 @author: super
 '''
-from src.recognizer import fileProcess
-from src.recognizer import medQuesRec
-from src.classifier import layer
+from classifier import layer
+from recognizer import fileProcess
+from recognizer import medQuesRec
+
 
 def testLoadData():
     trainFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test/train0.txt'

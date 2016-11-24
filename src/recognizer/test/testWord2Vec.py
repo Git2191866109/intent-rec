@@ -5,8 +5,8 @@ Created on 2016年11月18日
 
 @author: superhy
 '''
-from src.recognizer import cacheIndex, fileProcess
-from src.recognizer.embedding import word2Vec
+from recognizer import cacheIndex, fileProcess
+from recognizer.embedding import word2Vec
 import time
 
 

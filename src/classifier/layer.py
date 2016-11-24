@@ -80,6 +80,9 @@ def CNNs_Net(input_shape, nb_classes):
     
     return model
 
+def GRU_Net():
+    pass
+
 def LSTM_Net(input_shape, nb_classes):
     
     # set some fixed parameter in LSTM layer
@@ -116,9 +119,6 @@ def LSTM_Net(input_shape, nb_classes):
     
     return model
 
-def GRU_Net():
-    pass
-
 def CNNs2LSTM_Net():
     pass
 
@@ -131,7 +131,7 @@ def LSTM2CNNs_Net():
 #===============================================================================
 def trainer(model, x_train, y_train,
             batch_size=256,
-            nb_epoch=50,
+            nb_epoch=30,
             validation_split=0.25,
             auto_stop=False):
     

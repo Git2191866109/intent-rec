@@ -8,9 +8,9 @@ Created on 2016年11月21日
 import numpy
 import time
 
-from src.classifier import layer
-from src.recognizer import fileProcess
-from src.recognizer.embedding import word2Vec
+from classifier import layer
+from recognizer import fileProcess
+from recognizer.embedding import word2Vec
 
 
 def loadTrainTestMatData(trainTestFileTuples, gensimW2VModelPath, nb_classes):
@@ -94,7 +94,7 @@ def trainNetworkPredictor(x_train, y_train,
     
     # reflect produce network model
     model = getattr(layer, network)(input_shape, nb_classes)
-    model = layer.trainer(model, x_train, y_train, auto_stop=True)
+    model = layer.trainer(model, x_train, y_train, auto_stop=False)
     
     return model
 
