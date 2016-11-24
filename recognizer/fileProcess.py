@@ -20,7 +20,7 @@ root_macos = ''
 root_linux = '/home/superhy/intent-rec-file/'
 
 # server titan-x 225 root_path
-root_server225 = '/home/b3432/huyang/data/intent-rec-file/'
+root_server225 = '/home/b3432/Code/huyang/data/intent-rec-file/'
 
 def auto_config_root():
 

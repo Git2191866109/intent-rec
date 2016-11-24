@@ -161,7 +161,7 @@ def LSTM_CNNs_Net():
 #===============================================================================
 def trainer(model, x_train, y_train,
             batch_size=500,
-            nb_epoch=500,
+            nb_epoch=50,
             validation_split=0.2,
             auto_stop=False):
     

@@ -11,8 +11,8 @@ from recognizer import medQuesRec
 
 
 def testLoadData():
-    trainFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test/train0.txt'
-    testFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test/test0.txt'
+    trainFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test/train6.txt'
+    testFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test/test6.txt'
     gensimW2VModelPath = fileProcess.auto_config_root() + u'model_cache/gensim/med_qus-5000.vector'
     
     trainTestFileTuples = (trainFilePath, testFilePath)
