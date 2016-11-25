@@ -21,7 +21,7 @@ def testLoadData():
 def testTrainNetPred(xy_data, input_shape):
     x_train = xy_data[0]
     y_train = xy_data[1]
-    model = medQuesRec.trainNetworkPredictor(x_train, y_train, input_shape, nb_classes=11, network='CNNs_Net')
+    model = medQuesRec.trainNetworkPredictor(x_train, y_train, input_shape, nb_classes=11, network='LSTM_Net')
     
     return model
 
