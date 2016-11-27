@@ -5,14 +5,14 @@ Created on 2016年11月18日
 
 @author: superhy
 '''
-import warnings
-
 from keras.callbacks import EarlyStopping
 from keras.layers.convolutional import Convolution1D
-from keras.layers.core import Dense, Dropout, Activation
+from keras.layers.core import Dense, Dropout, Activation, Flatten
 from keras.layers.pooling import GlobalMaxPooling1D, MaxPooling1D
 from keras.layers.recurrent import LSTM, GRU
 from keras.models import Sequential, model_from_json
+from keras.utils.visualize_util import plot
+import warnings
 
 
 #===============================================================================
@@ -27,14 +27,13 @@ def CNNs_Net(input_shape, nb_classes):
     cnn_activation = 'relu'
     subsample_length = 1
     # set some fixed parameter in MaxPooling layer
-    #===========================================================================
-    # use global max-pooling, need not pool_length
-    # pool_length = 5
-    #===========================================================================
+#     when pool_length==0: use global max-pooling, need not pool_length
+    pool_length = 4
+    
     # set some fixed parameter in Dense layer
 #     hidden_dims = 64
     # set some fixed parameter in Dropout layer
-    dropout_rate = 0.8
+    dropout_rate = 0.5
     # set some fixed parameter in Activation layer
     final_activation = 'softmax'
     #===========================================================================
@@ -67,11 +66,14 @@ def CNNs_Net(input_shape, nb_classes):
                                 input_shape=input_shape))
 #     if pool_length == None:
 #         pool_length = model.output_shape[1]
-    model.add(GlobalMaxPooling1D())
+    if pool_length == 0:
+        model.add(GlobalMaxPooling1D())
+    else:
+        model.add(MaxPooling1D(pool_length=pool_length))
+        model.add(Flatten())
 #     model.add(Dense(hidden_dims))
     if dropout_rate > 0:
         model.add(Dropout(p=dropout_rate))
-    model.add(Activation(activation=cnn_activation))
     # output layer
     model.add(Dense(nb_classes))
     model.add(Activation(activation=final_activation))
@@ -87,7 +89,7 @@ def GRU_Net(input_shape, nb_classes):
     # set some fixed parameter in Dense layer
 #     hidden_dims = 40
     # set some fixed parameter in Dropout layer
-    dropout_rate = 0.5
+    dropout_rate = 0.25
     # set some fixed parameter in Activation layer
     final_activation = 'softmax'
     
@@ -100,13 +102,14 @@ def GRU_Net(input_shape, nb_classes):
     model = Sequential()
     # hidden layer
     if len(input_shape) == 1:
-        model.add(GRU(output_dim=gru_output_size, input_dim=input_shape[0]))
+        model.add(GRU(output_dim=gru_output_size, activation=gru_activation,
+                      input_dim=input_shape[0]))
     else:
-        model.add(GRU(output_dim=gru_output_size, input_shape=input_shape))
+        model.add(GRU(output_dim=gru_output_size, activation=gru_activation,
+                      input_shape=input_shape))
 #     model.add(Dense(hidden_dims))
     if dropout_rate > 0:
         model.add(Dropout(p=dropout_rate))
-    model.add(Activation(activation=gru_activation))
     # output layer     
     model.add(Dense(nb_classes))
     model.add(Activation(activation=final_activation))
@@ -123,7 +126,7 @@ def LSTM_Net(input_shape, nb_classes):
     # set some fixed parameter in Dense layer
 #     hidden_dims = 40
     # set some fixed parameter in Dropout layer
-    dropout_rate = 0.5
+    dropout_rate = 0.25
     # set some fixed parameter in Activation layer
     final_activation = 'softmax'
     
@@ -136,13 +139,14 @@ def LSTM_Net(input_shape, nb_classes):
     model = Sequential()
     # hidden layer
     if len(input_shape) == 1:
-        model.add(LSTM(output_dim=lstm_output_size, input_dim=input_shape[0]))
+        model.add(LSTM(output_dim=lstm_output_size, activation=lstm_activation,
+                       input_dim=input_shape[0]))
     else:
-        model.add(LSTM(output_dim=lstm_output_size, input_shape=input_shape))
+        model.add(LSTM(output_dim=lstm_output_size, activation=lstm_activation,
+                       input_shape=input_shape))
 #     model.add(Dense(hidden_dims))
     if dropout_rate > 0:
         model.add(Dropout(p=dropout_rate))
-    model.add(Activation(activation=lstm_activation))
     # output layer     
     model.add(Dense(nb_classes))
     model.add(Activation(activation=final_activation))
@@ -166,7 +170,7 @@ def CNNs_LSTM_Net(input_shape, nb_classes):
     # set some fixed parameter in Dense layer
 #     hidden_dims = 400
     # set some fixed parameter in Dropout layer
-    dropout_rate = 0.8
+    dropout_rate = 0.5
     # set some fixed parameter in Activation layer
     final_activation = 'softmax'
     
@@ -206,15 +210,66 @@ def CNNs_LSTM_Net(input_shape, nb_classes):
     
     return model
 
-def LSTM_CNNs_Net():
-    pass
+def LSTM_CNNs_Net(input_shape, nb_classes):
+    # set some fixed parameter in LSTM layer
+    lstm_output_size = 200
+    lstm_activation = 'tanh'
+    # set some fixed parameter in Convolution layer
+    nb_filter = 180  # convolution core num       
+    filter_length = 5  # convolution core size
+    border_mode = 'valid'
+    cnn_activation = 'relu'
+    subsample_length = 1
+    # set some fixed parameter in MaxPooling layer
+    pool_length = 4
+    # set some fixed parameter in Dense layer
+#     hidden_dims = 400
+    # set some fixed parameter in Dropout layer
+    dropout_rate = 0.5
+    # set some fixed parameter in Activation layer
+    final_activation = 'softmax'
+    
+    # check input_shape
+    if len(input_shape) > 2 or len(input_shape) < 1:
+        warnings.warn('input_shape is not valid!')
+        return None
+    
+    '''produce deep layer model with sequential structure'''
+    model = Sequential()
+    # hidden layer
+    if len(input_shape) == 1:
+        model.add(LSTM(output_dim=lstm_output_size, activation=lstm_activation,
+                       return_sequences=True,
+                       input_dim=input_shape[0]))
+    else:
+        model.add(LSTM(output_dim=lstm_output_size, activation=lstm_activation,
+                       return_sequences=True,
+                       input_dim=input_shape))
+    model.add(Convolution1D(nb_filter=nb_filter,
+                                filter_length=filter_length,
+                                border_mode=border_mode,
+                                activation=cnn_activation,
+                                subsample_length=subsample_length))
+    model.add(MaxPooling1D(pool_length=pool_length))
+    model.add(Flatten())
+#     model.add(Dense(hidden_dims))
+#     model.add(Activation(activation=cnn_activation))
+    if dropout_rate > 0:
+        model.add(Dropout(p=dropout_rate))
+    # output layer 
+    model.add(Dense(nb_classes))
+    model.add(Activation(activation=final_activation))   
+    # compile the layer model
+    model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+    
+    return model
 
 #===============================================================================
 # tools function for layer-net model
 #===============================================================================
 def trainer(model, x_train, y_train,
-            batch_size=64,
-            nb_epoch=50,
+            batch_size=500,
+            nb_epoch=80,
             validation_split=0.2,
             auto_stop=False):
     
@@ -241,7 +296,7 @@ def trainer(model, x_train, y_train,
     return model
 
 def predictor(model, x_test,
-              batch_size=64):
+              batch_size=500):
     
     # predict the test data's classes with trained layer model
     classes = model.predict_classes(x_test, batch_size=batch_size)
@@ -250,11 +305,19 @@ def predictor(model, x_test,
     return classes, proba
 
 def evaluator(model, x_test, y_test,
-              batch_size=64):
+              batch_size=500):
     
     # evaluate the trained layer model
     score = model.evaluate(x_test, y_test, batch_size=batch_size)
     return score
+
+def ploter(model, pic_path):
+    '''
+    @attention: this function is Linux only
+    '''
+    
+    # plot the model framework
+    plot(model, to_file=pic_path)
 
 def storageModel(model, storage_path):
     '''

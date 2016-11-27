@@ -109,6 +109,15 @@ def trainNetworkPredictor(x_train, y_train,
     
     return model
 
+def showNetworkPredictor(input_shape,
+                          nb_classes,
+                          network='CNNs_Net'):
+    
+    picPath = fileProcess.auto_config_root() + 'model_cache/keras/' + network + '.png'
+    model = getattr(layer, network)(input_shape, nb_classes)
+    layer.ploter(model, pic_path=picPath)
+    print('finish generate layer model picture in path: {0}.'.format(picPath))
+
 def loadNetworkPredictor(storagePath):
     '''
     @param @recompile:  if recompile the loaded layer model

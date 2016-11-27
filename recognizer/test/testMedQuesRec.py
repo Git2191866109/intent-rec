@@ -10,18 +10,18 @@ from recognizer import fileProcess
 from recognizer import medQuesRec
 
 
-def testLoadData():
-    trainFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test/train6.txt'
-    testFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test/test6.txt'
+def testLoadData(lb_data=0):
+    trainFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test/train{0}.txt'.format(lb_data)
+    testFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test/test{0}.txt'.format(lb_data)
     gensimW2VModelPath = fileProcess.auto_config_root() + u'model_cache/gensim/med_qus-5000.vector'
     
     trainTestFileTuples = (trainFilePath, testFilePath)
     return medQuesRec.loadGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_classes=11)
 
-def testTrainNetPred(xy_data, input_shape):
+def testTrainNetPred(xy_data, input_shape, name_net='CNNs_Net'):
     x_train = xy_data[0]
     y_train = xy_data[1]
-    model = medQuesRec.trainNetworkPredictor(x_train, y_train, input_shape, nb_classes=11, network='LSTM_Net')
+    model = medQuesRec.trainNetworkPredictor(x_train, y_train, input_shape, nb_classes=11, network=name_net)
     
     return model
 
@@ -40,6 +40,9 @@ def testEvalNetPred(xy_data, model):
     score = medQuesRec.evaluateNetworkPredictor(model, x_test, y_test)
     
     print(score)
+
+def testShowNetPred(input_shape, name_net='CNNs_Net'):
+    medQuesRec.showNetworkPredictor(input_shape, nb_classes=11, network=name_net)
 
 if __name__ == '__main__':
     
