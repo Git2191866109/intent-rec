@@ -17,10 +17,14 @@ import cacheIndex
 
 root_windows = 'D:\\intent-rec-file\\'
 root_macos = ''
-root_linux = os.environ['HOME'] + '/intent-rec-file/'
+root_linux = '/intent-rec-file/'
 
-# server TITAN-X 225 root_path
-root_server225 = os.environ['HOME'] + '/Code/experiment/huyang/data/intent-rec-file/'
+root_server225 = '/Code/experiment/huyang/data/intent-rec-file/'
+
+if platform.system() == 'Linux':
+    root_linux = os.environ['HOME'] + root_linux
+    # server TITAN-X 225 root_path
+    root_server225 = os.environ['HOME'] + root_server225
 
 def auto_config_root():
 

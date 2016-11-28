@@ -24,8 +24,8 @@ from recognizer.test.testMedQuesRec import testLoadData, testTrainNetPred, \
 2. evaluate the model
 '''
 # exp_param
-lb_data = 1
-name_net = 'MultiLSTM_Net'
+lb_data = 0
+name_net = 'GRU_Net'
   
 xy_data, input_shape = testLoadData(lb_data=lb_data)
 model = testTrainNetPred(xy_data, input_shape, name_net=name_net)

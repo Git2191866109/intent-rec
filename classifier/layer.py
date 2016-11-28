@@ -11,9 +11,9 @@ from keras.layers.core import Dense, Dropout, Activation, Flatten
 from keras.layers.pooling import GlobalMaxPooling1D, MaxPooling1D
 from keras.layers.recurrent import LSTM, GRU
 from keras.models import Sequential, model_from_json
-from keras.utils.visualize_util import plot
-import warnings
 from keras.optimizers import SGD, RMSprop
+
+import warnings
 
 
 #===============================================================================
@@ -116,7 +116,7 @@ def GRU_Net(input_shape, nb_classes):
     model.add(Dense(nb_classes))
     model.add(Activation(activation=final_activation))
     # compile the layer model
-    rmsprop = RMSprop(lr=0.005)
+    rmsprop = RMSprop(lr=0.002)
     model.compile(loss='categorical_crossentropy', optimizer=rmsprop, metrics=['accuracy'])
     
     return model
@@ -154,7 +154,7 @@ def LSTM_Net(input_shape, nb_classes):
     model.add(Dense(nb_classes))
     model.add(Activation(activation=final_activation))
     # compile the layer model
-    rmsprop = RMSprop(lr=0.005)
+    rmsprop = RMSprop(lr=0.002)
     model.compile(loss='categorical_crossentropy', optimizer=rmsprop, metrics=['accuracy'])
     
     return model
@@ -211,7 +211,7 @@ def CNNs_LSTM_Net(input_shape, nb_classes):
     model.add(Activation(activation=final_activation))   
     # compile the layer model
 #     sgd = SGD(lr=0.05, decay=1e-6, nesterov=True)
-    rmsprop = RMSprop(lr=0.005)
+    rmsprop = RMSprop(lr=0.002)
     model.compile(loss='categorical_crossentropy', optimizer=rmsprop, metrics=['accuracy'])
     
     return model
@@ -267,7 +267,7 @@ def LSTM_CNNs_Net(input_shape, nb_classes):
     model.add(Activation(activation=final_activation))   
     # compile the layer model
 #     sgd = SGD(lr=0.05, decay=1e-6, nesterov=True)
-    rmsprop = RMSprop(lr=0.005)
+    rmsprop = RMSprop(lr=0.002)
     model.compile(loss='categorical_crossentropy', optimizer=rmsprop, metrics=['accuracy'])
     
     return model
@@ -282,12 +282,12 @@ def MultiLSTM_Net(input_shape, nb_classes):
     # set some fixed parameter in Dense layer
 #     hidden_dims = 400
     # set some fixed parameter in Dropout layer
-    dropout_rate_00 = 0.8
-    dropout_rate_01W = 0.6
-    dropout_rate_01U = 0.6
-    dropout_rate_02W = 0.5
-    dropout_rate_02U = 0.5
-    dropout_rate_03 = 0.35
+    dropout_rate_00 = 0.7
+    dropout_rate_01W = 0.55
+    dropout_rate_01U = 0.55
+    dropout_rate_02W = 0.45
+    dropout_rate_02U = 0.45
+    dropout_rate_03 = 0.3
     # set some fixed parameter in Activation layer
     final_activation = 'softmax'
     
@@ -320,7 +320,7 @@ def MultiLSTM_Net(input_shape, nb_classes):
     model.add(Activation(activation=final_activation))
     
     # compile the layer model
-    rmsprop = RMSprop(lr=0.005)
+    rmsprop = RMSprop(lr=0.002)
     model.compile(loss='categorical_crossentropy', optimizer=rmsprop, metrics=['accuracy'])
     
     return model
@@ -379,6 +379,8 @@ def ploter(model, pic_path):
     '''
     @attention: this function is Linux only
     '''
+    
+    from keras.utils.visualize_util import plot
     
     # plot the model framework
     print(model.summary())
