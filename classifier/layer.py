@@ -89,7 +89,7 @@ def GRU_Net(input_shape, nb_classes):
     # set some fixed parameter in Dense layer
 #     hidden_dims = 40
     # set some fixed parameter in Dropout layer
-    dropout_rate = 0.25
+    dropout_rate = 0.5
     # set some fixed parameter in Activation layer
     final_activation = 'softmax'
     
@@ -126,7 +126,7 @@ def LSTM_Net(input_shape, nb_classes):
     # set some fixed parameter in Dense layer
 #     hidden_dims = 40
     # set some fixed parameter in Dropout layer
-    dropout_rate = 0.25
+    dropout_rate = 0.5
     # set some fixed parameter in Activation layer
     final_activation = 'softmax'
     
@@ -244,7 +244,7 @@ def LSTM_CNNs_Net(input_shape, nb_classes):
     else:
         model.add(LSTM(output_dim=lstm_output_size, activation=lstm_activation,
                        return_sequences=True,
-                       input_dim=input_shape))
+                       input_shape=input_shape))
     model.add(Convolution1D(nb_filter=nb_filter,
                                 filter_length=filter_length,
                                 border_mode=border_mode,
@@ -264,6 +264,61 @@ def LSTM_CNNs_Net(input_shape, nb_classes):
     
     return model
 
+def MultiLSTM_Net(input_shape, nb_classes):
+    # set some fixed parameter in LSTM layer
+    lstm_init_size = 128
+    lstm_size_01 = 80
+    lstm_size_02 = 64
+    lstm_out_size = 40
+    lstm_activation = 'tanh'
+    # set some fixed parameter in Dense layer
+#     hidden_dims = 400
+    # set some fixed parameter in Dropout layer
+    dropout_rate_00 = 0.8
+    dropout_rate_01W = 0.6
+    dropout_rate_01U = 0.6
+    dropout_rate_02W = 0.5
+    dropout_rate_02U = 0.5
+    dropout_rate_03 = 0.35
+    # set some fixed parameter in Activation layer
+    final_activation = 'softmax'
+    
+    # check input_shape
+    if len(input_shape) > 2 or len(input_shape) < 1:
+        warnings.warn('input_shape is not valid!')
+        return None
+    '''produce deep layer model with sequential structure'''
+    model = Sequential()
+    # hidden layer
+    if len(input_shape) == 1:
+        model.add(LSTM(output_dim=lstm_init_size, activation=lstm_activation,
+                       return_sequences=True,
+                       input_dim=input_shape[0]))
+    else:
+        model.add(LSTM(output_dim=lstm_init_size, activation=lstm_activation,
+                       return_sequences=True,
+                       input_shape=input_shape))
+    model.add(Dropout(p=dropout_rate_00))
+    model.add(LSTM(output_dim=lstm_size_01, activation=lstm_activation,
+                   dropout_W=dropout_rate_01W, dropout_U=dropout_rate_01U,
+                   return_sequences=True))
+    model.add(LSTM(output_dim=lstm_size_02, activation=lstm_activation,
+                   dropout_U=dropout_rate_02U, dropout_W=dropout_rate_02W,
+                   return_sequences=True))
+    model.add(LSTM(output_dim=lstm_out_size, activation=lstm_activation))
+    model.add(Dropout(p=dropout_rate_03))
+    # output layer 
+    model.add(Dense(nb_classes))
+    model.add(Activation(activation=final_activation))
+    
+    # compile the layer model
+    model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+    
+    return model
+
+def MultiLSTM_MultiCNNs_Net(input_shape, nb_classes):
+    pass
+    
 #===============================================================================
 # tools function for layer-net model
 #===============================================================================
@@ -317,6 +372,7 @@ def ploter(model, pic_path):
     '''
     
     # plot the model framework
+    print(model.summary())
     plot(model, to_file=pic_path)
 
 def storageModel(model, storage_path):

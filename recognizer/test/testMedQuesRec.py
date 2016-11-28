@@ -40,6 +40,7 @@ def testEvalNetPred(xy_data, model):
     score = medQuesRec.evaluateNetworkPredictor(model, x_test, y_test)
     
     print(score)
+    return score
 
 def testShowNetPred(input_shape, name_net='CNNs_Net'):
     medQuesRec.showNetworkPredictor(input_shape, nb_classes=11, network=name_net)
