@@ -13,6 +13,7 @@ from keras.layers.recurrent import LSTM, GRU
 from keras.models import Sequential, model_from_json
 from keras.utils.visualize_util import plot
 import warnings
+from keras.optimizers import SGD, RMSprop
 
 
 #===============================================================================
@@ -78,7 +79,8 @@ def CNNs_Net(input_shape, nb_classes):
     model.add(Dense(nb_classes))
     model.add(Activation(activation=final_activation))
     # compile the layer model
-    model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+    sgd = SGD(lr=0.05, decay=1e-6, nesterov=True)
+    model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
     
     return model
 
@@ -114,7 +116,8 @@ def GRU_Net(input_shape, nb_classes):
     model.add(Dense(nb_classes))
     model.add(Activation(activation=final_activation))
     # compile the layer model
-    model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+    rmsprop = RMSprop(lr=0.005)
+    model.compile(loss='categorical_crossentropy', optimizer=rmsprop, metrics=['accuracy'])
     
     return model
 
@@ -151,7 +154,8 @@ def LSTM_Net(input_shape, nb_classes):
     model.add(Dense(nb_classes))
     model.add(Activation(activation=final_activation))
     # compile the layer model
-    model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+    rmsprop = RMSprop(lr=0.005)
+    model.compile(loss='categorical_crossentropy', optimizer=rmsprop, metrics=['accuracy'])
     
     return model
 
@@ -206,7 +210,9 @@ def CNNs_LSTM_Net(input_shape, nb_classes):
     model.add(Dense(nb_classes))
     model.add(Activation(activation=final_activation))   
     # compile the layer model
-    model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+#     sgd = SGD(lr=0.05, decay=1e-6, nesterov=True)
+    rmsprop = RMSprop(lr=0.005)
+    model.compile(loss='categorical_crossentropy', optimizer=rmsprop, metrics=['accuracy'])
     
     return model
 
@@ -260,7 +266,9 @@ def LSTM_CNNs_Net(input_shape, nb_classes):
     model.add(Dense(nb_classes))
     model.add(Activation(activation=final_activation))   
     # compile the layer model
-    model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+#     sgd = SGD(lr=0.05, decay=1e-6, nesterov=True)
+    rmsprop = RMSprop(lr=0.005)
+    model.compile(loss='categorical_crossentropy', optimizer=rmsprop, metrics=['accuracy'])
     
     return model
 
@@ -312,7 +320,8 @@ def MultiLSTM_Net(input_shape, nb_classes):
     model.add(Activation(activation=final_activation))
     
     # compile the layer model
-    model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+    rmsprop = RMSprop(lr=0.005)
+    model.compile(loss='categorical_crossentropy', optimizer=rmsprop, metrics=['accuracy'])
     
     return model
 
