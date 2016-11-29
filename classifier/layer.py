@@ -129,7 +129,7 @@ def LSTM_Net(input_shape, nb_classes):
     # set some fixed parameter in Dense layer
 #     hidden_dims = 40
     # set some fixed parameter in Dropout layer
-    dropout_rate = 0.5
+    dropout_rate = 0.4
     # set some fixed parameter in Activation layer
     final_activation = 'softmax'
     
@@ -166,7 +166,7 @@ def BiDirtLSTM_Net(input_shape, nb_classes):
     # set some fixed parameter in Dense layer
 #     hidden_dims = 40
     # set some fixed parameter in Dropout layer
-    dropout_rate = 0.5
+    dropout_rate = 0.4
     # set some fixed parameter in Activation layer
     final_activation = 'softmax'
     
@@ -394,9 +394,11 @@ def trainer(model, x_train, y_train,
     callbacks = []
     if auto_stop == True:
         monitor = 'val_acc' if validation_split > 0.0 else 'acc'
+        min_delta = 0.001
         patience = 10
         mode = 'auto'
         early_stopping = EarlyStopping(monitor=monitor,
+                                       min_delta=min_delta,
                                        patience=patience,
                                        mode=mode)
         callbacks = [early_stopping]
