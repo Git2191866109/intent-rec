@@ -99,7 +99,7 @@ def trainNetworkPredictor(x_train, y_train,
     # reflect produce network model
     start_train = time.clock()
     model = getattr(layer, network)(input_shape, nb_classes)
-    model = layer.trainer(model, x_train, y_train, auto_stop=False)
+    model = layer.trainer(model, x_train, y_train)
     end_train = time.clock()
     print('finish train layer model in {0}s'.format(end_train - start_train))
     
