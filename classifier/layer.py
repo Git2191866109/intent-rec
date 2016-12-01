@@ -348,25 +348,23 @@ def LSTM_CNNs_Net(input_shape, nb_classes):
 
 def CplxLSTMs_Net(input_shape, nb_classes):
     # set some fixed parameter in LSTM layer
-    lstm_init_size = 160
-    mlp_size_00 = lstm_init_size
-    lstm_size_01 = 160
-    mlp_size_01 = lstm_size_01
-    lstm_size_02 = 128
-    mlp_size_02 = lstm_size_02
+    lstm_init_size = 80
+    lstm_size_01 = 70
+    lstm_size_02 = 70
     lstm_out_size = 64
+    timemlp_out_size = lstm_out_size
     lstm_activation = 'tanh'
     # set some fixed parameter in Dense layer
 #     hidden_dims = 400
     # set some fixed parameter in Dropout layer
     dropout_rate_00 = 0.8
-    dropout_rate_01W = 0.75
-    dropout_rate_01U = 0.75
-    dropout_rate_01mlp = (dropout_rate_01W + dropout_rate_01U) / 2
-    dropout_rate_02W = 0.75
-    dropout_rate_02U = 0.75
-    dropout_rate_02mlp = (dropout_rate_02W + dropout_rate_02U) / 2
-    dropout_rate_03 = 0.6
+    dropout_rate_01W = 0.35
+    dropout_rate_01U = 0.35
+    dropout_rate_01 = 0.7
+    dropout_rate_02W = 0.35
+    dropout_rate_02U = 0.35
+    dropout_rate_02 = 0.7
+    dropout_rate_03 = 0.55
     # set some fixed parameter in Activation layer
     final_activation = 'softmax'
     
@@ -376,6 +374,7 @@ def CplxLSTMs_Net(input_shape, nb_classes):
         return None
     '''produce deep layer model with sequential structure'''
     model = Sequential()
+    
     # hidden layer
     if len(input_shape) == 1:
         model.add(LSTM(output_dim=lstm_init_size, activation=lstm_activation,
@@ -385,23 +384,23 @@ def CplxLSTMs_Net(input_shape, nb_classes):
         model.add(LSTM(output_dim=lstm_init_size, activation=lstm_activation,
                        return_sequences=True,
                        input_shape=input_shape))
-    model.add(TimeDistributed(Dense(output_dim=mlp_size_00)))
     model.add(Dropout(p=dropout_rate_00))
     
     model.add(LSTM(output_dim=lstm_size_01, activation=lstm_activation,
                    dropout_W=dropout_rate_01W, dropout_U=dropout_rate_01U,
                    return_sequences=True))
-    model.add(TimeDistributed(Dense(output_dim=mlp_size_01)))
-    model.add(Dropout(p=dropout_rate_01mlp))
+    model.add(Dropout(p=dropout_rate_01))
     
     model.add(LSTM(output_dim=lstm_size_02, activation=lstm_activation,
                    dropout_U=dropout_rate_02U, dropout_W=dropout_rate_02W,
                    return_sequences=True))
-    model.add(TimeDistributed(Dense(output_dim=mlp_size_02)))
-    model.add(Dropout(p=dropout_rate_02mlp))
+    model.add(Dropout(p=dropout_rate_02))
     
-    model.add(LSTM(output_dim=lstm_out_size, activation=lstm_activation))
+    model.add(LSTM(output_dim=lstm_out_size, activation=lstm_activation, return_sequences=True))
+    model.add(TimeDistributed(Dense(output_dim=timemlp_out_size)))
     model.add(Dropout(p=dropout_rate_03))
+    model.add(Flatten())
+    
     # output layer 
     model.add(Dense(nb_classes))
     model.add(Activation(activation=final_activation))
@@ -420,7 +419,7 @@ def MultiLSTM_MultiCNNs_Net(input_shape, nb_classes):
 #===============================================================================
 def trainer(model, x_train, y_train,
             batch_size=500,
-            nb_epoch=80,
+            nb_epoch=100,
             validation_split=0.2,
             auto_stop=True):
     
