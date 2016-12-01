@@ -5,7 +5,7 @@ Created on 2016年11月18日
 
 @author: superhy
 '''
-from keras.callbacks import EarlyStopping
+from keras.callbacks import EarlyStopping, ModelCheckpoint, Callback
 from keras.layers.convolutional import Convolution1D
 from keras.layers.core import Dense, Dropout, Activation, Flatten
 from keras.layers.pooling import GlobalMaxPooling1D, MaxPooling1D
@@ -13,7 +13,7 @@ from keras.layers.recurrent import LSTM, GRU
 from keras.layers.wrappers import TimeDistributed, Bidirectional
 from keras.models import Sequential, model_from_json
 from keras.optimizers import SGD, RMSprop
-
+from numpy import record
 import warnings
 
 
@@ -346,7 +346,7 @@ def LSTM_CNNs_Net(input_shape, nb_classes):
     
     return model
 
-def CplxLSTMs_Net(input_shape, nb_classes):
+def StackLSTMs_Net(input_shape, nb_classes):
     # set some fixed parameter in LSTM layer
     lstm_init_size = 80
     lstm_size_01 = 70
@@ -421,31 +421,44 @@ def trainer(model, x_train, y_train,
             batch_size=500,
             nb_epoch=100,
             validation_split=0.2,
-            auto_stop=True):
+            auto_stop=True,
+            best_record_path=None):
     
     #===========================================================================
     # set callbacks function for auto early stopping
     # by monitor the loss or val_loss if not change any more
     #===========================================================================
     callbacks = []
+    
     if auto_stop == True:
         monitor = 'val_acc' if validation_split > 0.0 else 'acc'
-        min_delta = 0.001
-        patience = 10
-        mode = 'auto'
-        early_stopping = EarlyStopping(monitor=monitor,
-                                       min_delta=min_delta,
-                                       patience=patience,
-                                       mode=mode)
-        callbacks = [early_stopping]
-        
-    model.fit(x=x_train, y=y_train,
-              batch_size=batch_size,
-              nb_epoch=nb_epoch,
-              validation_split=validation_split,
-              callbacks=callbacks)
+        early_stopping = EarlyStopping(monitor=monitor, min_delta=0.001, patience=10, mode='auto')
+        callbacks.append(early_stopping)
     
-    return model
+    if best_record_path != None:
+        monitor = 'val_acc' if validation_split > 0.0 else 'acc'
+        check_pointer = ModelCheckpoint(best_record_path, monitor=monitor, verbose=1, save_best_only=True)
+        callbacks.append(check_pointer)
+    
+    class MetricesHistory(Callback):
+        def on_train_begin(self, logs={}):
+            self.metrices = []
+
+        def on_batch_end(self, batch, logs={}):
+            if validation_split > 0.0:
+                self.metrices.append((logs.get('loss'), logs.get('acc'), logs.get('val_loss'), logs.get('val_acc')))
+            else:
+                self.metrices.append((logs.get('loss'), logs.get('acc')))
+                
+#     history = MetricesHistory()
+#     callbacks.append(history)
+    model.fit(x=x_train, y=y_train,
+                        batch_size=batch_size,
+                        nb_epoch=nb_epoch,
+                        validation_split=validation_split,
+                        callbacks=callbacks)
+    
+    return model, None #history.metrices
 
 def predictor(model, x_test,
               batch_size=500):
@@ -474,52 +487,37 @@ def ploter(model, pic_path):
     print(model.summary())
     plot(model, to_file=pic_path)
 
-def storageModel(model, storage_path):
-    '''
-    use json file to store the model's framework (.json), use hdf5 file to store the model's data (.h5)
-    storage_path must be with .json or nothing(just filename)
+def storageModel(model, frame_path, replace_record=False):
+    
+    record_path = None
         
-    when store the .json framework to storage_path, also create/store the .h5 file 
-    on same path automatically .json and .h5 file have same filename
-    '''
-    storeFileName = storage_path
-    if storage_path.find('.json') != -1:
-        storeFileName = storage_path[:storage_path.find('.json')]
-    storeDataPath = storeFileName + '.h5'
-    storeFramePath = storeFileName + '.json'
-        
-    frameFile = open(storeFramePath, 'w')
+    frameFile = open(frame_path, 'w')
     json_str = model.to_json()
     frameFile.write(json_str)  # save model's framework file
     frameFile.close()
-    model.save_weights(storeDataPath, overwrite=True)  # save model's data file
+    if replace_record == True:
+        record_path = frame_path.replace('.json', '.h5')
+        model.save_weights(record_path, overwrite=True)  # save model's data file
         
-    return storeFramePath, storeDataPath
+    return frame_path, record_path
 
-def recompileModel(self, model):
+def recompileModel(model):
     
-    model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+    optimizer = SGD(lr=0.1, decay=1e-5, nesterov=True)  # only CNNs_Net use SGD
+#     optimizer = RMSprop(lr=0.002)
+    
+    model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
     return model
 
-def loadStoredModel(storage_path, recompile=False):
-    '''
-    note same as previous function
-    if u just use the model to predict, you need not to recompile the model
-    if u want to evaluate the model, u should set the parameter: recompile as True
-    '''
-    storeFileName = storage_path
-    if storage_path.find('.json') != -1:
-        storeFileName = storage_path[:storage_path.find('.json')]
-    storeDataPath = storeFileName + '.h5'
-    storeFramePath = storeFileName + '.json'
+def loadStoredModel(frame_path, record_path, recompile=False):
         
-    frameFile = open(storeFramePath, 'r')
+    frameFile = open(frame_path, 'r')
 #     yaml_str = frameFile.readline()
     json_str = frameFile.readline()
     model = model_from_json(json_str)
     if recompile == True:
         model = recompileModel(model)  # if need to recompile
-    model.load_weights(storeDataPath)
+    model.load_weights(record_path)
     frameFile.close()
         
     return model

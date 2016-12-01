@@ -94,20 +94,25 @@ def trainNetworkPredictor(x_train, y_train,
                           input_shape,
                           nb_classes,
                           network='CNNs_Net',
-                          storagePath=None):
+                          frame_path=None):
     
     # reflect produce network model
     start_train = time.clock()
     model = getattr(layer, network)(input_shape, nb_classes)
-    model = layer.trainer(model, x_train, y_train)
+    
+    # record best model_weight into file
+    record_path = frame_path.replace('.json', '.h5')
+#     record_path = 'weights.hdf5'
+    model, history_metrices = layer.trainer(model, x_train, y_train, best_record_path=record_path)
     end_train = time.clock()
     print('finish train layer model in {0}s'.format(end_train - start_train))
+    print('store the best weight record on: {0}'.format(record_path))
     
-    if storagePath != None:
-        layer.storageModel(model, storagePath)
-        print('layer model has been stored in path: {0}.'.format(storagePath))
+    if frame_path != None:
+        layer.storageModel(model, frame_path, replace_record=False)
+        print('layer model has been stored in path: {0}.'.format(frame_path))
     
-    return model
+    return model, history_metrices
 
 def showNetworkPredictor(input_shape,
                           nb_classes,
@@ -118,15 +123,11 @@ def showNetworkPredictor(input_shape,
     layer.ploter(model, pic_path=picPath)
     print('finish generate layer model picture in path: {0}.'.format(picPath))
 
-def loadNetworkPredictor(storagePath):
-    '''
-    @param @recompile:  if recompile the loaded layer model
-        if u just use the model to predict, you need not to recompile the model
-        if u want to evaluate the model, u should set the parameter: recompile as True
-    '''
-    
-    model = layer.loadStoredModel(storagePath, recompile=True)
-    print('load layer model from path: {0}.'.format(storagePath))
+def loadNetworkPredictor(frame_path):
+    record_path = frame_path.replace('.json', '.h5')
+#     record_path = 'weights.hdf5'   
+    model = layer.loadStoredModel(frame_path, record_path, recompile=True)
+    print('load layer model from path: {0}.'.format(frame_path))
     return model
 
 def runNetworkPredictor(network_model, x_test):

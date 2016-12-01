@@ -5,7 +5,8 @@ Created on 2016年11月21日
 
 @author: super
 '''
-from classifier import layer
+
+
 from recognizer import fileProcess
 from recognizer import medQuesRec
 
@@ -18,14 +19,20 @@ def testLoadData(lb_data=0):
     trainTestFileTuples = (trainFilePath, testFilePath)
     return medQuesRec.loadGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_classes=11)
 
-def testTrainNetPred(xy_data, input_shape, name_net='CNNs_Net'):
+def testTrainNetPred(xy_data, input_shape, name_net='CNNs_Net', lb_data=None):
+    frame_path = fileProcess.auto_config_root() + u'model_cache/keras/{0}5000_{1}.json'.format(name_net, lb_data)
     x_train = xy_data[0]
     y_train = xy_data[1]
-    model = medQuesRec.trainNetworkPredictor(x_train, y_train, input_shape, nb_classes=11, network=name_net)
+    model, history_metrices = medQuesRec.trainNetworkPredictor(x_train, y_train, input_shape,
+                                                      nb_classes=11,
+                                                      network=name_net,
+                                                      frame_path=frame_path)
+    print(history_metrices)
     
-    return model
+    return frame_path
 
-def testRunNetPred(xy_data, model):
+def testRunNetPred(xy_data, frame_path):
+    model = medQuesRec.loadNetworkPredictor(frame_path)
     x_test = xy_data[2]
     y_test = xy_data[3]
     classes, proba = medQuesRec.runNetworkPredictor(model, x_test)
@@ -34,7 +41,8 @@ def testRunNetPred(xy_data, model):
         print('{0} '.format(list(classes).count(i))),
     print('')
 
-def testEvalNetPred(xy_data, model):
+def testEvalNetPred(xy_data, frame_path):
+    model = medQuesRec.loadNetworkPredictor(frame_path)
     x_test = xy_data[2]
     y_test = xy_data[3]
     score = medQuesRec.evaluateNetworkPredictor(model, x_test, y_test)

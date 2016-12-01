@@ -23,31 +23,56 @@ from recognizer.test.testMedQuesRec import testLoadData, testTrainNetPred, \
 1. train model
 2. evaluate the model
 '''
-# exp_param
-# lb_data = 0
-# name_net = 'LSTM_Net'
-#    
-# xy_data, input_shape = testLoadData(lb_data=lb_data)
-# model = testTrainNetPred(xy_data, input_shape, name_net=name_net)
-# score = testEvalNetPred(xy_data, model)
-# testRunNetPred(xy_data, model)
+def one_data(lb_data=0, name_net='GRU_Net'):
+    # exp_param
+    
+        
+    xy_data, input_shape = testLoadData(lb_data=lb_data)
+    model = testTrainNetPred(xy_data, input_shape, name_net=name_net, lb_data=lb_data)
+    score = testEvalNetPred(xy_data, model)
+    # testRunNetPred(xy_data, model)
+    
+# one_data()
 
 '''
 batch process as above operation from data 0~9
 '''
-name_net = 'CplxLSTMs_Net'
-scores = []
-       
-for i in range(10):
-    lb_data = i
-    xy_data, input_shape = testLoadData(lb_data=lb_data)
-    model = testTrainNetPred(xy_data, input_shape, name_net=name_net)
-    score = testEvalNetPred(xy_data, model)
-    scores.append(score)
-print(scores)
-fw = open(name_net + 'batch_scores.txt', 'w')
-fw.write(name_net + '\n' + '\n'.join(str(s) for s in scores))
-fw.close()
+def batch_allData(name_net='CNNs_Net'):
+    scores = []     
+    for i in range(10):
+        lb_data = i
+        xy_data, input_shape = testLoadData(lb_data=lb_data)
+        model = testTrainNetPred(xy_data, input_shape, name_net=name_net, lb_data=lb_data)
+        score = testEvalNetPred(xy_data, model)
+        scores.append(score)
+    print(scores)
+    fw = open(name_net + 'batch_scores.txt', 'w')
+    fw.write(name_net + '\n' + '\n'.join(str(s) for s in scores))
+    fw.close()
+    
+# batch_allData()
+
+'''
+batch process all model in all data 0~9
+'''
+def batch_allModel_allData():
+#     name_nets = ['CNNs_Net', 'GRU_Net', 'BiDirtGRU_Net', 'LSTM_Net', 'BiDirtLSTM_Net', 'StackLSTMs_Net']
+    '''except CNNs_Net'''
+    name_nets = ['GRU_Net', 'BiDirtGRU_Net', 'LSTM_Net', 'BiDirtLSTM_Net', 'StackLSTMs_Net']
+    for name_net in name_nets:
+        scores = []
+        for i in range(10):
+            lb_data = i
+            xy_data, input_shape = testLoadData(lb_data=lb_data)
+            model = testTrainNetPred(xy_data, input_shape, name_net=name_net, lb_data=lb_data)
+            score = testEvalNetPred(xy_data, model)
+            scores.append(score)
+        print(scores)
+        fw = open(name_net + 'batch_scores.txt', 'w')
+        fw.write(name_net + '\n' + '\n'.join(str(s) for s in scores))
+        fw.close()
+
+batch_allModel_allData()
 
 '''
 1. plot the model framework picture
