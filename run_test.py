@@ -35,7 +35,7 @@ from recognizer.test.testMedQuesRec import testLoadData, testTrainNetPred, \
 '''
 batch process as above operation from data 0~9
 '''
-name_net = 'CNNs_Net'
+name_net = 'GRU_Net'
 scores = []
        
 for i in range(10):

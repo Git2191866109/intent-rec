@@ -92,7 +92,7 @@ def GRU_Net(input_shape, nb_classes):
     # set some fixed parameter in Dense layer
 #     hidden_dims = 40
     # set some fixed parameter in Dropout layer
-    dropout_rate = 0.5
+    dropout_rate = 0.4
     # set some fixed parameter in Activation layer
     final_activation = 'softmax'
     
@@ -110,6 +110,43 @@ def GRU_Net(input_shape, nb_classes):
     else:
         model.add(GRU(output_dim=gru_output_size, activation=gru_activation,
                       input_shape=input_shape))
+#     model.add(Dense(hidden_dims))
+    if dropout_rate > 0:
+        model.add(Dropout(p=dropout_rate))
+    # output layer     
+    model.add(Dense(nb_classes))
+    model.add(Activation(activation=final_activation))
+    # compile the layer model
+    rmsprop = RMSprop(lr=0.002)
+    model.compile(loss='categorical_crossentropy', optimizer=rmsprop, metrics=['accuracy'])
+    
+    return model
+
+def BiDirtGRU_Net(input_shape, nb_classes):
+    # set some fixed parameter in LSTM layer
+    gru_output_size = 64
+    gru_activation = 'tanh'
+    # set some fixed parameter in Dense layer
+#     hidden_dims = 40
+    # set some fixed parameter in Dropout layer
+    dropout_rate = 0.4
+    # set some fixed parameter in Activation layer
+    final_activation = 'softmax'
+    
+    # check input_shape
+    if len(input_shape) > 2 or len(input_shape) < 1:
+        warnings.warn('input_shape is not valid!')
+        return None
+    
+    # produce deep layer model with sequential structure
+    model = Sequential()
+    # hidden layer
+    if len(input_shape) == 1:
+        model.add(Bidirectional(GRU(output_dim=gru_output_size, activation=gru_activation),
+                                input_dim=input_shape[0]))
+    else:
+        model.add(Bidirectional(GRU(output_dim=gru_output_size, activation=gru_activation),
+                                input_shape=input_shape))
 #     model.add(Dense(hidden_dims))
     if dropout_rate > 0:
         model.add(Dropout(p=dropout_rate))
