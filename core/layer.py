@@ -13,7 +13,6 @@ from keras.layers.recurrent import LSTM, GRU
 from keras.layers.wrappers import TimeDistributed, Bidirectional
 from keras.models import Sequential, model_from_json
 from keras.optimizers import SGD, RMSprop
-from numpy import record
 import warnings
 
 
@@ -419,7 +418,7 @@ def MultiLSTM_MultiCNNs_Net(input_shape, nb_classes):
 #===============================================================================
 def trainer(model, x_train, y_train,
             batch_size=500,
-            nb_epoch=2,
+            nb_epoch=100,
             validation_split=0.2,
             auto_stop=True,
             best_record_path=None):
@@ -503,8 +502,8 @@ def storageModel(model, frame_path, replace_record=False):
 
 def recompileModel(model):
     
-    optimizer = SGD(lr=0.1, decay=1e-5, nesterov=True)  # only CNNs_Net use SGD
-#     optimizer = RMSprop(lr=0.002)
+#     optimizer = SGD(lr=0.1, decay=1e-5, nesterov=True)  # only CNNs_Net use SGD
+    optimizer = RMSprop(lr=0.002)
     
     model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
     return model

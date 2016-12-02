@@ -23,7 +23,7 @@ from recog.test.testMedQuesRec import testLoadData, testTrainNetPred, \
 1. train model
 2. evaluate the model
 '''
-def one_data(lb_data=0, name_net='CNNs_Net'):
+def one_data(lb_data=0, name_net='GRU_Net'):
     # exp_param
     
         
@@ -37,7 +37,7 @@ one_data()
 '''
 batch process as above operation from data 0~9
 '''
-def batch_allData(name_net='CNNs_Net'):
+def batch_allData(name_net='GRU_Net'):
     scores = []     
     for i in range(10):
         lb_data = i
