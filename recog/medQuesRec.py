@@ -8,9 +8,9 @@ Created on 2016年11月21日
 import numpy
 import time
 
-from classifier import layer
-from recognizer import fileProcess
-from recognizer.embedding import word2Vec
+from core import layer
+from recog import fileProcess
+from recog.embedding import word2Vec
 
 
 def loadGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_classes):

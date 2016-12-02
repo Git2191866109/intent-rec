@@ -7,7 +7,7 @@ Created on 2016年11月17日
 '''
 import multiprocessing
 from gensim.models.word2vec import Word2Vec
-from recognizer import fileProcess
+from recog import fileProcess
 
 def trainWord2VecModel(sentences, modelPath,
                            Size=100,

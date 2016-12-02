@@ -8,8 +8,8 @@ Created on 2016年11月22日
 
 import time
 
-from classifier import layer
-from recognizer.test.testMedQuesRec import testLoadData, testTrainNetPred, \
+from core import layer
+from recog.test.testMedQuesRec import testLoadData, testTrainNetPred, \
     testEvalNetPred, testShowNetPred
     
 
@@ -23,7 +23,7 @@ from recognizer.test.testMedQuesRec import testLoadData, testTrainNetPred, \
 1. train model
 2. evaluate the model
 '''
-def one_data(lb_data=0, name_net='GRU_Net'):
+def one_data(lb_data=0, name_net='CNNs_Net'):
     # exp_param
     
         
@@ -32,7 +32,7 @@ def one_data(lb_data=0, name_net='GRU_Net'):
     score = testEvalNetPred(xy_data, model)
     # testRunNetPred(xy_data, model)
     
-# one_data()
+one_data()
 
 '''
 batch process as above operation from data 0~9
@@ -72,10 +72,10 @@ def batch_allModel_allData():
         fw.write(name_net + '\n' + '\n'.join(str(s) for s in scores))
         fw.close()
 
-batch_allModel_allData()
+# batch_allModel_allData()
 
 '''
-1. plot the model framework picture
+1. fig the model framework picture
 (inux only)
 '''
 #===============================================================================

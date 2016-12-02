@@ -10,8 +10,8 @@ import random
 import time
 import warnings
 
-from recognizer import fileProcess, cacheIndex
-from recognizer.embedding import word2Vec
+from recog import fileProcess, cacheIndex
+from recog.embedding import word2Vec
 
 
 _totalDirPath = fileProcess.auto_config_root() + u'med_question_5000each/'

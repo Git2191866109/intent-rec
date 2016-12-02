@@ -419,7 +419,7 @@ def MultiLSTM_MultiCNNs_Net(input_shape, nb_classes):
 #===============================================================================
 def trainer(model, x_train, y_train,
             batch_size=500,
-            nb_epoch=100,
+            nb_epoch=2,
             validation_split=0.2,
             auto_stop=True,
             best_record_path=None):
@@ -444,21 +444,21 @@ def trainer(model, x_train, y_train,
         def on_train_begin(self, logs={}):
             self.metrices = []
 
-        def on_batch_end(self, batch, logs={}):
+        def on_epoch_end(self, epoch, logs={}):
             if validation_split > 0.0:
                 self.metrices.append((logs.get('loss'), logs.get('acc'), logs.get('val_loss'), logs.get('val_acc')))
             else:
                 self.metrices.append((logs.get('loss'), logs.get('acc')))
                 
-#     history = MetricesHistory()
-#     callbacks.append(history)
+    history = MetricesHistory()
+    callbacks.append(history)
     model.fit(x=x_train, y=y_train,
                         batch_size=batch_size,
                         nb_epoch=nb_epoch,
                         validation_split=validation_split,
                         callbacks=callbacks)
     
-    return model, None #history.metrices
+    return model, history.metrices
 
 def predictor(model, x_test,
               batch_size=500):
@@ -483,7 +483,7 @@ def ploter(model, pic_path):
     
     from keras.utils.visualize_util import plot
     
-    # plot the model framework
+    # fig the model framework
     print(model.summary())
     plot(model, to_file=pic_path)
 

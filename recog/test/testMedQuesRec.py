@@ -5,10 +5,7 @@ Created on 2016年11月21日
 
 @author: super
 '''
-
-
-from recognizer import fileProcess
-from recognizer import medQuesRec
+from recog import fileProcess, medQuesRec
 
 
 def testLoadData(lb_data=0):
