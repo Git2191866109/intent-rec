@@ -37,6 +37,16 @@ def getWordVec(model, queryWord):
     vector = model[queryWord.decode('utf-8')]
     return vector
 
+def queryMostSimWords(self, model, wordStr, topN=20):
+    '''
+    MSimilar words basic query function
+    return 2-dim List [0] is word [1] is double-prob
+    '''
+    fileProcess.reLoadEncoding()
+        
+    similarPairList = model.most_similar(wordStr.decode('utf-8'), topn=topN)
+    return similarPairList
+
 def loadModelfromFile(modelPath):
     
     model = Word2Vec.load(modelPath)

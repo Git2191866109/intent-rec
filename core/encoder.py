@@ -7,11 +7,22 @@ Created on 2016年12月2日
 '''
 import warnings
 import numpy
+from recog.embedding import word2Vec
 
 def loadAttSimVecDic(gensimW2VModel, sentences, attention_seqs, attention_T):
-    attSimVecDic = {}
     if len(sentences) != len(attention_seqs):
         warnings.warn('given incompatible dim_sentences!')
+        
+    attSimVecDic = {}
+    for i in range(len(sentences)):
+        for j in range(len(attention_seqs[i])):
+            if attention_seqs[i][j] > attention_T:
+                if sentences[i][j] not in attSimVecDic.keys() and sentences[i][j].decode('utf-8') in gensimW2VModel.vocab:
+                    simWord = word2Vec.queryMostSimWords(gensimW2VModel, sentences[i][j], topN=1)[0][0]
+                    simVec = word2Vec.getWordVec(gensimW2VModel, simWord)
+                    attSimVecDic[sentences[i][j]] = simVec
+                    
+    return attSimVecDic
 
 def seqUniDirtExt(vector_seqs, attention_seqs):
     pass
@@ -20,7 +31,7 @@ def seqBiDirtExt(vector_seqs, attention_seqs, attention_T=0.5, ext_lemda=0.2):
     len_vectorSeqs = len(vector_seqs)
     len_attentionSeqs = len(attention_seqs)
     if len_attentionSeqs != len_vectorSeqs:
-        warnings.warn('given incompatible sequences!')
+        warnings.warn('given incompatible dim_sequences!')
     
     # count the average value of vector sequence's length
     avelen_vecSeq = numpy.mean(list(len(vecSeq) for vecSeq in vector_seqs))
