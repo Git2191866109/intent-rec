@@ -1,4 +1,5 @@
 eclipse.preferences.version=1
+encoding//core/encoder.py=UTF-8
 encoding//core/layer.py=UTF-8
 encoding//core/svm.py=UTF-8
 encoding//core/test/testLayer.py=UTF-8
