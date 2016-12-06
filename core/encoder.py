@@ -35,36 +35,38 @@ def genExtVecs(attVec, simVec, tagVecs, extNum):
     # vary from big to small
     varyDecay = varyRange * 1.0 / extNum
     extVecs = []
+    
+    def addExtVecs(tagIndex, j):
+        random_v = (random.randint(15, 60) * 1.0 / 100) * varyDecay
+        varyVec = varyRange - varyDecay * (j - 1) - random_v
+        varydirtVec = numpy.asarray(list(1 if tagVecs[tagIndex][i] > attVec[i] else -1 for i in range(len(attVec))))
+        extVecs.append(attVec + varyVec * varydirtVec)
+        
     if len(tagVecs) == 1: 
-        for i in range(extNum):
-            random_v = (random.randint(15, 60) * 1.0 / 100) * varyDecay
-            varyVec = varyRange - varyDecay * (i - 1) - random_v
-            varydirtVec = numpy.asarray(list(1 if tagVecs[0][i] > attVec[i] else -1 for i in range(len(attVec))))
-            extVecs.append(attVec + varyVec * varydirtVec)
+        for j in range(extNum):
+            addExtVecs(0, j)
     elif len(tagVecs) == 2:
-        for i in range(extNum):
-            random_v = (random.randint(15, 60) * 1.0 / 100) * varyDecay
-            varyVec = varyRange - varyDecay * (i - 1) - random_v
-            varydirtVec = numpy.asarray(list(1 if tagVecs[i % 2][i] > attVec[i] else -1 for i in range(len(attVec))))
-            extVecs.append(attVec + varyVec * varydirtVec)
+        for j in range(extNum):
+            addExtVecs(j % 2, j)
     else:
         warnings.warn('nb_tagVecs exceed the limit! use first-2')
-        for i in range(extNum):
-            random_v = (random.randint(15, 60) * 1.0 / 100) * varyDecay
-            varyVec = varyRange - varyDecay * (i - 1) - random_v
-            varydirtVec = numpy.asarray(list(1 if tagVecs[i % 2][i] > attVec[i] else -1 for i in range(len(attVec))))
-            extVecs.append(attVec + varyVec * varydirtVec)
+        for j in range(extNum):
+            addExtVecs(j % 2, j)
             
     return extVecs
 
 def seqUniDirtExt(vector_seqs, attention_seqs):
     pass
 
-def seqBiDirtExt(vector_seqs, attention_seqs, attention_T=0.5, ext_lemda=0.2):
+def seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attention_T=0.5, ext_lemda=0.2):
     len_vectorSeqs = len(vector_seqs)
     len_attentionSeqs = len(attention_seqs)
     if len_attentionSeqs != len_vectorSeqs:
         warnings.warn('given incompatible dim_sequences!')
+        
+    # load all attSimVecDic firstly
+    attSimVecDic = loadAttSimVecDic(gensimW2VModel, sentences, attention_seqs, attention_T)
+    del(gensimW2VModel)
     
     # count the average value of vector sequence's length
     avelen_vecSeq = numpy.mean(list(len(vecSeq) for vecSeq in vector_seqs))
@@ -79,12 +81,32 @@ def seqBiDirtExt(vector_seqs, attention_seqs, attention_T=0.5, ext_lemda=0.2):
         extIndexes = []
         for att_i in range(len(attention_seqs[i])):
             if attention_seqs[i][att_i] > attention_T:
-                extIndexes.append(att_i + 1)
+                extIndexes.append(att_i)
+        extIndexes = numpy.asarray(extIndexes)
         
         org_vec_seq = vector_seqs[i]
         # doing the extension
-        for index in extIndexes:
-            pass
+        for j in range(len(extIndexes)):
+            if extIndexes[j] == 0:
+                # check index on left border, only extension vectors on right direction
+                if sentences[i][extIndexes[j]] not in attSimVecDic.keys():
+                    break
+                attVec = vector_seqs[i][extIndexes[j]]
+                simVec = attSimVecDic[sentences[i][extIndexes[j]]]
+                tagVecs = (vector_seqs[i][extIndexes[j] + 1],)
+                extVecs = genExtVecs(attVec, simVec, tagVecs, (extNum + 1.0) / 2.0)
+                
+                for ext_i in range(len(extVecs)):
+                    org_vec_seq.insert(extIndexes[j] + 1, extVecs[ext_i])
+                # push the rest indexs
+                extIndexes += len(extVecs)
+            elif extIndexes[j] == len(org_vec_seq) - 1:
+                # check index on right border, only extension vectors on left direction
+                # TODO:
+                pass
+            else:
+                # TODO:
+                pass
     
 if __name__ == '__main__':
     pass
