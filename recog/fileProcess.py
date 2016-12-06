@@ -84,7 +84,7 @@ def loadMedQuesSentences(totalDataPath):
     dirPath.extend(totalDataPath + category + '/' for category in med_qus_categories)
     print('load index:')
     for dir in dirPath:
-        print(dir + ' ')
+        print(dir)
     loadedFilesPath = listAllFilePathInDirectory(dirPath)
     
     totalSentences = []
