@@ -66,7 +66,7 @@ def seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attenti
         
     # load all attSimVecDic firstly
     attSimVecDic = loadAttSimVecDic(gensimW2VModel, sentences, attention_seqs, attention_T)
-    del(gensimW2VModel)
+    del(gensimW2VModel) # release the memory space
     
     # count the average value of vector sequence's length
     avelen_vecSeq = numpy.mean(list(len(vecSeq) for vecSeq in vector_seqs))
@@ -88,25 +88,59 @@ def seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attenti
         # doing the extension
         for j in range(len(extIndexes)):
             if extIndexes[j] == 0:
-                # check index on left border, only extension vectors on right direction
+                # check index on left border, only extension half vectors on right direction
                 if sentences[i][extIndexes[j]] not in attSimVecDic.keys():
                     break
                 attVec = vector_seqs[i][extIndexes[j]]
                 simVec = attSimVecDic[sentences[i][extIndexes[j]]]
                 tagVecs = (vector_seqs[i][extIndexes[j] + 1],)
-                extVecs = genExtVecs(attVec, simVec, tagVecs, (extNum + 1.0) / 2.0)
+                extVecs = genExtVecs(attVec, simVec, tagVecs, (extNum + 1) / 2)
+                del(attVec, simVec, tagVecs) # release the memory space
                 
                 for ext_i in range(len(extVecs)):
                     org_vec_seq.insert(extIndexes[j] + 1, extVecs[ext_i])
                 # push the rest indexs
                 extIndexes += len(extVecs)
+                del(extVecs) # release the memory space
             elif extIndexes[j] == len(org_vec_seq) - 1:
-                # check index on right border, only extension vectors on left direction
-                # TODO:
-                pass
+                # check index on right border, only extension half vectors on left direction
+                if sentences[i][extIndexes[j]] not in attSimVecDic.keys():
+                    break
+                attVec = vector_seqs[i][extIndexes[j]]
+                simVec = attSimVecDic[sentences[i][extIndexes[j]]]
+                tagVecs = (vector_seqs[i][extIndexes[j] + 1],)
+                extVecs = genExtVecs(attVec, simVec, tagVecs, (extNum + 1) / 2)
+                del(attVec, simVec, tagVecs) # release the memory space
+                
+                for ext_i in range(len(extVecs)):
+                    org_vec_seq.insert(extIndexes[j] + ext_i, extVecs[ext_i])  # after insert on left, att_ele always be pushed one step
+                # push the rest indexs
+                extIndexes += len(extVecs)
+                del(extVecs) # release the memory space
             else:
-                # TODO:
-                pass
+                # extension vectors on both right & left directions
+                if sentences[i][extIndexes[j]] not in attSimVecDic.keys():
+                    break
+                attVec = vector_seqs[i][extIndexes[j]]
+                simVec = attSimVecDic[sentences[i][extIndexes[j]]]
+                tagVecs = (vector_seqs[i][extIndexes[j] + 1],)
+                extVecs = genExtVecs(attVec, simVec, tagVecs, extNum)
+                del(attVec, simVec, tagVecs) # release the memory space
+                
+                for ext_i in range(len(extVecs)):
+                    # when insert on left, att_ele has been pushed one step
+                    # so we need carefully about this, push forward the insert position
+                    org_vec_seq.insert(extIndexes[j] + ext_i / 2 + (ext_i + 1) % 2, extVecs[ext_i])
+                # push the rest indexs
+                extIndexes += len(extVecs)
+                del(extVecs) # release the memory space
+        
+        attExt_vec_seqs.append(org_vec_seq)
+        
+        # release the memory space
+        del(org_vec_seq, extIndexes, extNum)
+                
+    return attExt_vec_seqs
     
 if __name__ == '__main__':
     pass
