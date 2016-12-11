@@ -97,7 +97,7 @@ def feature_selection_chi(class_df_list, term_set, term_class_df_mat):
     N = sum(class_df_list)
     D = N - A - B - C
     class_set_size = len(class_df_list)
-    '''简化的CHI'''
+    '''simple CHI'''
     term_score_mat = np.square(A * D - C * B) / ((A + B + class_set_size) * (C + D + class_set_size))
     term_score_max_list = [max(x) for x in term_score_mat]
     term_score_array = np.array(term_score_max_list)
@@ -153,7 +153,7 @@ if __name__ == "__main__":
     filepath = fileProcess.auto_config_root() + 'exp_mid_data/sentences_labeled55000.txt'
     doc_terms_list, doc_class_list = load(filepath)
     '''input the texts list, classes list, the called method in IG, CHI and MI'''
-    model = feature_selection(doc_terms_list, doc_class_list, 'MI')
+    model = feature_selection(doc_terms_list, doc_class_list, 'CHI')
 
 
 #     model=sorted(model.items(),key=lambda item:item[1],reverse=False)
