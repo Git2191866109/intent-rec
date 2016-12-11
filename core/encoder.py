@@ -17,7 +17,7 @@ def loadAttSimVecDic(gensimW2VModel, sentences, attention_seqs, attention_T):
     attSimVecDic = {}
     for i in range(len(sentences)):
         for j in range(len(attention_seqs[i])):
-            if attention_seqs[i][j] > attention_T:
+            if attention_seqs[i][j] >= attention_T:
                 if sentences[i][j] not in attSimVecDic.keys() and sentences[i][j].decode('utf-8') in gensimW2VModel.vocab:
                     simWord = word2Vec.queryMostSimWords(gensimW2VModel, sentences[i][j], topN=1)[0][0]
                     simVec = word2Vec.getWordVec(gensimW2VModel, simWord)
@@ -80,7 +80,7 @@ def seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attenti
         # record the elements' indexes which need extension
         extIndexes = []
         for att_i in range(len(attention_seqs[i])):
-            if attention_seqs[i][att_i] > attention_T:
+            if attention_seqs[i][att_i] >= attention_T:
                 extIndexes.append(att_i)
         extIndexes = numpy.asarray(extIndexes)
         
