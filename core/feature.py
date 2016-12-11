@@ -162,24 +162,31 @@ def Normalize(f_model={}):
         f_model[word] = (1.0 * f_model[word] - minValue) / (maxValue - minValue)
     return f_model
 
-def auto_attention_T(f_model, select_prop = 0.2):
+def auto_attention_T(f_model, select_prop=0.2):
     '''
     select the min value of best(select_prop) feature as attention_T
     '''
+    sf_model = sorted(f_model.items(), key=lambda item:item[1], reverse=False)
+    attention_T = sf_model[int((1 - select_prop) * len(sf_model))][1]
+    
+    return attention_T
 
 if __name__ == "__main__":
     
     filepath = fileProcess.auto_config_root() + 'exp_mid_data/sentences_labeled55000.txt'
     doc_terms_list, doc_class_list = load(filepath)
     '''input the texts list, classes list, the called method in IG, CHI and MI'''
-    f_model = f_values(doc_terms_list, doc_class_list, 'CHI')
+    f_model = f_values(doc_terms_list, doc_class_list, 'MI')
 
 
-    f_model = sorted(f_model.items(), key=lambda item:item[1], reverse=False)
-#     for i in f_model:
-#         print i[0],' ',i[1]
-    sf_model = dict(f_model[int((1 - 0.2) * len(f_model)) - 1 :])
-#     print(sf_model)
-    for key in sf_model.keys():
-        print type(key), ': ', key, ' ', sf_model[key]
-    print(len(sf_model))
+    f_model_s = sorted(f_model.items(), key=lambda item:item[1], reverse=False)
+#===============================================================================
+# #     for i in f_model:
+# #         print i[0],' ',i[1]
+#     sf_model = dict(f_model_s[int((1 - 0.2) * len(f_model_s)) - 1 :])
+# #     print(sf_model)
+#     for key in sf_model.keys():
+#         print type(key), ': ', key, ' ', sf_model[key]
+#===============================================================================
+    print(len(f_model_s))
+    print(auto_attention_T(f_model, select_prop=0.2))

@@ -91,12 +91,22 @@ def loadGensimSumVecData(trainTestFileTuples, gensimW2VModelPath, nb_classes):
     pass
 
 def storeExprimentNpzData(npzPath, xy_data):
+    start_np = time.clock()
     numpy.savez(npzPath, train_x=xy_data[0], train_y=xy_data[1], test_x=xy_data[2], test_y=xy_data[3])
+    end_np = time.clock()
+    print('store npz data in {0}s'.format(end_np - start_np))
+    
     return npzPath
 
 def loadExprimentNpzData(npzPath):
+    start_np = time.clock()
     npzData = numpy.load(npzPath)
-    return (npzData['train_x'], npzData['train_y'], npzData['test_x'], npzData['test_y'])
+    xy_data = (npzData['train_x'], npzData['train_y'], npzData['test_x'], npzData['test_y'])
+    input_shape = npzData['train_x'][0].shape
+    end_np = time.clock()
+    print('load npz data in {0}s'.format(end_np - start_np))
+    
+    return xy_data, input_shape
     
 def trainNetworkPredictor(x_train, y_train,
                           input_shape,

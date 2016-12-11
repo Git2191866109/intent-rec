@@ -13,8 +13,21 @@ def testLoadData(lb_data=0):
     testFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test/test{0}.txt'.format(lb_data)
     gensimW2VModelPath = fileProcess.auto_config_root() + u'model_cache/gensim/med_qus-5000.vector'
     
+    npzPath = fileProcess.auto_config_root() + u'exp_mid_data/npy_data/train_NP{0}.npz'.format(lb_data)
+    
     trainTestFileTuples = (trainFilePath, testFilePath)
-    return medQuesRec.loadGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_classes=11)
+    xy_data, input_shape = medQuesRec.loadGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_classes=11)
+    medQuesRec.storeExprimentNpzData(npzPath, xy_data)
+    print('store the xy_data at {0}!'.format(npzPath))
+    
+    return xy_data, input_shape
+
+def testGetNpyData(lb_data=0):
+    npzPath = fileProcess.auto_config_root() + u'exp_mid_data/npy_data/train_NP{0}.npz'.format(lb_data)
+    xy_data, input_shape = medQuesRec.loadExprimentNpzData(npzPath)
+    print('get the xy_data at {0}! input shape: {1}'.format(npzPath, input_shape))
+    
+    return xy_data, input_shape
 
 def testTrainNetPred(xy_data, input_shape, name_net='CNNs_Net', lb_data=None):
     frame_path = fileProcess.auto_config_root() + u'model_cache/keras/{0}5000_{1}.json'.format(name_net, lb_data)
@@ -59,6 +72,10 @@ if __name__ == '__main__':
     *4. run predict by network model
     '''
     xy_data, input_shape = testLoadData()
-    model = testTrainNetPred(xy_data, input_shape)
-    testEvalNetPred(xy_data, model)
-#     testRunNetPred(xy_data, model)
+    print('org input_shape: {0}'.format(input_shape))
+    xy_data, input_shape = testGetNpyData()
+#===============================================================================
+#     model = testTrainNetPred(xy_data, input_shape)
+#     testEvalNetPred(xy_data, model)
+# #     testRunNetPred(xy_data, model)
+#===============================================================================
