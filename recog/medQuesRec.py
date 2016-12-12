@@ -88,10 +88,15 @@ def loadGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_classes):
     return xy_data, input_shape
 
 def loadAttentionGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_classes):
-    pass
-
-def loadGensimSumVecData(trainTestFileTuples, gensimW2VModelPath, nb_classes):
-    pass
+    
+    fr_train = open(trainTestFileTuples[0], 'r')
+    fr_test = open(trainTestFileTuples[1], 'r')
+    trainLines = fr_train.readlines()
+    testLines = fr_test.readlines()
+    fr_train.close()
+    fr_test.close()
+    del(fr_train)
+    del(fr_test)
 
 def storeExprimentNpzData(npzPath, xy_data):
     start_np = time.clock()
