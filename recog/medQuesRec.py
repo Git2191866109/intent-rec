@@ -8,7 +8,7 @@ Created on 2016年11月21日
 import numpy
 import time
 
-from core import layer
+from core import layer, feature
 from recog import fileProcess
 from recog.embedding import word2Vec
 
@@ -87,6 +87,16 @@ def loadGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_classes):
     
     return xy_data, input_shape
 
+def initAttentionValues(org_filepath):
+    
+    doc_terms_list, doc_class_list = feature.load_info(org_filepath)
+    # input the texts list, classes list, called methods: IG, CHI and MI
+    f_model = feature.f_values(doc_terms_list, doc_class_list)
+    
+    attention_T = feature.auto_attention_T(f_model)
+    
+    return f_model, attention_T
+
 def loadAttentionGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_classes):
     
     fr_train = open(trainTestFileTuples[0], 'r')
@@ -97,6 +107,11 @@ def loadAttentionGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_class
     fr_test.close()
     del(fr_train)
     del(fr_test)
+    
+    '''attentional encoder processing'''
+    gensimW2VModel = word2Vec.loadModelfromFile(gensimW2VModelPath)
+    # TODO: gensimW2VModel(ok), sentences, vector_seqs, attention_seqs
+    # TODO: train&test label np arrays
 
 def storeExprimentNpzData(npzPath, xy_data):
     start_np = time.clock()
