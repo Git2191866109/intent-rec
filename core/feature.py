@@ -6,6 +6,7 @@ Created on 2016年12月10日
 @author: mull
 '''
 
+
 import os
 import sys
 
@@ -14,7 +15,7 @@ from recog import fileProcess
 
 '''part of data load function'''
 
-def load(filepath=''):
+def load_info(filepath=''):
     f = open(filepath)
     line = f.readline()
     doc_terms_list = []
@@ -136,7 +137,7 @@ def CHI(class_df_list, term_set, term_class_df_mat):
         
     return Normalize(f_model)
 
-def f_values(doc_terms_list, doc_class_list, fs_method):
+def f_values(doc_terms_list, doc_class_list, fs_method='MI'):
     class_dict = load_class(doc_class_list)
     term_dict = load_term(doc_terms_list)
     class_df_list = stats_class_df(doc_class_list, class_dict)
@@ -144,12 +145,9 @@ def f_values(doc_terms_list, doc_class_list, fs_method):
     term_set = [term[0] for term in sorted(term_dict.items(), key=lambda x : x[1])]
     f_model = {}
     
-    if fs_method == 'MI':
-        f_model = MI(class_df_list, term_set, term_class_df_mat)
-    elif fs_method == 'IG':
-        f_model = IG(class_df_list, term_set, term_class_df_mat)
-    elif fs_method == 'CHI':
-        f_model = CHI(class_df_list, term_set, term_class_df_mat)
+    # reflect from self function
+    from core import feature
+    f_model = getattr(feature, fs_method)(class_df_list, term_set, term_class_df_mat)
         
     return f_model
 
@@ -174,19 +172,17 @@ def auto_attention_T(f_model, select_prop=0.2):
 if __name__ == "__main__":
     
     filepath = fileProcess.auto_config_root() + 'exp_mid_data/sentences_labeled55000.txt'
-    doc_terms_list, doc_class_list = load(filepath)
+    doc_terms_list, doc_class_list = load_info(filepath)
     '''input the texts list, classes list, the called method in IG, CHI and MI'''
     f_model = f_values(doc_terms_list, doc_class_list, 'MI')
 
 
     f_model_s = sorted(f_model.items(), key=lambda item:item[1], reverse=False)
-#===============================================================================
-# #     for i in f_model:
-# #         print i[0],' ',i[1]
-#     sf_model = dict(f_model_s[int((1 - 0.2) * len(f_model_s)) - 1 :])
-# #     print(sf_model)
-#     for key in sf_model.keys():
-#         print type(key), ': ', key, ' ', sf_model[key]
-#===============================================================================
+#     for i in f_model:
+#         print i[0],' ',i[1]
+    sf_model = dict(f_model_s[int((1 - 0.2) * len(f_model_s)) - 1 :])
+#     print(sf_model)
+    for key in sf_model.keys():
+        print type(key), ': ', key, ' ', sf_model[key]
     print(len(f_model_s))
     print(auto_attention_T(f_model, select_prop=0.2))

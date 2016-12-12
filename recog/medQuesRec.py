@@ -87,6 +87,9 @@ def loadGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_classes):
     
     return xy_data, input_shape
 
+def loadAttentionGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_classes):
+    pass
+
 def loadGensimSumVecData(trainTestFileTuples, gensimW2VModelPath, nb_classes):
     pass
 
