@@ -5,10 +5,11 @@ Created on 2016年11月21日
 
 @author: superhy
 '''
-import numpy
 import time
 
-from core import layer, feature
+import numpy
+
+from core import layer, feature, encoder
 from recog import fileProcess
 from recog.embedding import word2Vec
 
@@ -93,11 +94,14 @@ def initAttentionValues(org_filepath):
     # input the texts list, classes list, called methods: IG, CHI and MI
     f_model = feature.f_values(doc_terms_list, doc_class_list)
     
-    attention_T = feature.auto_attention_T(f_model)
+    auto_attention_T = feature.auto_attention_T(f_model)
     
-    return f_model, attention_T
+    return f_model, auto_attention_T
 
-def loadAttentionGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_classes):
+def loadAttentionGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_classes, org_filepath):
+    '''
+    @param @org_filepath: original corpus file path which contain all text sentences
+    '''
     
     fr_train = open(trainTestFileTuples[0], 'r')
     fr_test = open(trainTestFileTuples[1], 'r')
@@ -107,11 +111,70 @@ def loadAttentionGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_class
     fr_test.close()
     del(fr_train)
     del(fr_test)
+    # save the border of train & test data for split mix-data in future
+    train_test_border = len(trainLines)  
     
-    '''attentional encoder processing'''
+    '''attentional encoder pre-processing'''
+    # init attentional values
+    f_model, auto_attention_T = initAttentionValues(org_filepath)
+    
     gensimW2VModel = word2Vec.loadModelfromFile(gensimW2VModelPath)
-    # TODO: gensimW2VModel(ok), sentences, vector_seqs, attention_seqs
-    # TODO: train&test label np arrays
+    vector_dim = gensimW2VModel.vector_size
+    #===========================================================================
+    # load or produce gensimW2VModel, sentences, vector_seqs, attention_seqs
+    # load train&test label np arrays
+    #===========================================================================
+    sentences = []
+    vector_seqs = []
+    attention_seqs = []
+    labelList = []
+    for line in trainLines + testLines:
+        # count the parameters which needed by attentional encoder
+        words = line[line.find('[') + 1 : line.find(']')].split(',')
+        label = line[line.find(']') + 1: len(line)]
+        sentences.append(words)
+        lineVecs = []
+        attentionVec = []
+        for i in range(len(words)):
+            if words[i].decode('utf-8') in gensimW2VModel.vocab:
+                lineVecs.append(word2Vec.getWordVec(gensimW2VModel, words[i]))
+                attentionVec.append(f_model[words[i]] if words[i] in f_model.keys() else 0.0)
+            else:
+                lineVecs.append(numpy.zeros(vector_dim))
+                attentionVec.append(0.0)
+        vector_seqs.append(lineVecs)
+        attention_seqs.append(attentionVec)
+        
+        # count the train & test labels
+        classesVec = numpy.zeros(nb_classes)
+        classesVec[int(label) - 1] = 1
+        labelList.append(classesVec)
+#     del(trainLines, testLines)
+    
+    '''run attentional encoder'''
+    attExt_vec_seqs = encoder.seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attention_T=auto_attention_T)
+    
+    '''produce and load the attentional train & test mat data'''
+    # count the max length of attext-vectors
+    max_len = 0 
+    for seq in attExt_vec_seqs:
+        max_len = len(seq) if len(seq) > max_len else max_len
+    
+    # uniform the length of train & test mat data
+    for i in range(attExt_vec_seqs):
+        attExt_vec_seqs.extend([numpy.zeros(vector_dim)] * (max_len - len(seq)))
+        
+    '''split train and test data, transform them into numpy array'''
+    x_train = numpy.asarray(attExt_vec_seqs[:train_test_border])
+    y_train = numpy.asarray(labelList[:train_test_border])
+    x_test = numpy.asarray(attExt_vec_seqs[:train_test_border])
+    y_test = numpy.asarray(labelList[:train_test_border])
+    del(attExt_vec_seqs, labelList)
+    xy_data = (x_train, y_train, x_test, y_test)
+    
+    input_shape = (max_len, vector_dim)
+    
+    return xy_data, input_shape
 
 def storeExprimentNpzData(npzPath, xy_data):
     start_np = time.clock()
