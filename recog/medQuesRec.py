@@ -171,8 +171,8 @@ def loadAttentionGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_class
     '''split train and test data, transform them into numpy array'''
     x_train = numpy.asarray(attExt_vec_seqs[:train_test_border])
     y_train = numpy.asarray(labelList[:train_test_border])
-    x_test = numpy.asarray(attExt_vec_seqs[:train_test_border])
-    y_test = numpy.asarray(labelList[:train_test_border])
+    x_test = numpy.asarray(attExt_vec_seqs[train_test_border:])
+    y_test = numpy.asarray(labelList[train_test_border:])
     del(attExt_vec_seqs, labelList)
     xy_data = (x_train, y_train, x_test, y_test)
     end_att = time.clock()
