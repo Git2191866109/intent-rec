@@ -115,8 +115,10 @@ def loadAttentionGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_class
     train_test_border = len(trainLines)  
     
     '''attentional encoder pre-processing'''
+    start_org = time.clock()
     # init attentional values
     f_model, auto_attention_T = initAttentionValues(org_filepath)
+    print('finish load feature selection model')
     
     gensimW2VModel = word2Vec.loadModelfromFile(gensimW2VModelPath)
     vector_dim = gensimW2VModel.vector_size
@@ -133,15 +135,13 @@ def loadAttentionGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_class
         words = line[line.find('[') + 1 : line.find(']')].split(',')
         label = line[line.find(']') + 1: len(line)]
         sentences.append(words)
-        lineVecs = []
-        attentionVec = []
+        lineVecs = [numpy.zeros(vector_dim)] * len(words)
+        attentionVec = [0.0] * len(words)
         for i in range(len(words)):
             if words[i].decode('utf-8') in gensimW2VModel.vocab:
-                lineVecs.append(word2Vec.getWordVec(gensimW2VModel, words[i]))
-                attentionVec.append(f_model[words[i]] if words[i] in f_model.keys() else 0.0)
-            else:
-                lineVecs.append(numpy.zeros(vector_dim))
-                attentionVec.append(0.0)
+                lineVecs[i] = word2Vec.getWordVec(gensimW2VModel, words[i])
+#                 attentionVec[i] = f_model[words[i]] if words[i] in f_model.keys() else 0.0
+                attentionVec[i] = f_model[words[i]]
         vector_seqs.append(lineVecs)
         attention_seqs.append(attentionVec)
         
@@ -149,10 +149,14 @@ def loadAttentionGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_class
         classesVec = numpy.zeros(nb_classes)
         classesVec[int(label) - 1] = 1
         labelList.append(classesVec)
-#     del(trainLines, testLines)
+    del(trainLines, testLines, f_model)
+    end_org = time.clock()
+    print('finish load original data and generate attentional pre-data in {0}s'.format(end_org - start_org))
     
     '''run attentional encoder'''
+    start_att = time.clock()
     attExt_vec_seqs = encoder.seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attention_T=auto_attention_T)
+    del(gensimW2VModel, sentences, vector_seqs, attention_seqs)
     
     '''produce and load the attentional train & test mat data'''
     # count the max length of attext-vectors
@@ -161,8 +165,8 @@ def loadAttentionGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_class
         max_len = len(seq) if len(seq) > max_len else max_len
     
     # uniform the length of train & test mat data
-    for i in range(attExt_vec_seqs):
-        attExt_vec_seqs.extend([numpy.zeros(vector_dim)] * (max_len - len(seq)))
+    for i in range(len(attExt_vec_seqs)):
+        attExt_vec_seqs[i].extend([numpy.zeros(vector_dim)] * (max_len - len(attExt_vec_seqs[i])))
         
     '''split train and test data, transform them into numpy array'''
     x_train = numpy.asarray(attExt_vec_seqs[:train_test_border])
@@ -171,6 +175,8 @@ def loadAttentionGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_class
     y_test = numpy.asarray(labelList[:train_test_border])
     del(attExt_vec_seqs, labelList)
     xy_data = (x_train, y_train, x_test, y_test)
+    end_att = time.clock()
+    print('finish load attentional extend data and generate final exp-data in {0}s'.format(end_att - start_att))
     
     input_shape = (max_len, vector_dim)
     
@@ -253,8 +259,10 @@ if __name__ == '__main__':
     testFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test/test0.txt'
     trainTestFileTuples = (trainFilePath, testFilePath)
     gensimW2VModelPath = fileProcess.auto_config_root() + u'model_cache/gensim/med_qus-5000.vector'
+    org_filepath = fileProcess.auto_config_root() + u'exp_mid_data/sentences_labeled55000.txt'
      
-    xy_data, input_shape = loadGensimMatData(trainTestFileTuples, gensimW2VModelPath, 11)
+#     xy_data, input_shape = loadGensimMatData(trainTestFileTuples, gensimW2VModelPath, 11)
+    xy_data, input_shape = loadAttentionGensimMatData(trainTestFileTuples, gensimW2VModelPath, 11, org_filepath)
      
     print('x_train: {0}'.format(xy_data[0]))
     print(xy_data[0].shape)

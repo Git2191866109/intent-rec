@@ -9,6 +9,7 @@ import warnings
 import numpy
 from recog.embedding import word2Vec
 import random
+from numpy import dtype
 
 def loadAttSimVecDic(gensimW2VModel, sentences, attention_seqs, attention_T):
     if len(sentences) != len(attention_seqs):
@@ -58,7 +59,12 @@ def genExtVecs(attVec, simVec, tagVecs, extNum):
 def seqUniDirtExt(vector_seqs, attention_seqs):
     pass
 
-def seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attention_T=0.5, ext_lemda=0.2):
+def seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attention_T=0.5, ext_lemda=(0.2, 0.3)):
+    '''
+    @param @ext_lemda: tuple contain 2 elements, 0: baseline_lemda to calculation baseline ext-length,
+        1: limit_lemda to calculation max ext-length
+    '''
+    
     len_vectorSeqs = len(vector_seqs)
     len_attentionSeqs = len(attention_seqs)
     if len_attentionSeqs != len_vectorSeqs:
@@ -70,24 +76,32 @@ def seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attenti
     
     # count the average value of vector sequence's length
     avelen_vecSeq = numpy.mean(list(len(vecSeq) for vecSeq in vector_seqs))
-    extNum_b = ext_lemda * avelen_vecSeq
+    extNum_b = int(ext_lemda[0] * avelen_vecSeq)
+    extNum_l = int(ext_lemda[1] * avelen_vecSeq)
     
     attExt_vec_seqs = []
     for i in range(len_vectorSeqs):
         # count the extension range from extension length base
-        extNum = int(extNum_b * avelen_vecSeq / len(vector_seqs[i])) if extNum_b * avelen_vecSeq * 1.0 / len(vector_seqs[i]) > 1 else 1
+        extNum = int(extNum_b * avelen_vecSeq * 1.0 / len(vector_seqs[i])) if extNum_b * avelen_vecSeq * 1.0 / len(vector_seqs[i]) > 1 else 1
+        extNum = extNum if extNum <= extNum_l else extNum_l
         
         # record the elements' indexes which need extension
         extIndexes = []
         for att_i in range(len(attention_seqs[i])):
+#             print(att_i)
             if attention_seqs[i][att_i] >= attention_T:
                 extIndexes.append(att_i)
         extIndexes = numpy.asarray(extIndexes)
+#         for i in range(len(extIndexes)):
+#             print('{0} '.format(extIndexes[i])),
+#         print('')
         
         org_vec_seq = vector_seqs[i]
         # doing the extension
+        push = 0
         for j in range(len(extIndexes)):
-            if extIndexes[j] == 0:
+#             print('len sentence: {0}, len attention seq: {1}, extIndex: {2}'.format(len(sentences[i]), len(attention_seqs[i]), extIndexes[j]))
+            if extIndexes[j] + push == 0:
                 # check index on left border, only extension half vectors on right direction
                 if sentences[i][extIndexes[j]] not in attSimVecDic.keys():
                     break
@@ -98,24 +112,24 @@ def seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attenti
                 del(attVec, simVec, tagVecs) # release the memory space
                 
                 for ext_i in range(len(extVecs)):
-                    org_vec_seq.insert(extIndexes[j] + 1, extVecs[ext_i])
+                    org_vec_seq.insert(extIndexes[j] + push + 1, extVecs[ext_i])
                 # push the rest indexs
-                extIndexes += len(extVecs)
+                push += len(extVecs)
                 del(extVecs) # release the memory space
-            elif extIndexes[j] == len(org_vec_seq) - 1:
+            elif extIndexes[j] + push == len(org_vec_seq) - 1:
                 # check index on right border, only extension half vectors on left direction
                 if sentences[i][extIndexes[j]] not in attSimVecDic.keys():
                     break
                 attVec = vector_seqs[i][extIndexes[j]]
                 simVec = attSimVecDic[sentences[i][extIndexes[j]]]
-                tagVecs = (vector_seqs[i][extIndexes[j] + 1],)
+                tagVecs = (vector_seqs[i][extIndexes[j] - 1],)
                 extVecs = genExtVecs(attVec, simVec, tagVecs, (extNum + 1) / 2)
                 del(attVec, simVec, tagVecs) # release the memory space
                 
                 for ext_i in range(len(extVecs)):
-                    org_vec_seq.insert(extIndexes[j] + ext_i, extVecs[ext_i])  # after insert on left, att_ele always be pushed one step
+                    org_vec_seq.insert(extIndexes[j] + push + ext_i, extVecs[ext_i])  # after insert on left, att_ele always be pushed one step
                 # push the rest indexs
-                extIndexes += len(extVecs)
+                push += len(extVecs)
                 del(extVecs) # release the memory space
             else:
                 # extension vectors on both right & left directions
@@ -130,15 +144,15 @@ def seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attenti
                 for ext_i in range(len(extVecs)):
                     # when insert on left, att_ele has been pushed one step
                     # so we need carefully about this, push forward the insert position
-                    org_vec_seq.insert(extIndexes[j] + ext_i / 2 + (ext_i + 1) % 2, extVecs[ext_i])
+                    org_vec_seq.insert(extIndexes[j] + push + ext_i / 2 + (ext_i + 1) % 2, extVecs[ext_i])
                 # push the rest indexs
-                extIndexes += len(extVecs)
+                push += len(extVecs)
                 del(extVecs) # release the memory space
         
         attExt_vec_seqs.append(org_vec_seq)
         
         # release the memory space
-        del(org_vec_seq, extIndexes, extNum)
+        del(org_vec_seq, extIndexes, extNum, push)
                 
     return attExt_vec_seqs
     

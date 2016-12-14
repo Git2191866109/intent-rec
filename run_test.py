@@ -6,13 +6,6 @@ Created on 2016年11月22日
 @author: super
 ''' 
 
-import time
-
-from core import layer
-from recog.test.testMedQuesRec import testLoadData, testTrainNetPred, \
-    testEvalNetPred, testShowNetPred
-    
-
 '''
 1. laod train and test data
 2. train network predictor model
@@ -23,16 +16,24 @@ from recog.test.testMedQuesRec import testLoadData, testTrainNetPred, \
 1. train model
 2. evaluate the model
 '''
+
+import time
+
+from core import layer
+from recog.test.testMedQuesRec import testLoadBasicData, testTrainNetPred, \
+    testEvalNetPred, testShowNetPred, testLoadAttentionData
+
+
 def one_data(lb_data=0, name_net='GRU_Net'):
     # exp_param
     
         
-    xy_data, input_shape = testLoadData(lb_data=lb_data)
+    xy_data, input_shape = testLoadBasicData(lb_data=lb_data)
     model = testTrainNetPred(xy_data, input_shape, name_net=name_net, lb_data=lb_data)
     score = testEvalNetPred(xy_data, model)
     # testRunNetPred(xy_data, model)
     
-one_data()
+# one_data()
 
 '''
 batch process as above operation from data 0~9
@@ -41,7 +42,7 @@ def batch_allData(name_net='GRU_Net'):
     scores = []     
     for i in range(10):
         lb_data = i
-        xy_data, input_shape = testLoadData(lb_data=lb_data)
+        xy_data, input_shape = testLoadBasicData(lb_data=lb_data)
         model = testTrainNetPred(xy_data, input_shape, name_net=name_net, lb_data=lb_data)
         score = testEvalNetPred(xy_data, model)
         scores.append(score)
@@ -63,7 +64,7 @@ def batch_allModel_allData():
         scores = []
         for i in range(10):
             lb_data = i
-            xy_data, input_shape = testLoadData(lb_data=lb_data)
+            xy_data, input_shape = testLoadBasicData(lb_data=lb_data)
             model = testTrainNetPred(xy_data, input_shape, name_net=name_net, lb_data=lb_data)
             score = testEvalNetPred(xy_data, model)
             scores.append(score)
@@ -83,6 +84,33 @@ def batch_allModel_allData():
 # lb_data = 0
 # name_net = 'CNNs_Net'
 # 
-# xy_data, input_shape = testLoadData(lb_data=lb_data)
+# xy_data, input_shape = testLoadBasicData(lb_data=lb_data)
 # testShowNetPred(input_shape=input_shape, name_net=name_net)
 #===============================================================================
+
+'''
+load attention xy_data and store them into npz
+'''
+def load_store_matData(lb_data=0, type=1):
+    '''
+    @param @type: 0: basic mat data, 1: attention mat data
+    '''
+    xy_data = None
+    input_shape = None
+    if type == 0:
+        xy_data, input_shape = testLoadBasicData(lb_data=lb_data)
+    else:
+        xy_data, input_shape = testLoadAttentionData(lb_data=lb_data)
+    
+    print('x_train: {0}'.format(xy_data[0]))
+    print(xy_data[0].shape)
+    print('y_train: {0}'.format(xy_data[1]))
+    print(xy_data[1].shape)
+#     print(len(set(xy_data[1]])))
+    print('x_test: {0}'.format(xy_data[2]))
+    print('y_test: {0}'.format(xy_data[3]))
+#     print(len(set(xy_data[3])))
+    print('input_shape: {0}'.format(input_shape))
+    
+load_store_matData()
+        

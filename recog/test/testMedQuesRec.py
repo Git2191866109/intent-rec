@@ -8,7 +8,7 @@ Created on 2016年11月21日
 from recog import fileProcess, medQuesRec
 
 
-def testLoadData(lb_data=0):
+def testLoadBasicData(lb_data=0):
     trainFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test/train{0}.txt'.format(lb_data)
     testFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test/test{0}.txt'.format(lb_data)
     gensimW2VModelPath = fileProcess.auto_config_root() + u'model_cache/gensim/med_qus-5000.vector'
@@ -18,7 +18,23 @@ def testLoadData(lb_data=0):
     trainTestFileTuples = (trainFilePath, testFilePath)
     xy_data, input_shape = medQuesRec.loadGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_classes=11)
     medQuesRec.storeExprimentNpzData(npzPath, xy_data)
-    print('store the xy_data at {0}!'.format(npzPath))
+    print('store the basic xy_data at {0}!'.format(npzPath))
+    
+    return xy_data, input_shape
+
+def testLoadAttentionData(lb_data=0):
+    trainFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test/train{0}.txt'.format(lb_data)
+    testFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test/test{0}.txt'.format(lb_data)
+    gensimW2VModelPath = fileProcess.auto_config_root() + u'model_cache/gensim/med_qus-5000.vector'
+    org_filepath = fileProcess.auto_config_root() + u'exp_mid_data/sentences_labeled55000.txt'
+    
+    npzPath = fileProcess.auto_config_root() + u'exp_mid_data/npy_data/train_NP{0}.npz'.format(lb_data)
+    
+    trainTestFileTuples = (trainFilePath, testFilePath)
+    xy_data, input_shape = medQuesRec.loadAttentionGensimMatData(trainTestFileTuples, gensimW2VModelPath, 11, org_filepath)
+    
+    medQuesRec.storeExprimentNpzData(npzPath, xy_data)
+    print('store the attention xy_data at {0}!'.format(npzPath))
     
     return xy_data, input_shape
 
@@ -71,7 +87,7 @@ if __name__ == '__main__':
     3. evaluate network predictor model
     *4. run predict by network model
     '''
-    xy_data, input_shape = testLoadData()
+    xy_data, input_shape = testLoadBasicData()
     print('org input_shape: {0}'.format(input_shape))
     xy_data, input_shape = testGetNpyData()
 #===============================================================================
