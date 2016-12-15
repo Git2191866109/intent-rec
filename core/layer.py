@@ -418,7 +418,7 @@ def MultiLSTM_MultiCNNs_Net(input_shape, nb_classes):
 #===============================================================================
 def trainer(model, x_train, y_train,
             batch_size=500,
-            nb_epoch=100,
+            nb_epoch=200,
             validation_split=0.2,
             auto_stop=True,
             best_record_path=None):
@@ -431,7 +431,8 @@ def trainer(model, x_train, y_train,
     
     if auto_stop == True:
         monitor = 'val_acc' if validation_split > 0.0 else 'acc'
-        early_stopping = EarlyStopping(monitor=monitor, min_delta=0.001, patience=10, mode='auto')
+#         early_stopping = EarlyStopping(monitor=monitor, min_delta=0.001, patience=10, mode='auto')
+        early_stopping = EarlyStopping(monitor=monitor, patience=20, mode='auto')
         callbacks.append(early_stopping)
     
     if best_record_path != None:
