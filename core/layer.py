@@ -91,7 +91,7 @@ def GRU_Net(input_shape, nb_classes):
     # set some fixed parameter in Dense layer
 #     hidden_dims = 40
     # set some fixed parameter in Dropout layer
-    dropout_rate = 0.4
+    dropout_rate = 0.6
     # set some fixed parameter in Activation layer
     final_activation = 'softmax'
     
@@ -128,7 +128,7 @@ def BiDirtGRU_Net(input_shape, nb_classes):
     # set some fixed parameter in Dense layer
 #     hidden_dims = 40
     # set some fixed parameter in Dropout layer
-    dropout_rate = 0.4
+    dropout_rate = 0.6
     # set some fixed parameter in Activation layer
     final_activation = 'softmax'
     
@@ -165,7 +165,7 @@ def LSTM_Net(input_shape, nb_classes):
     # set some fixed parameter in Dense layer
 #     hidden_dims = 40
     # set some fixed parameter in Dropout layer
-    dropout_rate = 0.4
+    dropout_rate = 0.6
     # set some fixed parameter in Activation layer
     final_activation = 'softmax'
     
@@ -202,7 +202,7 @@ def BiDirtLSTM_Net(input_shape, nb_classes):
     # set some fixed parameter in Dense layer
 #     hidden_dims = 40
     # set some fixed parameter in Dropout layer
-    dropout_rate = 0.4
+    dropout_rate = 0.6
     # set some fixed parameter in Activation layer
     final_activation = 'softmax'
     
@@ -418,9 +418,9 @@ def MultiLSTM_MultiCNNs_Net(input_shape, nb_classes):
 #===============================================================================
 def trainer(model, x_train, y_train,
             batch_size=500,
-            nb_epoch=200,
+            nb_epoch=120,
             validation_split=0.2,
-            auto_stop=True,
+            auto_stop=False,
             best_record_path=None):
     
     #===========================================================================

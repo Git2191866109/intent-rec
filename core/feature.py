@@ -160,7 +160,7 @@ def Normalize(f_model={}):
         f_model[word] = (1.0 * f_model[word] - minValue) / (maxValue - minValue)
     return f_model
 
-def auto_attention_T(f_model, select_prop=0.1):
+def auto_attention_T(f_model, select_prop=0.02):
     '''
     select the min value of best(select_prop) feature as attention_T
     '''

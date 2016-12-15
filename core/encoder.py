@@ -30,7 +30,7 @@ def genExtVecs(attVec, simVec, tagVecs, extNum):
     '''
     @param @tagVecs: tuple: (1, ) in seqUniDirtExt or (1, 2) which right-1 left-2 in seqBiDirtExt
     '''
-    N_1 = 1.0 / 2
+    N_1 = 1.0 / 5
     ''' numpy array calculation '''
     varyRange = (attVec - simVec) * N_1
     # vary from big to small
@@ -38,7 +38,7 @@ def genExtVecs(attVec, simVec, tagVecs, extNum):
     extVecs = []
     
     def addExtVecs(tagIndex, j):
-        random_v = (random.randint(15, 60) * 1.0 / 100) * varyDecay
+        random_v = (random.randint(20, 60) * 1.0 / 100) * varyDecay
         varyVec = varyRange - varyDecay * (j - 1) - random_v
         varydirtVec = numpy.asarray(list(1 if tagVecs[tagIndex][i] > attVec[i] else -1 for i in range(len(attVec))))
         extVecs.append(attVec + varyVec * varydirtVec)
@@ -59,7 +59,7 @@ def genExtVecs(attVec, simVec, tagVecs, extNum):
 def seqUniDirtExt(vector_seqs, attention_seqs):
     pass
 
-def seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attention_T=0.2, ext_lemda=(0.15, 0.2)):
+def seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attention_T=0.2, ext_lemda=(0.2, 0.25)):
     '''
     @param @ext_lemda: tuple contain 2 elements, 0: baseline_lemda to calculation baseline ext-length,
         1: limit_lemda to calculation max ext-length
