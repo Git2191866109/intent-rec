@@ -418,7 +418,7 @@ def MultiLSTM_MultiCNNs_Net(input_shape, nb_classes):
 #===============================================================================
 def trainer(model, x_train, y_train,
             batch_size=500,
-            nb_epoch=120,
+            nb_epoch=150,
             validation_split=0.2,
             auto_stop=False,
             best_record_path=None):

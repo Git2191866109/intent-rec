@@ -59,7 +59,7 @@ def genExtVecs(attVec, simVec, tagVecs, extNum):
 def seqUniDirtExt(vector_seqs, attention_seqs):
     pass
 
-def seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attention_T=0.2, ext_lemda=(0.2, 0.25)):
+def seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attention_T=0.2, ext_lemda=(0.2, 0.6)):
     '''
     @param @ext_lemda: tuple contain 2 elements, 0: baseline_lemda to calculation baseline ext-length,
         1: limit_lemda to calculation max ext-length
@@ -80,6 +80,11 @@ def seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attenti
     extNum_l = int(ext_lemda[1] * avelen_vecSeq)
     
     attExt_vec_seqs = []
+    # count some attention extend info
+    ave_nb_extNum = 0.0
+    ave_nb_extIndexes = 0.0
+    ave_len_orgVec = 0.0
+    ave_len_attVec = 0.0
     for i in range(len_vectorSeqs):
         # count the extension range from extension length base
         extNum = int(extNum_b * avelen_vecSeq * 1.0 / len(vector_seqs[i])) if extNum_b * avelen_vecSeq * 1.0 / len(vector_seqs[i]) > 1 else 1
