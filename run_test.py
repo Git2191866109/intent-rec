@@ -24,7 +24,7 @@ from recog.test.testMedQuesRec import testLoadBasicData, testTrainNetPred, \
     testEvalNetPred, testShowNetPred, testLoadAttentionData, testGetNpyData
 
 
-def one_data(lb_data=0, name_net='GRU_Net'):
+def one_data(lb_data=0, name_net='BiDirtGRU_Net'):
     # exp_param
     
         
