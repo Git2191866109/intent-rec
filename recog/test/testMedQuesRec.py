@@ -13,7 +13,7 @@ def testLoadBasicData(lb_data=0):
     testFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test/test{0}.txt'.format(lb_data)
     gensimW2VModelPath = fileProcess.auto_config_root() + u'model_cache/gensim/med_qus-5000.vector'
     
-    npzPath = fileProcess.auto_config_root() + u'exp_mid_data/npy_data/train_NP{0}.npz'.format(lb_data)
+    npzPath = fileProcess.auto_config_root() + u'exp_mid_data/npy_data/train_B_NP{0}.npz'.format(lb_data)
     
     trainTestFileTuples = (trainFilePath, testFilePath)
     xy_data, input_shape = medQuesRec.loadGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_classes=11)
@@ -28,7 +28,7 @@ def testLoadAttentionData(lb_data=0):
     gensimW2VModelPath = fileProcess.auto_config_root() + u'model_cache/gensim/med_qus-5000.vector'
     org_filepath = fileProcess.auto_config_root() + u'exp_mid_data/sentences_labeled55000.txt'
     
-    npzPath = fileProcess.auto_config_root() + u'exp_mid_data/npy_data/train_NP{0}.npz'.format(lb_data)
+    npzPath = fileProcess.auto_config_root() + u'exp_mid_data/npy_data/train_Att_NP{0}.npz'.format(lb_data)
     
     trainTestFileTuples = (trainFilePath, testFilePath)
     xy_data, input_shape = medQuesRec.loadAttentionGensimMatData(trainTestFileTuples, gensimW2VModelPath, 11, org_filepath)
@@ -38,8 +38,14 @@ def testLoadAttentionData(lb_data=0):
     
     return xy_data, input_shape
 
-def testGetNpyData(lb_data=0):
-    npzPath = fileProcess.auto_config_root() + u'exp_mid_data/npy_data/train_NP{0}.npz'.format(lb_data)
+def testGetNpyData(lb_data=0, encode_type = 1):
+    '''
+    @param @encode_type: when encode_type = 1, use attention sequence expand encoder
+        otherwise use basic encoder
+    '''
+    npzPath = fileProcess.auto_config_root() + u'exp_mid_data/npy_data/train_Att_NP{0}.npz'.format(lb_data)
+    if encode_type != 1:
+        npzPath = fileProcess.auto_config_root() + u'exp_mid_data/npy_data/train_B_NP{0}.npz'.format(lb_data)
     xy_data, input_shape = medQuesRec.loadExprimentNpzData(npzPath)
     print('get the xy_data at {0}! input shape: {1}'.format(npzPath, input_shape))
     

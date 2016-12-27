@@ -30,7 +30,7 @@ def genExtVecs(attVec, simVec, tagVecs, extNum):
     '''
     @param @tagVecs: tuple: (1, ) in seqUniDirtExt or (1, 2) which right-1 left-2 in seqBiDirtExt
     '''
-    N_1 = 1.0 / 5
+    N_1 = 1.0 / 8
     ''' numpy array calculation '''
     varyRange = (attVec - simVec) * N_1
     # vary from big to small
@@ -59,7 +59,7 @@ def genExtVecs(attVec, simVec, tagVecs, extNum):
 def seqUniDirtExt(vector_seqs, attention_seqs):
     pass
 
-def seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attention_T=0.2, ext_lemda=(0.2, 0.6)):
+def seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attention_T=0.2, ext_lemda=(0.15, 0.8)):
     '''
     @param @ext_lemda: tuple contain 2 elements, 0: baseline_lemda to calculation baseline ext-length,
         1: limit_lemda to calculation max ext-length
@@ -109,7 +109,7 @@ def seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attenti
             if extIndexes[j] + push == 0:
                 # check index on left border, only extension half vectors on right direction
                 if sentences[i][extIndexes[j]] not in attSimVecDic.keys():
-                    break
+                    continue
                 attVec = vector_seqs[i][extIndexes[j]]
                 simVec = attSimVecDic[sentences[i][extIndexes[j]]]
                 tagVecs = (vector_seqs[i][extIndexes[j] + 1],)
@@ -124,7 +124,7 @@ def seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attenti
             elif extIndexes[j] + push == len(org_vec_seq) - 1:
                 # check index on right border, only extension half vectors on left direction
                 if sentences[i][extIndexes[j]] not in attSimVecDic.keys():
-                    break
+                    continue
                 attVec = vector_seqs[i][extIndexes[j]]
                 simVec = attSimVecDic[sentences[i][extIndexes[j]]]
                 tagVecs = (vector_seqs[i][extIndexes[j] - 1],)
@@ -139,7 +139,7 @@ def seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attenti
             else:
                 # extension vectors on both right & left directions
                 if sentences[i][extIndexes[j]] not in attSimVecDic.keys():
-                    break
+                    continue
                 attVec = vector_seqs[i][extIndexes[j]]
                 simVec = attSimVecDic[sentences[i][extIndexes[j]]]
                 tagVecs = (vector_seqs[i][extIndexes[j] + 1],)

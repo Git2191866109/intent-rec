@@ -87,6 +87,7 @@ def MI(class_df_list, term_set, term_class_df_mat):
     class_set_size = len(class_df_list)
     
     term_score_mat = np.log(((A + 1.0) * N) / ((A + C) * (A + B + class_set_size)))
+#     term_score_mat = np.log(((A + 1.0) * N) / ((A + C) * (A + B + 1.0)))
     term_score_max_list = [max(x) for x in term_score_mat]
     term_score_array = np.array(term_score_max_list)
 
@@ -107,8 +108,10 @@ def IG(class_df_list, term_set, term_class_df_mat):
     
     p_t = term_df_array / N
     p_not_t = 1 - p_t
-    p_c_t_mat = (A + 1) / (A + B + class_set_size)
-    p_c_not_t_mat = (C + 1) / (C + D + class_set_size)
+    p_c_t_mat = (A + 1.0) / (A + B + class_set_size)
+    p_c_not_t_mat = (C + 1.0) / (C + D + class_set_size)
+#     p_c_t_mat = (A + 1.0) / (A + B + 1.0)
+#     p_c_not_t_mat = (C + 1.0) / (C + D + 1.0)
     p_c_t = np.sum(p_c_t_mat * np.log(p_c_t_mat), axis=1)
     p_c_not_t = np.sum(p_c_not_t_mat * np.log(p_c_not_t_mat), axis=1)
     
@@ -128,6 +131,7 @@ def CHI(class_df_list, term_set, term_class_df_mat):
     class_set_size = len(class_df_list)
     '''simplified CHI'''
     term_score_mat = np.square(A * D - C * B) / ((A + B + class_set_size) * (C + D + class_set_size))
+#     term_score_mat = np.square(A * D - C * B + 1.0) / ((A + B + 1.0) * (C + D + 1.0))
     term_score_max_list = [max(x) for x in term_score_mat]
     term_score_array = np.array(term_score_max_list)
     
@@ -154,10 +158,18 @@ def f_values(doc_terms_list, doc_class_list, fs_method='MI'):
 '''part of post processing function'''
 
 def Normalize(f_model={}):
-    maxValue = max(f_model.values())
-    minValue = min(f_model.values())
-    for word in f_model:
-        f_model[word] = (1.0 * f_model[word] - minValue) / (maxValue - minValue)
+#     maxValue = max(f_model.values())
+#     minValue = min(f_model.values())
+#     for word in f_model:
+#         f_model[word] = (1.0 * f_model[word] - minValue) / (maxValue - minValue)
+
+    f_model_s = sorted(f_model.items(), key=lambda item:item[1], reverse=False)
+    L = len(f_model_s)
+    val = 0.1
+    for t in f_model_s:
+        val += ((0.9 - 1E-6) / L)
+        f_model[t[0]] = val
+        
     return f_model
 
 def auto_attention_T(f_model, select_prop=0.02):
@@ -165,7 +177,7 @@ def auto_attention_T(f_model, select_prop=0.02):
     select the min value of best(select_prop) feature as attention_T
     '''
     sf_model = sorted(f_model.items(), key=lambda item:item[1], reverse=False)
-    attention_T = sf_model[int((1 - select_prop) * len(sf_model))][1]
+    attention_T = sf_model[int((1 - select_prop) * len(sf_model)) - 1][1]
     
     return attention_T
 
@@ -174,7 +186,7 @@ if __name__ == "__main__":
     filepath = fileProcess.auto_config_root() + 'exp_mid_data/sentences_labeled55000.txt'
     doc_terms_list, doc_class_list = load_info(filepath)
     '''input the texts list, classes list, the called method in IG, CHI and MI'''
-    f_model = f_values(doc_terms_list, doc_class_list, 'MI')
+    f_model = f_values(doc_terms_list, doc_class_list, 'IG')
 
 
     f_model_s = sorted(f_model.items(), key=lambda item:item[1], reverse=False)
@@ -182,7 +194,9 @@ if __name__ == "__main__":
 #         print i[0],' ',i[1]
     sf_model = dict(f_model_s[int((1 - 0.2) * len(f_model_s)) - 1 :])
 #     print(sf_model)
-    for key in sf_model.keys():
+    for key in sf_model.keys()[len(sf_model.keys()) - 100 : ]:
         print type(key), ': ', key, ' ', sf_model[key]
+    print('max: {0}'.format(max(sf_model.values())))
+    print('min: {0}'.format(min(sf_model.values())))
     print(len(f_model_s))
     print(auto_attention_T(f_model, select_prop=0.2))
