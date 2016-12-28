@@ -14,9 +14,11 @@ from recog import fileProcess, cacheIndex
 from recog.embedding import word2Vec
 
 
-_totalDirPath = fileProcess.auto_config_root() + u'med_question_5000each/'
+_totalDirPath_2 = fileProcess.auto_config_root() + u'med_question_2000each/'
+_totalDirPath_5 = fileProcess.auto_config_root() + u'med_question_5000each/'
+_totalDirPath_10 = fileProcess.auto_config_root() + u'med_question_10000each/'
 
-def prodRandomLabeledData(totalDirPath, writeFilePath=None):
+def prodRandomLabeledData(totalDirPath, writeFilePath_5=None):
     
     fileProcess.reLoadEncoding()
     
@@ -47,8 +49,8 @@ def prodRandomLabeledData(totalDirPath, writeFilePath=None):
     end_random = time.clock()
     print('finish random data in {0}s'.format(end_random - start_random))
     
-    if writeFilePath != None:
-        fw = open(writeFilePath, 'w')
+    if writeFilePath_5 != None:
+        fw = open(writeFilePath_5, 'w')
         fw.write('\n'.join(totalSentences_labeled))
         fw.close()
     
@@ -103,17 +105,19 @@ def splitTrainTestData(totalDataPath, trainTestDirPath, split_rate=10):
 
 if __name__ == '__main__':
     
-    writeFilePath = fileProcess.auto_config_root() + u'exp_mid_data/sentences_labeled55000.txt'
+    writeFilePath_2 = fileProcess.auto_config_root() + u'exp_mid_data/sentences_labeled22000.txt'
+    writeFilePath_5 = fileProcess.auto_config_root() + u'exp_mid_data/sentences_labeled55000.txt'
+    writeFilePath_10 = fileProcess.auto_config_root() + u'exp_mid_data/sentences_labeled110000.txt'
     
-    #===========================================================================
-    # prodRandomLabeledData(_totalDirPath, writeFilePath)
-    #===========================================================================
+    prodRandomLabeledData(_totalDirPath_2, writeFilePath_2)
+#     prodRandomLabeledData(_totalDirPath_5, writeFilePath_5)
+#     prodRandomLabeledData(_totalDirPath_10, writeFilePath_10)
     
     '''
     test mid data index in gensim word2vec
     '''
     #===========================================================================
-    # fr = open(writeFilePath, 'r')
+    # fr = open(writeFilePath_5, 'r')
     # line = fr.readline()
     # print(type(line))
     # test_words = line[line.find('[') + 1:line.find(']')].split(',')
@@ -128,5 +132,7 @@ if __name__ == '__main__':
     
     '''
     '''
-    trainTestDir = fileProcess.auto_config_root() + u'exp_mid_data/train_test/'
-    splitTrainTestData(writeFilePath, trainTestDir)
+    #===========================================================================
+    # trainTestDir = fileProcess.auto_config_root() + u'exp_mid_data/train_test/'
+    # splitTrainTestData(writeFilePath_5, trainTestDir)
+    #===========================================================================
