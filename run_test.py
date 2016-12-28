@@ -39,27 +39,25 @@ def one_data(lb_data=0, name_net='BiDirtGRU_Net', encode_type=1):
 #     print(len(set(xy_data[3])))
     print('input_shape: {0}'.format(input_shape))
     
-    model = testTrainNetPred(xy_data, input_shape, name_net=name_net, lb_data=lb_data)
-    score = testEvalNetPred(xy_data, model)
-    # testRunNetPred(xy_data, model)
+    model_path, history_metrices = testTrainNetPred(xy_data, input_shape, name_net=name_net, lb_data=lb_data)
+    score = testEvalNetPred(xy_data, model_path)
+    # testRunNetPred(xy_data, model_path)
     
-one_data(encode_type=1)
+    ''' write the exp-res into file '''
+    resFileName = 'RES_{0}_mat{1}_data{2}.txt'.format(name_net, encode_type, lb_data)
+    resStr = str(history_metrices) + '\n' + str(score)
+    fw = open(resFileName, 'w')
+    fw.write(resStr)
+    fw.close()
+    
+# one_data()
 
 '''
 batch process as above operation from data 0~9
 '''
-def batch_allData(name_net='GRU_Net'):
-    scores = []     
+def batch_allData(name_net='BiDirtGRU_Net', encode_type=1):  
     for i in range(10):
-        lb_data = i
-        xy_data, input_shape = testLoadBasicData(lb_data=lb_data)
-        model = testTrainNetPred(xy_data, input_shape, name_net=name_net, lb_data=lb_data)
-        score = testEvalNetPred(xy_data, model)
-        scores.append(score)
-    print(scores)
-    fw = open(name_net + 'batch_scores.txt', 'w')
-    fw.write(name_net + '\n' + '\n'.join(str(s) for s in scores))
-    fw.close()
+        one_data(lb_data=i, name_net=name_net, encode_type=encode_type)
     
 # batch_allData()
 
@@ -122,7 +120,7 @@ def load_store_matData(lb_data=0, encode_type=1):
 #     print(len(set(xy_data[3])))
     print('input_shape: {0}'.format(input_shape))
     
-# load_store_matData()
+load_store_matData()
 
 '''
 batch load xy_data and store them into npz
@@ -131,5 +129,5 @@ def batchload_store_matData(encode_type=1):
     for i in range(10):
         load_store_matData(lb_data=i, encode_type=encode_type)
         
-batchload_store_matData()
+# batchload_store_matData()
         

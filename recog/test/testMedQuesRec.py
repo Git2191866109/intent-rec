@@ -61,7 +61,7 @@ def testTrainNetPred(xy_data, input_shape, name_net='CNNs_Net', lb_data=None):
                                                       frame_path=frame_path)
     print(history_metrices)
     
-    return frame_path
+    return frame_path, history_metrices
 
 def testRunNetPred(xy_data, frame_path):
     model = medQuesRec.loadNetworkPredictor(frame_path)
