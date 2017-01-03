@@ -70,7 +70,7 @@ def genDecayExtVecs(attVec, simVec, tagVecs, extNum):
 def seqUniDirtExt(vector_seqs, attention_seqs):
     pass
 
-def seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attention_T=0.2, ext_lemda=(0.2, 0.8)):
+def seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attention_T=0.2, ext_lemda=(0.25, 1.0)):
     '''
     @param @ext_lemda: tuple contain 2 elements, 0: baseline_lemda to calculation baseline ext-length,
         1: limit_lemda to calculation max ext-length
@@ -126,8 +126,8 @@ def seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attenti
                 attVec = vector_seqs[i][extIndexes[j]]
                 simVec = attSimVecDic[sentences[i][extIndexes[j]]]
                 tagVecs = (vector_seqs[i][extIndexes[j] + 1],)
-                extVecs = genDecayExtVecs(attVec, simVec, tagVecs, (int(extNum * extAttValue[j]) + 1) / 2)
-#                 extVecs = genDecayExtVecs(attVec, simVec, tagVecs, (extNum + 1) / 2)
+#                 extVecs = genDecayExtVecs(attVec, simVec, tagVecs, (int(extNum * extAttValue[j]) + 1) / 2)
+                extVecs = genDecayExtVecs(attVec, simVec, tagVecs, (extNum + 1) / 2)
                 del(attVec, simVec, tagVecs)  # release the memory space
                 
                 for ext_i in range(len(extVecs)):
@@ -142,8 +142,8 @@ def seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attenti
                 attVec = vector_seqs[i][extIndexes[j]]
                 simVec = attSimVecDic[sentences[i][extIndexes[j]]]
                 tagVecs = (vector_seqs[i][extIndexes[j] - 1],)
-                extVecs = genDecayExtVecs(attVec, simVec, tagVecs, (int(extNum * extAttValue[j]) + 1) / 2)
-#                 extVecs = genDecayExtVecs(attVec, simVec, tagVecs, (extNum + 1) / 2)
+#                 extVecs = genDecayExtVecs(attVec, simVec, tagVecs, (int(extNum * extAttValue[j]) + 1) / 2)
+                extVecs = genDecayExtVecs(attVec, simVec, tagVecs, (extNum + 1) / 2)
                 del(attVec, simVec, tagVecs)  # release the memory space
                 
                 for ext_i in range(len(extVecs)):
@@ -158,8 +158,8 @@ def seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attenti
                 attVec = vector_seqs[i][extIndexes[j]]
                 simVec = attSimVecDic[sentences[i][extIndexes[j]]]
                 tagVecs = (vector_seqs[i][extIndexes[j] + 1],)
-                extVecs = genDecayExtVecs(attVec, simVec, tagVecs, int(extNum * extAttValue[j]))
-#                 extVecs = genDecayExtVecs(attVec, simVec, tagVecs, extNum)
+#                 extVecs = genDecayExtVecs(attVec, simVec, tagVecs, int(extNum * extAttValue[j]))
+                extVecs = genDecayExtVecs(attVec, simVec, tagVecs, extNum)
                 del(attVec, simVec, tagVecs)  # release the memory space
                 
                 for ext_i in range(len(extVecs)):
