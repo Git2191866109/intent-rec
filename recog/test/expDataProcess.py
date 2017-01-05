@@ -103,13 +103,29 @@ def splitTrainTestData(totalDataPath, trainTestDirPath, split_rate=10):
     
     return splitTrainTestTuples
 
+def statTextInfo(totalDataPath):
+    fr = open(totalDataPath, 'r')
+    lines = fr.readlines()
+    fr.close()
+    
+    ave = 0.0
+    min = 0xFFFFFF * 1.0
+    max = 0.0
+    for line in lines:
+        words = line[line.find('[') + 1 : line.find(']')].split(',')
+        ave += (len(words) * 1.0 / len(lines))
+        min = len(words) * 1.0 if min > len(words) * 1.0 else min
+        max = len(words) * 1.0 if max < len(words) * 1.0 else max
+    
+    return ave, min, max
+
 if __name__ == '__main__':
     
     writeFilePath_2 = fileProcess.auto_config_root() + u'exp_mid_data/sentences_labeled22000.txt'
     writeFilePath_5 = fileProcess.auto_config_root() + u'exp_mid_data/sentences_labeled55000.txt'
     writeFilePath_10 = fileProcess.auto_config_root() + u'exp_mid_data/sentences_labeled110000.txt'
     
-    prodRandomLabeledData(_totalDirPath_2, writeFilePath_2)
+#     prodRandomLabeledData(_totalDirPath_2, writeFilePath_2)
 #     prodRandomLabeledData(_totalDirPath_5, writeFilePath_5)
 #     prodRandomLabeledData(_totalDirPath_10, writeFilePath_10)
     
@@ -133,6 +149,11 @@ if __name__ == '__main__':
     '''
     '''
     #===========================================================================
-    # trainTestDir = fileProcess.auto_config_root() + u'exp_mid_data/train_test/'
-    # splitTrainTestData(writeFilePath_5, trainTestDir)
+    # trainTestDir = fileProcess.auto_config_root() + u'exp_mid_data/train_test-10000/'
+    # splitTrainTestData(writeFilePath_10, trainTestDir)
     #===========================================================================
+    
+    '''
+    '''
+    ave, min, max = statTextInfo(writeFilePath_10)
+    print('ave: {0}, min: {1}, max: {2}'.format(ave, min, max))

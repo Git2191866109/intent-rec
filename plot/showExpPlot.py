@@ -61,8 +61,8 @@ def plotLine(hist1, hist2, res1, res2):
     plt.show()
         
 if __name__ == '__main__':
-    path1 = '/home/superhy/文档/experiment/2017.1.3/5000vs/227b-5000all/RES_CNNs_Net_mat0_data9.txt'
-    path2 = '/home/superhy/文档/experiment/2017.1.3/5000vs/225att-5000all/RES_CNNs_Net_mat1_data9.txt'
+    path1 = '/home/superhy/文档/experiment/2017.1.3/5000vs/227b-5000all/RES_BiDirtGRU_Net_mat0_data7.txt'
+    path2 = '/home/superhy/文档/experiment/2017.1.3/5000vs/225att-5000all/RES_BiDirtGRU_Net_mat1_data7.txt'
     hist1, res1 = loadHistFileData(path1)
     hist2, res2 = loadHistFileData(path2)
     
