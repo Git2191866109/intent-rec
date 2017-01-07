@@ -24,7 +24,7 @@ from recog.test.testMedQuesRec import testLoadBasicData, testTrainNetPred, \
     testEvalNetPred, testShowNetPred, testLoadAttentionData, testGetNpyData
 
 
-def one_data(lb_data=0, name_net='BiDirtGRU_Net', encode_type=1):
+def one_data(lb_data=2, name_net='BiDirtGRU_Net', encode_type=0):
     # exp_param
       
 #     xy_data, input_shape = testLoadBasicData(lb_data=lb_data)
@@ -50,7 +50,7 @@ def one_data(lb_data=0, name_net='BiDirtGRU_Net', encode_type=1):
     fw.write(resStr)
     fw.close()
     
-# one_data()
+one_data()
 
 '''
 batch process as above operation from data 0~9
@@ -61,6 +61,18 @@ def batch_allData(name_net='BiDirtGRU_Net', encode_type=1):
     
 # batch_allData()
 
+'''
+bacth all model on one data
+'''
+def batch_allModel_oneData(lb_data=2, encode_type=1):
+#     name_nets = ['CNNs_Net', 'GRU_Net', 'BiDirtGRU_Net', 'LSTM_Net', 'BiDirtLSTM_Net', 'StackLSTMs_Net']
+    name_nets = ['CNNs_Net', 'GRU_Net', 'LSTM_Net', 'BiDirtLSTM_Net', 'StackLSTMs_Net']
+    for name_net in name_nets:
+        one_data(lb_data=lb_data, name_net=name_net, encode_type=encode_type)
+        
+batch_allModel_oneData(encode_type=0)
+batch_allModel_oneData(encode_type=1)
+        
 '''
 batch process all model in all data 0~9
 '''
@@ -91,7 +103,7 @@ def batch_allModel_allData(encode_type=1):
 '''
 load attention xy_data and store them into npz
 '''
-def load_store_matData(lb_data=0, encode_type=1):
+def load_store_matData(lb_data=2, encode_type=1):
     '''
     @param @encode_type: 0: basic mat data, 1: attention mat data
     '''
@@ -112,7 +124,7 @@ def load_store_matData(lb_data=0, encode_type=1):
 #     print(len(set(xy_data[3])))
     print('input_shape: {0}'.format(input_shape))
     
-load_store_matData()
+#load_store_matData()
 
 '''
 batch load xy_data and store them into npz

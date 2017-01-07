@@ -232,6 +232,73 @@ def BiDirtLSTM_Net(input_shape, nb_classes):
     
     return model
 
+def StackLSTMs_Net(input_shape, nb_classes):
+    # set some fixed parameter in LSTM layer
+    lstm_init_size = 80
+    lstm_size_01 = 70
+    lstm_size_02 = 70
+    lstm_out_size = 64
+    mlp_out_size = lstm_out_size
+    lstm_activation = 'tanh'
+    # set some fixed parameter in Dense layer
+#     hidden_dims = 400
+    # set some fixed parameter in Dropout layer
+    dropout_rate_00 = 0.8
+    dropout_rate_01W = 0.4
+    dropout_rate_01U = 0.4
+    dropout_rate_01 = 0.7
+    dropout_rate_02W = 0.4
+    dropout_rate_02U = 0.4
+    dropout_rate_02 = 0.7
+    dropout_rate_03 = 0.6
+    # set some fixed parameter in Activation layer
+    final_activation = 'softmax'
+    
+    # check input_shape
+    if len(input_shape) > 2 or len(input_shape) < 1:
+        warnings.warn('input_shape is not valid!')
+        return None
+    '''produce deep layer model with sequential structure'''
+    model = Sequential()
+    
+    # hidden layer
+    if len(input_shape) == 1:
+        model.add(Bidirectional(LSTM(output_dim=lstm_init_size, activation=lstm_activation,
+                       return_sequences=True),
+                       input_dim=input_shape[0]))
+    else:
+        model.add(Bidirectional(LSTM(output_dim=lstm_init_size, activation=lstm_activation,
+                       return_sequences=True),
+                       input_shape=input_shape))
+    model.add(Dropout(p=dropout_rate_00))
+    
+    model.add(Bidirectional(LSTM(output_dim=lstm_size_01, activation=lstm_activation,
+                   dropout_W=dropout_rate_01W, dropout_U=dropout_rate_01U,
+                   return_sequences=True)))
+    model.add(Dropout(p=dropout_rate_01))
+    
+    model.add(Bidirectional(LSTM(output_dim=lstm_size_02, activation=lstm_activation,
+                   dropout_U=dropout_rate_02U, dropout_W=dropout_rate_02W,
+                   return_sequences=True)))
+    model.add(Dropout(p=dropout_rate_02))
+    
+    model.add(Bidirectional(LSTM(output_dim=lstm_out_size, activation=lstm_activation)))
+    model.add(Dense(output_dim=mlp_out_size))
+    model.add(Dropout(p=dropout_rate_03))
+#     model.add(Flatten())
+    
+    # output layer 
+    model.add(Dense(nb_classes))
+    model.add(Activation(activation=final_activation))
+    
+    # compile the layer model
+    rmsprop = RMSprop(lr=0.002)
+    model.compile(loss='categorical_crossentropy', optimizer=rmsprop, metrics=['accuracy'])
+    
+    return model
+
+'''not used'''
+
 def CNNs_LSTM_Net(input_shape, nb_classes):
     # set some fixed parameter in Convolution layer
     nb_filter = 260  # convolution core num       
@@ -345,71 +412,6 @@ def LSTM_CNNs_Net(input_shape, nb_classes):
     
     return model
 
-def StackLSTMs_Net(input_shape, nb_classes):
-    # set some fixed parameter in LSTM layer
-    lstm_init_size = 80
-    lstm_size_01 = 70
-    lstm_size_02 = 70
-    lstm_out_size = 64
-    timemlp_out_size = lstm_out_size
-    lstm_activation = 'tanh'
-    # set some fixed parameter in Dense layer
-#     hidden_dims = 400
-    # set some fixed parameter in Dropout layer
-    dropout_rate_00 = 0.8
-    dropout_rate_01W = 0.35
-    dropout_rate_01U = 0.35
-    dropout_rate_01 = 0.7
-    dropout_rate_02W = 0.35
-    dropout_rate_02U = 0.35
-    dropout_rate_02 = 0.7
-    dropout_rate_03 = 0.55
-    # set some fixed parameter in Activation layer
-    final_activation = 'softmax'
-    
-    # check input_shape
-    if len(input_shape) > 2 or len(input_shape) < 1:
-        warnings.warn('input_shape is not valid!')
-        return None
-    '''produce deep layer model with sequential structure'''
-    model = Sequential()
-    
-    # hidden layer
-    if len(input_shape) == 1:
-        model.add(LSTM(output_dim=lstm_init_size, activation=lstm_activation,
-                       return_sequences=True,
-                       input_dim=input_shape[0]))
-    else:
-        model.add(LSTM(output_dim=lstm_init_size, activation=lstm_activation,
-                       return_sequences=True,
-                       input_shape=input_shape))
-    model.add(Dropout(p=dropout_rate_00))
-    
-    model.add(LSTM(output_dim=lstm_size_01, activation=lstm_activation,
-                   dropout_W=dropout_rate_01W, dropout_U=dropout_rate_01U,
-                   return_sequences=True))
-    model.add(Dropout(p=dropout_rate_01))
-    
-    model.add(LSTM(output_dim=lstm_size_02, activation=lstm_activation,
-                   dropout_U=dropout_rate_02U, dropout_W=dropout_rate_02W,
-                   return_sequences=True))
-    model.add(Dropout(p=dropout_rate_02))
-    
-    model.add(LSTM(output_dim=lstm_out_size, activation=lstm_activation, return_sequences=True))
-    model.add(TimeDistributed(Dense(output_dim=timemlp_out_size)))
-    model.add(Dropout(p=dropout_rate_03))
-    model.add(Flatten())
-    
-    # output layer 
-    model.add(Dense(nb_classes))
-    model.add(Activation(activation=final_activation))
-    
-    # compile the layer model
-    rmsprop = RMSprop(lr=0.002)
-    model.compile(loss='categorical_crossentropy', optimizer=rmsprop, metrics=['accuracy'])
-    
-    return model
-
 def MultiLSTM_MultiCNNs_Net(input_shape, nb_classes):
     pass
     
@@ -417,7 +419,7 @@ def MultiLSTM_MultiCNNs_Net(input_shape, nb_classes):
 # tools function for layer-net model
 #===============================================================================
 def trainer(model, x_train, y_train,
-            batch_size=500,
+            batch_size=256,
             nb_epoch=150,
             validation_split=0.2,
             auto_stop=False,
