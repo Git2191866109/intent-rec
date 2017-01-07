@@ -50,7 +50,7 @@ def one_data(lb_data=2, name_net='BiDirtGRU_Net', encode_type=0):
     fw.write(resStr)
     fw.close()
     
-one_data()
+# one_data()
 
 '''
 batch process as above operation from data 0~9
