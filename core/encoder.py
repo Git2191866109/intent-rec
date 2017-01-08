@@ -177,7 +177,7 @@ def seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attenti
         
         # count some statics info(2)
         ave_extLen += (push * 1.0 / len_vectorSeqs)
-        ave_len_attVec += (len(attExt_vec_seqs) * 1.0 / len_vectorSeqs)
+        ave_len_attVec += (len(org_vec_seq) * 1.0 / len_vectorSeqs)
         
         # release the memory space
         del(org_vec_seq, extIndexes, extAttValue, extNum, push)
