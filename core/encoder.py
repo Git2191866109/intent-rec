@@ -26,9 +26,6 @@ def loadAttSimVecDic(gensimW2VModel, sentences, attention_seqs, attention_T):
                     
     return attSimVecDic
 
-def genCopyExtVecs(attVec, tagVecs, extNum):
-    pass
-
 def genDecayExtVecs(attVec, simVec, tagVecs, extNum):
     '''
     @param @tagVecs: tuple: (1, ) in seqUniDirtExt or (1, 2) which right-1 left-2 in seqBiDirtExt
@@ -94,7 +91,7 @@ def seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attenti
     # count some attention extend info
     ave_nb_extNum = 0.0
     ave_nb_extIndexes = 0.0
-    ave_len_orgVec = 0.0
+    ave_extLen = 0.0
     ave_len_attVec = 0.0
     for i in range(len_vectorSeqs):
         # count the extension range from extension length base
@@ -115,6 +112,11 @@ def seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attenti
 #         print('')
         
         org_vec_seq = vector_seqs[i]
+        
+        # count some statics info (1)
+        ave_nb_extNum += (extNum * 1.0 / len_vectorSeqs)  # basic expand number
+        ave_nb_extIndexes += (len(extIndexes) * 1.0 / len_vectorSeqs)  # number of expand elements
+        
         # doing the extension
         push = 0
         for j in range(len(extIndexes)):
@@ -173,9 +175,18 @@ def seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attenti
         
         attExt_vec_seqs.append(org_vec_seq)
         
+        # count some statics info(2)
+        ave_extLen += (push * 1.0 / len_vectorSeqs)
+        ave_len_attVec += (len(attExt_vec_seqs) * 1.0 / len_vectorSeqs)
+        
         # release the memory space
         del(org_vec_seq, extIndexes, extAttValue, extNum, push)
-                
+    
+    print('average expand length base: {0}'.format(ave_nb_extNum))
+    print('average number of expand elements: {0}'.format(ave_nb_extIndexes))
+    print('average expand length: {0}'.format(ave_extLen))
+    print('average length of expanded vectors: {0}'.format(ave_len_attVec))
+    
     return attExt_vec_seqs
     
 if __name__ == '__main__':
