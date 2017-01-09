@@ -41,6 +41,7 @@ def one_data(lb_data=2, name_net='BiDirtGRU_Net', encode_type=0):
     
     model_path, history_metrices = testTrainNetPred(xy_data, input_shape, name_net=name_net, lb_data=lb_data)
     score = testEvalNetPred(xy_data, model_path)
+    del(xy_data, input_shape)
     # testRunNetPred(xy_data, model_path)
     
     ''' write the exp-res into file '''
@@ -49,6 +50,7 @@ def one_data(lb_data=2, name_net='BiDirtGRU_Net', encode_type=0):
     fw = open(resFileName, 'w')
     fw.write(resStr)
     fw.close()
+    del(model_path, history_metrices)
     
 # one_data()
 
@@ -66,11 +68,12 @@ bacth all model on one data
 '''
 def batch_allModel_oneData(lb_data=2, encode_type=1):
 #     name_nets = ['CNNs_Net', 'GRU_Net', 'BiDirtGRU_Net', 'LSTM_Net', 'BiDirtLSTM_Net', 'StackLSTMs_Net']
-    name_nets = ['CNNs_Net', 'GRU_Net', 'LSTM_Net', 'BiDirtLSTM_Net', 'StackLSTMs_Net']
+#     name_nets = ['CNNs_Net', 'GRU_Net', 'LSTM_Net', 'BiDirtLSTM_Net', 'StackLSTMs_Net']
+    name_nets = ['BiDirtLSTM_Net', 'StackLSTMs_Net']
     for name_net in name_nets:
         one_data(lb_data=lb_data, name_net=name_net, encode_type=encode_type)
         
-batch_allModel_oneData(encode_type=0)
+# batch_allModel_oneData(encode_type=0)
 batch_allModel_oneData(encode_type=1)
         
 '''
