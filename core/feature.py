@@ -5,7 +5,10 @@ Created on 2016年12月10日
 
 @author: mull
 '''
+from numpy import average
 
+
+'''part of data load function'''
 
 import os
 import sys
@@ -13,7 +16,6 @@ import sys
 import numpy as np
 from recog import fileProcess
 
-'''part of data load function'''
 
 def load_info(filepath=''):
     f = open(filepath)
@@ -186,17 +188,59 @@ if __name__ == "__main__":
     filepath = fileProcess.auto_config_root() + 'exp_mid_data/sentences_labeled55000.txt'
     doc_terms_list, doc_class_list = load_info(filepath)
     '''input the texts list, classes list, the called method in IG, CHI and MI'''
-    f_model = f_values(doc_terms_list, doc_class_list, 'IG')
-
-
-    f_model_s = sorted(f_model.items(), key=lambda item:item[1], reverse=False)
-#     for i in f_model:
-#         print i[0],' ',i[1]
-    sf_model = dict(f_model_s[int((1 - 0.2) * len(f_model_s)) - 1 :])
-#     print(sf_model)
-    for key in sf_model.keys()[len(sf_model.keys()) - 100 : ]:
-        print type(key), ': ', key, ' ', sf_model[key]
-    print('max: {0}'.format(max(sf_model.values())))
-    print('min: {0}'.format(min(sf_model.values())))
-    print(len(f_model_s))
-    print(auto_attention_T(f_model, select_prop=0.2))
+#===============================================================================
+#     f_model = f_values(doc_terms_list, doc_class_list, 'MI')
+# 
+# 
+#     f_model_s = sorted(f_model.items(), key=lambda item:item[1], reverse=False)
+# #     for i in f_model:
+# #         print i[0],' ',i[1]
+#     sf_model = dict(f_model_s[int((1 - 0.2) * len(f_model_s)) - 1 :])
+# #     print(sf_model)
+#     for key in sf_model.keys()[len(sf_model.keys()) - 100 : ]:
+#         print type(key), ': ', key, ' ', sf_model[key]
+#     print('max: {0}'.format(max(sf_model.values())))
+#     print('min: {0}'.format(min(sf_model.values())))
+#     print(len(f_model_s))
+#     print(auto_attention_T(f_model, select_prop=0.2))
+#===============================================================================
+    
+    '''
+    test the repeat rate of 3 f_select methods
+    '''
+    f_model1 = f_values(doc_terms_list, doc_class_list, 'MI')
+    f_model2 = f_values(doc_terms_list, doc_class_list, 'CHI')
+    f_model3 = f_values(doc_terms_list, doc_class_list, 'IG')
+    f_model_s1 = sorted(f_model1.items(), key=lambda item:item[1], reverse=False)
+    f_model_s2 = sorted(f_model2.items(), key=lambda item:item[1], reverse=False)
+    f_model_s3 = sorted(f_model3.items(), key=lambda item:item[1], reverse=False)
+    
+    select_prop = 0.02
+    sf_model1 = f_model_s1[int((1 - select_prop) * len(f_model_s1)) - 1 : ]
+    sf_model2 = f_model_s2[int((1 - select_prop) * len(f_model_s2)) - 1 : ]
+    sf_model3 = f_model_s3[int((1 - select_prop) * len(f_model_s3)) - 1 : ]
+    
+    e_strs1 = set(ele[0] for ele in sf_model1)
+    e_strs2 = set(ele[0] for ele in sf_model2)
+    e_strs3 = set(ele[0] for ele in sf_model3)
+    
+    rp_12 = e_strs1 & e_strs2
+    rp_13 = e_strs1 & e_strs3
+    rp_23 = e_strs2 & e_strs3
+    rp_123 = (e_strs1 & e_strs2) & e_strs3
+    
+    rp_rate12 = len(rp_12) * 1.0 / len(sf_model1)
+    rp_rate13 = len(rp_13) * 1.0 / len(sf_model1)
+    rp_rate23 = len(rp_23) * 1.0 / len(sf_model1)
+    rp_rate123 = len(rp_123) * 1.0 / len(sf_model1)
+    
+    print('total num: {0}'.format(len(sf_model1)))
+    print('rp_12 num: {0}'.format(len(rp_12)))
+    print('rp_13 num: {0}'.format(len(rp_13)))
+    print('rp_23 num: {0}'.format(len(rp_23)))
+    print('rp_123 num: {0}'.format(len(rp_123)))
+    print('rp_rate12: {0}'.format(rp_rate12))
+    print('rp_rate13: {0}'.format(rp_rate13))
+    print('rp_rate23: {0}'.format(rp_rate23))
+    print('rp_rate123: {0}'.format(rp_rate123))
+    
