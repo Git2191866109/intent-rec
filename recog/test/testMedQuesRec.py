@@ -9,11 +9,11 @@ from recog import fileProcess, medQuesRec
 
 
 def testLoadBasicData(lb_data=0):
-    trainFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test/train{0}.txt'.format(lb_data)
-    testFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test/test{0}.txt'.format(lb_data)
-    gensimW2VModelPath = fileProcess.auto_config_root() + u'model_cache/gensim/med_qus-5000.vector'
+    trainFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test-2500/train{0}.txt'.format(lb_data)
+    testFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test-2500/test{0}.txt'.format(lb_data)
+    gensimW2VModelPath = fileProcess.auto_config_root() + u'model_cache/gensim/med_qus-2500.vector'
     
-    npzPath = fileProcess.auto_config_root() + u'exp_mid_data/npy_data/train_B_NP{0}.npz'.format(lb_data)
+    npzPath = fileProcess.auto_config_root() + u'exp_mid_data/npy_data/2500/train_B_NP{0}.npz'.format(lb_data)
     
     trainTestFileTuples = (trainFilePath, testFilePath)
     xy_data, input_shape = medQuesRec.loadGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_classes=11)
@@ -23,12 +23,12 @@ def testLoadBasicData(lb_data=0):
     return xy_data, input_shape
 
 def testLoadAttentionData(lb_data=0):
-    trainFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test/train{0}.txt'.format(lb_data)
-    testFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test/test{0}.txt'.format(lb_data)
-    gensimW2VModelPath = fileProcess.auto_config_root() + u'model_cache/gensim/med_qus-5000.vector'
-    org_filepath = fileProcess.auto_config_root() + u'exp_mid_data/sentences_labeled55000.txt'
+    trainFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test-2500/train{0}.txt'.format(lb_data)
+    testFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test-2500/test{0}.txt'.format(lb_data)
+    gensimW2VModelPath = fileProcess.auto_config_root() + u'model_cache/gensim/med_qus-2500.vector'
+    org_filepath = fileProcess.auto_config_root() + u'exp_mid_data/sentences_labeled27500.txt'
     
-    npzPath = fileProcess.auto_config_root() + u'exp_mid_data/npy_data/train_Att_NP{0}.npz'.format(lb_data)
+    npzPath = fileProcess.auto_config_root() + u'exp_mid_data/npy_data/2500/train_Att_NP{0}.npz'.format(lb_data)
     
     trainTestFileTuples = (trainFilePath, testFilePath)
     xy_data, input_shape = medQuesRec.loadAttentionGensimMatData(trainTestFileTuples, gensimW2VModelPath, 11, org_filepath)
@@ -52,7 +52,7 @@ def testGetNpyData(lb_data=0, encode_type = 1):
     return xy_data, input_shape
 
 def testTrainNetPred(xy_data, input_shape, name_net='CNNs_Net', lb_data=None):
-    frame_path = fileProcess.auto_config_root() + u'model_cache/keras/{0}5000_{1}.json'.format(name_net, lb_data)
+    frame_path = fileProcess.auto_config_root() + u'model_cache/keras/{0}1000-5000_{1}.json'.format(name_net, lb_data)
     x_train = xy_data[0]
     y_train = xy_data[1]
     model, history_metrices = medQuesRec.trainNetworkPredictor(x_train, y_train, input_shape,

@@ -14,9 +14,10 @@ from recog import fileProcess, cacheIndex
 from recog.embedding import word2Vec
 
 
-_totalDirPath_2 = fileProcess.auto_config_root() + u'med_question_2000each/'
+# _totalDirPath_1 = fileProcess.auto_config_root() + u'med_question_1000each/'
+_totalDirPath_2_5 = fileProcess.auto_config_root() + u'med_question_2500each/'
+_totalDirPath_3 = fileProcess.auto_config_root() + u'med_question_3000each/'
 _totalDirPath_5 = fileProcess.auto_config_root() + u'med_question_5000each/'
-_totalDirPath_10 = fileProcess.auto_config_root() + u'med_question_10000each/'
 
 def prodRandomLabeledData(totalDirPath, writeFilePath_5=None):
     
@@ -121,13 +122,15 @@ def statTextInfo(totalDataPath):
 
 if __name__ == '__main__':
     
-    writeFilePath_2 = fileProcess.auto_config_root() + u'exp_mid_data/sentences_labeled22000.txt'
+#     writeFilePath_1 = fileProcess.auto_config_root() + u'exp_mid_data/sentences_labeled11000.txt'
+    writeFilePath_2_5 = fileProcess.auto_config_root() + u'exp_mid_data/sentences_labeled27500.txt'
+#     writeFilePath_3 = fileProcess.auto_config_root() + u'exp_mid_data/sentences_labeled33000.txt'
     writeFilePath_5 = fileProcess.auto_config_root() + u'exp_mid_data/sentences_labeled55000.txt'
-    writeFilePath_10 = fileProcess.auto_config_root() + u'exp_mid_data/sentences_labeled110000.txt'
     
-#     prodRandomLabeledData(_totalDirPath_2, writeFilePath_2)
+#     prodRandomLabeledData(_totalDirPath_1, writeFilePath_1)
+#     prodRandomLabeledData(_totalDirPath_2_5, writeFilePath_2_5)
+#     prodRandomLabeledData(_totalDirPath_3, writeFilePath_3)
 #     prodRandomLabeledData(_totalDirPath_5, writeFilePath_5)
-#     prodRandomLabeledData(_totalDirPath_10, writeFilePath_10)
     
     '''
     test mid data index in gensim word2vec
@@ -148,12 +151,10 @@ if __name__ == '__main__':
     
     '''
     '''
-    #===========================================================================
-    # trainTestDir = fileProcess.auto_config_root() + u'exp_mid_data/train_test-10000/'
-    # splitTrainTestData(writeFilePath_10, trainTestDir)
-    #===========================================================================
+#     trainTestDir = fileProcess.auto_config_root() + u'exp_mid_data/train_test-2500/'
+#     splitTrainTestData(writeFilePath_2_5, trainTestDir)
     
     '''
     '''
-    ave, min, max = statTextInfo(writeFilePath_10)
+    ave, min, max = statTextInfo(writeFilePath_2_5)
     print('ave: {0}, min: {1}, max: {2}'.format(ave, min, max))

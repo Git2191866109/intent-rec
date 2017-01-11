@@ -144,6 +144,7 @@ def loadAttentionGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_class
                 attentionVec[i] = f_model[words[i]]
         vector_seqs.append(lineVecs)
         attention_seqs.append(attentionVec)
+        del(attentionVec)
         
         # count the train & test labels
         classesVec = numpy.zeros(nb_classes)

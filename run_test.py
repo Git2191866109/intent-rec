@@ -24,7 +24,7 @@ from recog.test.testMedQuesRec import testLoadBasicData, testTrainNetPred, \
     testEvalNetPred, testShowNetPred, testLoadAttentionData, testGetNpyData
 
 
-def one_data(lb_data=2, name_net='BiDirtGRU_Net', encode_type=0):
+def one_data(lb_data=2, name_net='CNNs_Net', encode_type=0):
     # exp_param
       
 #     xy_data, input_shape = testLoadBasicData(lb_data=lb_data)
@@ -45,7 +45,7 @@ def one_data(lb_data=2, name_net='BiDirtGRU_Net', encode_type=0):
     # testRunNetPred(xy_data, model_path)
     
     ''' write the exp-res into file '''
-    resFileName = 'RES_{0}_mat{1}_data{2}.txt'.format(name_net, encode_type, lb_data)
+    resFileName = 'RES_{0}_mat{1}_data{2}-1000.txt'.format(name_net, encode_type, lb_data)
     resStr = str(history_metrices) + '\n' + str(score)
     fw = open(resFileName, 'w')
     fw.write(resStr)
@@ -67,13 +67,13 @@ def batch_allData(name_net='BiDirtGRU_Net', encode_type=1):
 bacth all model on one data
 '''
 def batch_allModel_oneData(lb_data=2, encode_type=1):
-#     name_nets = ['CNNs_Net', 'GRU_Net', 'BiDirtGRU_Net', 'LSTM_Net', 'BiDirtLSTM_Net', 'StackLSTMs_Net']
+    name_nets = ['CNNs_Net', 'GRU_Net', 'BiDirtGRU_Net', 'LSTM_Net', 'BiDirtLSTM_Net', 'StackLSTMs_Net']
 #     name_nets = ['CNNs_Net', 'GRU_Net', 'LSTM_Net', 'BiDirtLSTM_Net', 'StackLSTMs_Net']
-    name_nets = ['BiDirtLSTM_Net', 'StackLSTMs_Net']
+#     name_nets = ['BiDirtLSTM_Net', 'StackLSTMs_Net']
     for name_net in name_nets:
         one_data(lb_data=lb_data, name_net=name_net, encode_type=encode_type)
         
-# batch_allModel_oneData(encode_type=0)
+batch_allModel_oneData(encode_type=0)
 batch_allModel_oneData(encode_type=1)
         
 '''
@@ -106,7 +106,7 @@ def batch_allModel_allData(encode_type=1):
 '''
 load attention xy_data and store them into npz
 '''
-def load_store_matData(lb_data=2, encode_type=1):
+def load_store_matData(lb_data=2, encode_type=0):
     '''
     @param @encode_type: 0: basic mat data, 1: attention mat data
     '''
@@ -127,7 +127,8 @@ def load_store_matData(lb_data=2, encode_type=1):
 #     print(len(set(xy_data[3])))
     print('input_shape: {0}'.format(input_shape))
     
-#load_store_matData()
+# load_store_matData(encode_type=0)
+# load_store_matData(encode_type=1)
 
 '''
 batch load xy_data and store them into npz
