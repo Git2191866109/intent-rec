@@ -7,6 +7,7 @@ Created on 2017年1月4日
 '''
 from numpy import float128
 import matplotlib.pyplot as plt
+from recog import fileProcess
 
 def transTrainingHistStrIntoList(histStr):
     histStr = histStr[histStr.find('[') + 1 : histStr.find(']')]
@@ -29,7 +30,7 @@ def loadHistFileData(histPath):
     histStr = lines[0]
     resStr = lines[1]
     hist1 = transTrainingHistStrIntoList(histStr)
-    resElesStr = resStr[1 : len(resStr) - 1].split(', ')
+    resElesStr = resStr[resStr.find('[') + 1 : resStr.find(']')].split(', ')
     res1 = [float128(resElesStr[0]), float128(resElesStr[1])]
     
     return hist1, res1
@@ -61,8 +62,8 @@ def plotLine(hist1, hist2, res1, res2):
     plt.show()
         
 if __name__ == '__main__':
-    path1 = '/home/superhy/文档/experiment/2017.1.7/5000vs/basic/RES_BiDirtLSTM_Net_mat0_data2.txt'
-    path2 = '/home/superhy/文档/experiment/2017.1.7/5000vs/att/RES_BiDirtLSTM_Net_mat1_data2.txt'
+    path1 = '/home/superhy/文档/experiment/2017.1.7/2500vs/basic/RES_BiDirtLSTM_Net_mat0_data2-1000.txt'
+    path2 = '/home/superhy/文档/experiment/2017.1.7/2500vs/att/RES_BiDirtLSTM_Net_mat1_data2-1000.txt'
     hist1, res1 = loadHistFileData(path1)
     hist2, res2 = loadHistFileData(path2)
     

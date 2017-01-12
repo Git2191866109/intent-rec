@@ -232,6 +232,8 @@ def BiDirtLSTM_Net(input_shape, nb_classes):
     
     return model
 
+'''not used'''
+
 def StackLSTMs_Net(input_shape, nb_classes):
     # set some fixed parameter in LSTM layer
     lstm_init_size = 80
@@ -296,8 +298,6 @@ def StackLSTMs_Net(input_shape, nb_classes):
     model.compile(loss='categorical_crossentropy', optimizer=rmsprop, metrics=['accuracy'])
     
     return model
-
-'''not used'''
 
 def CNNs_LSTM_Net(input_shape, nb_classes):
     # set some fixed parameter in Convolution layer
@@ -463,7 +463,7 @@ def trainer(model, x_train, y_train,
     return model, history.metrices
 
 def predictor(model, x_test,
-              batch_size=500):
+              batch_size=256):
     
     # predict the test data's classes with trained layer model
     classes = model.predict_classes(x_test, batch_size=batch_size)
@@ -472,7 +472,7 @@ def predictor(model, x_test,
     return classes, proba
 
 def evaluator(model, x_test, y_test,
-              batch_size=500):
+              batch_size=256):
     
     # evaluate the trained layer model
     score = model.evaluate(x_test, y_test, batch_size=batch_size)

@@ -53,15 +53,18 @@ def genExtVecs(attVec, simVec, tagVecs, extNum):
         
     if len(tagVecs) == 1: 
         for j in range(extNum):
+#             addCopyExtVecs(0, j)
 #             addRadomSkipExtVecs(0, j)
             addExpDecayExtVecs(0, j)
     elif len(tagVecs) == 2:
         for j in range(extNum):
+#             addCopyExtVecs(j % 2, j)
 #             addRadomSkipExtVecs(j % 2, j)
             addExpDecayExtVecs(j % 2, j)
     else:
         warnings.warn('nb_tagVecs exceed the limit! use first-2')
         for j in range(extNum):
+#             addCopyExtVecs(j % 2, j)
 #             addRadomSkipExtVecs(j % 2, j)
             addExpDecayExtVecs(j % 2, j)
             
@@ -129,7 +132,7 @@ def seqUniDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attent
                 simVec = attSimVecDic[sentences[i][extIndexes[j]]]
                 tagVecs = (vector_seqs[i][extIndexes[j] - 1],)
 #                 extVecs = genExtVecs(attVec, simVec, tagVecs, (int(extNum * extAttValue[j]) + 1) / 2)
-                extVecs = genExtVecs(attVec, simVec, tagVecs, extNum)
+                extVecs = genExtVecs(attVec, simVec, tagVecs, (extNum + 1) / 2)
                 del(attVec, simVec, tagVecs)  # release the memory space
                 
                 for ext_i in range(len(extVecs)):

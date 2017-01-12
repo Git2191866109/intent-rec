@@ -16,7 +16,7 @@ from recog.embedding import word2Vec
 
 # _totalDirPath_1 = fileProcess.auto_config_root() + u'med_question_1000each/'
 _totalDirPath_2_5 = fileProcess.auto_config_root() + u'med_question_2500each/'
-_totalDirPath_3 = fileProcess.auto_config_root() + u'med_question_3000each/'
+_totalDirPath_3_5 = fileProcess.auto_config_root() + u'med_question_3500each/'
 _totalDirPath_5 = fileProcess.auto_config_root() + u'med_question_5000each/'
 
 def prodRandomLabeledData(totalDirPath, writeFilePath_5=None):
@@ -124,12 +124,12 @@ if __name__ == '__main__':
     
 #     writeFilePath_1 = fileProcess.auto_config_root() + u'exp_mid_data/sentences_labeled11000.txt'
     writeFilePath_2_5 = fileProcess.auto_config_root() + u'exp_mid_data/sentences_labeled27500.txt'
-#     writeFilePath_3 = fileProcess.auto_config_root() + u'exp_mid_data/sentences_labeled33000.txt'
+    writeFilePath_3_5 = fileProcess.auto_config_root() + u'exp_mid_data/sentences_labeled38500.txt'
     writeFilePath_5 = fileProcess.auto_config_root() + u'exp_mid_data/sentences_labeled55000.txt'
     
 #     prodRandomLabeledData(_totalDirPath_1, writeFilePath_1)
 #     prodRandomLabeledData(_totalDirPath_2_5, writeFilePath_2_5)
-#     prodRandomLabeledData(_totalDirPath_3, writeFilePath_3)
+    prodRandomLabeledData(_totalDirPath_3_5, writeFilePath_3_5)
 #     prodRandomLabeledData(_totalDirPath_5, writeFilePath_5)
     
     '''
@@ -151,10 +151,10 @@ if __name__ == '__main__':
     
     '''
     '''
-#     trainTestDir = fileProcess.auto_config_root() + u'exp_mid_data/train_test-2500/'
-#     splitTrainTestData(writeFilePath_2_5, trainTestDir)
+    trainTestDir = fileProcess.auto_config_root() + u'exp_mid_data/train_test-3500/'
+    splitTrainTestData(writeFilePath_3_5, trainTestDir)
     
     '''
     '''
-    ave, min, max = statTextInfo(writeFilePath_2_5)
+    ave, min, max = statTextInfo(writeFilePath_3_5)
     print('ave: {0}, min: {1}, max: {2}'.format(ave, min, max))

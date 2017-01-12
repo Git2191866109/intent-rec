@@ -156,7 +156,8 @@ def loadAttentionGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_class
     
     '''run attentional encoder'''
     start_att = time.clock()
-    attExt_vec_seqs = encoder.seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attention_T=auto_attention_T)
+    attExt_vec_seqs = encoder.seqUniDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attention_T=auto_attention_T)
+#     attExt_vec_seqs = encoder.seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attention_T=auto_attention_T)
     del(gensimW2VModel, sentences, vector_seqs, attention_seqs)
     
     '''produce and load the attentional train & test mat data'''

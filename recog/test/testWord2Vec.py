@@ -15,7 +15,7 @@ def trainWord2VecModelTest():
     fileProcess.reLoadEncoding()
     
     # load all file folder path
-    trainDir = fileProcess.auto_config_root() + u'med_question_2500each/'
+    trainDir = fileProcess.auto_config_root() + u'med_question_3500each/'
 #     med_qus_categories = cacheIndex.med_question_index.values()
 #     dirPath = []
 #     dirPath.extend(trainDir + category + u'/' for category in med_qus_categories)
@@ -28,7 +28,7 @@ def trainWord2VecModelTest():
     print('sentences num: {0}'.format(len(totalSentences)))
     
     start_w2v = time.clock()
-    w2vModelPath = fileProcess.auto_config_root() + u'model_cache/gensim/med_qus-2500.vector'
+    w2vModelPath = fileProcess.auto_config_root() + u'model_cache/gensim/med_qus-3500.vector'
     model = word2Vec.trainWord2VecModel(totalSentences, w2vModelPath)
     end_w2v = time.clock()
     print('train gensim word2vec model finish, use time: {0}'.format(end_w2v - start_w2v))
