@@ -9,11 +9,11 @@ from recog import fileProcess, medQuesRec
 
 
 def testLoadBasicData(lb_data=0):
-    trainFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test-2500/train{0}.txt'.format(lb_data)
-    testFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test-2500/test{0}.txt'.format(lb_data)
-    gensimW2VModelPath = fileProcess.auto_config_root() + u'model_cache/gensim/med_qus-2500.vector'
+    trainFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test-3500/train{0}.txt'.format(lb_data)
+    testFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test-3500/test{0}.txt'.format(lb_data)
+    gensimW2VModelPath = fileProcess.auto_config_root() + u'model_cache/gensim/med_qus-3500.vector'
     
-    npzPath = fileProcess.auto_config_root() + u'exp_mid_data/npy_data/2500/train_B_NP{0}.npz'.format(lb_data)
+    npzPath = fileProcess.auto_config_root() + u'exp_mid_data/npy_data/3500/train_B_NP{0}.npz'.format(lb_data)
     
     trainTestFileTuples = (trainFilePath, testFilePath)
     xy_data, input_shape = medQuesRec.loadGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_classes=11)
@@ -23,12 +23,12 @@ def testLoadBasicData(lb_data=0):
     return xy_data, input_shape
 
 def testLoadAttentionData(lb_data=0):
-    trainFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test-2500/train{0}.txt'.format(lb_data)
-    testFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test-2500/test{0}.txt'.format(lb_data)
-    gensimW2VModelPath = fileProcess.auto_config_root() + u'model_cache/gensim/med_qus-2500.vector'
-    org_filepath = fileProcess.auto_config_root() + u'exp_mid_data/sentences_labeled27500.txt'
+    trainFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test-3500/train{0}.txt'.format(lb_data)
+    testFilePath = fileProcess.auto_config_root() + u'exp_mid_data/train_test-3500/test{0}.txt'.format(lb_data)
+    gensimW2VModelPath = fileProcess.auto_config_root() + u'model_cache/gensim/med_qus-3500.vector'
+    org_filepath = fileProcess.auto_config_root() + u'exp_mid_data/sentences_labeled38500.txt'
     
-    npzPath = fileProcess.auto_config_root() + u'exp_mid_data/npy_data/2500/train_Att_NP{0}.npz'.format(lb_data)
+    npzPath = fileProcess.auto_config_root() + u'exp_mid_data/npy_data/3500/train_Att_NP{0}.npz'.format(lb_data)
     
     trainTestFileTuples = (trainFilePath, testFilePath)
     xy_data, input_shape = medQuesRec.loadAttentionGensimMatData(trainTestFileTuples, gensimW2VModelPath, 11, org_filepath)

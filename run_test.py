@@ -24,7 +24,7 @@ from recog.test.testMedQuesRec import testLoadBasicData, testTrainNetPred, \
     testEvalNetPred, testShowNetPred, testLoadAttentionData, testGetNpyData
 
 
-def one_data(lb_data=2, name_net='BiDirtGRU_Net', encode_type=0):
+def one_data(lb_data=2, name_net='BiDirtLSTM_Net', encode_type=0):
     # exp_param
       
 #     xy_data, input_shape = testLoadBasicData(lb_data=lb_data)
@@ -67,13 +67,13 @@ def batch_allData(name_net='BiDirtGRU_Net', encode_type=1):
 bacth all model on one data
 '''
 def batch_allModel_oneData(lb_data=2, encode_type=1):
-#     name_nets = ['CNNs_Net', 'GRU_Net', 'BiDirtGRU_Net', 'LSTM_Net', 'BiDirtLSTM_Net']
+    name_nets = ['CNNs_Net', 'GRU_Net', 'BiDirtGRU_Net', 'LSTM_Net', 'BiDirtLSTM_Net']
 #     name_nets = ['CNNs_Net', 'GRU_Net', 'LSTM_Net', 'BiDirtLSTM_Net', 'StackLSTMs_Net']
-    name_nets = ['CNNs_Net', 'GRU_Net', 'LSTM_Net', 'BiDirtLSTM_Net']
+#     name_nets = ['CNNs_Net', 'LSTM_Net', 'BiDirtLSTM_Net']
     for name_net in name_nets:
         one_data(lb_data=lb_data, name_net=name_net, encode_type=encode_type)
         
-# batch_allModel_oneData(encode_type=0)
+#batch_allModel_oneData(encode_type=0)
 batch_allModel_oneData(encode_type=1)
         
 '''

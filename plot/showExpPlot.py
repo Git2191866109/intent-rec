@@ -60,11 +60,47 @@ def plotLine(hist1, hist2, res1, res2):
      
     
     plt.show()
+    
+def plotMutilLines(histList, resList):
+    p_va = []
+    for hist in histList:
+        p_va.append(list(e[3] * 100 for e in hist))
+    
+    x = list(i + 1 for i in range(150))
+    
+    plt.xlabel('iteration')
+    plt.ylabel('acc(%)')
+    
+    color = ['r', 'b', 'm', 'g', 'c']
+    type = ['-', '-', '--', '-', '--']
+#     color = ['r', 'b', 'g', 'g']
+#     type = ['-', '-', '--', '--']
+    for i in range(len(histList)):
+        plt.plot(x, p_va[i], color=color[i], linestyle=type[i])
+        plt.axhline(y=resList[i][1] * 100, color=color[i], linestyle=type[i], linewidth=1)
+        
+    plt.grid(True)
+        
+    plt.show()
         
 if __name__ == '__main__':
+#     path1 = '/home/superhy/文档/experiment/2017.1.7/2500vs/basic/RES_BiDirtGRU_Net_mat0_data2-1000.txt'
+#     path2 = '/home/superhy/文档/experiment/2017.1.7/2500vs/att/RES_BiDirtGRU_Net_mat1_data2-1000.txt'
+#     path3 = '/home/superhy/文档/experiment/2017.1.7/2500vs/att bicopy/RES_BiDirtGRU_Net_mat1_data2-1000.txt'
+#     path4 = '/home/superhy/文档/experiment/2017.1.7/2500vs/att unidecay/RES_BiDirtGRU_Net_mat1_data2-1000.txt'
+#     path5 = '/home/superhy/文档/experiment/2017.1.7/2500vs/att unicopy/RES_BiDirtGRU_Net_mat1_data2-1000.txt'
+
     path1 = '/home/superhy/文档/experiment/2017.1.7/2500vs/basic/RES_BiDirtLSTM_Net_mat0_data2-1000.txt'
     path2 = '/home/superhy/文档/experiment/2017.1.7/2500vs/att/RES_BiDirtLSTM_Net_mat1_data2-1000.txt'
+    path3 = '/home/superhy/文档/experiment/2017.1.7/2500vs/att bicopy/RES_BiDirtLSTM_Net_mat1_data2-1000.txt'
+    path4 = '/home/superhy/文档/experiment/2017.1.7/2500vs/att unidecay/RES_BiDirtLSTM_Net_mat1_data2-1000.txt'
+    path5 = '/home/superhy/文档/experiment/2017.1.7/2500vs/att unicopy/RES_BiDirtLSTM_Net_mat1_data2-1000.txt'
+    
     hist1, res1 = loadHistFileData(path1)
     hist2, res2 = loadHistFileData(path2)
+    hist3, res3 = loadHistFileData(path3)
+    hist4, res4 = loadHistFileData(path4)
+    hist5, res5 = loadHistFileData(path5) 
     
-    plotLine(hist1, hist2, res1, res2)
+#     plotLine(hist1, hist2, res1, res2)
+    plotMutilLines([hist1, hist2, hist3, hist4, hist5], [res1, res2, res3, res4, res5])
