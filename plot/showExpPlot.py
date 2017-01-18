@@ -5,9 +5,12 @@ Created on 2017年1月4日
 
 @author: superhy
 '''
-from numpy import float128
+
+from numpy import float64
+
 import matplotlib.pyplot as plt
 from recog import fileProcess
+
 
 def transTrainingHistStrIntoList(histStr):
     histStr = histStr[histStr.find('[') + 1 : histStr.find(']')]
@@ -16,7 +19,7 @@ def transTrainingHistStrIntoList(histStr):
     hist1 = []
     print('load history...')
     for i in range(len(histTupleStrs)):
-        histEleTuple = tuple(float128(ele) for ele in histTupleStrs[i].split(', '))
+        histEleTuple = tuple(float64(ele) for ele in histTupleStrs[i].split(', '))
         hist1.append(histEleTuple)
         print('{0} iterate: {1}'.format(i + 1, histEleTuple))
         
@@ -31,7 +34,7 @@ def loadHistFileData(histPath):
     resStr = lines[1]
     hist1 = transTrainingHistStrIntoList(histStr)
     resElesStr = resStr[resStr.find('[') + 1 : resStr.find(']')].split(', ')
-    res1 = [float128(resElesStr[0]), float128(resElesStr[1])]
+    res1 = [float64(resElesStr[0]), float64(resElesStr[1])]
     
     return hist1, res1
 
@@ -69,14 +72,15 @@ def plotMutilLines(histList, resList):
     x = list(i + 1 for i in range(150))
     
     plt.xlabel('iteration')
-    plt.ylabel('acc(%)')
+    plt.ylabel('accuracy(%)')
+    plt.xlim(-0.5, 150.5)
     
     color = ['r', 'b', 'm', 'g', 'c']
     type = ['-', '-', '--', '-', '--']
 #     color = ['r', 'b', 'g', 'g']
 #     type = ['-', '-', '--', '--']
     for i in range(len(histList)):
-        plt.plot(x, p_va[i], color=color[i], linestyle=type[i])
+        plt.plot(x, p_va[i], color=color[i], linestyle=type[i], linewidth=1.5)
         plt.axhline(y=resList[i][1] * 100, color=color[i], linestyle=type[i], linewidth=1)
         
     plt.grid(True)
@@ -90,11 +94,20 @@ if __name__ == '__main__':
 #     path4 = '/home/superhy/文档/experiment/2017.1.7/2500vs/att unidecay/RES_BiDirtGRU_Net_mat1_data2-1000.txt'
 #     path5 = '/home/superhy/文档/experiment/2017.1.7/2500vs/att unicopy/RES_BiDirtGRU_Net_mat1_data2-1000.txt'
 
-    path1 = '/home/superhy/文档/experiment/2017.1.7/2500vs/basic/RES_BiDirtLSTM_Net_mat0_data2-1000.txt'
-    path2 = '/home/superhy/文档/experiment/2017.1.7/2500vs/att/RES_BiDirtLSTM_Net_mat1_data2-1000.txt'
-    path3 = '/home/superhy/文档/experiment/2017.1.7/2500vs/att bicopy/RES_BiDirtLSTM_Net_mat1_data2-1000.txt'
-    path4 = '/home/superhy/文档/experiment/2017.1.7/2500vs/att unidecay/RES_BiDirtLSTM_Net_mat1_data2-1000.txt'
-    path5 = '/home/superhy/文档/experiment/2017.1.7/2500vs/att unicopy/RES_BiDirtLSTM_Net_mat1_data2-1000.txt'
+#     path1 = '/home/superhy/文档/experiment/2017.1.7/2500vs/basic/RES_BiDirtLSTM_Net_mat0_data2-1000.txt'
+#     path2 = '/home/superhy/文档/experiment/2017.1.7/2500vs/att/RES_BiDirtLSTM_Net_mat1_data2-1000.txt'
+#     path3 = '/home/superhy/文档/experiment/2017.1.7/2500vs/att bicopy/RES_BiDirtLSTM_Net_mat1_data2-1000.txt'
+#     path4 = '/home/superhy/文档/experiment/2017.1.7/2500vs/att unidecay/RES_BiDirtLSTM_Net_mat1_data2-1000.txt'
+#     path5 = '/home/superhy/文档/experiment/2017.1.7/2500vs/att unicopy/RES_BiDirtLSTM_Net_mat1_data2-1000.txt'
+
+    data = [(2500, 1000), (3500, 3500), (5000, 5000)]
+    pick = data[2]
+    
+    path1 = 'D:/intent-exp/2017.1.7/{0}vs/basic/RES_BiDirtGRU_Net_mat0_data2-{1}.txt'.format(pick[0], pick[1])
+    path2 = 'D:/intent-exp/2017.1.7/{0}vs/att/RES_BiDirtGRU_Net_mat1_data2-{1}.txt'.format(pick[0], pick[1])
+    path3 = 'D:/intent-exp/2017.1.7/{0}vs/att bicopy/RES_BiDirtGRU_Net_mat1_data2-{1}.txt'.format(pick[0], pick[1])
+    path4 = 'D:/intent-exp/2017.1.7/{0}vs/att unidecay/RES_BiDirtGRU_Net_mat1_data2-{1}.txt'.format(pick[0], pick[1])
+    path5 = 'D:/intent-exp/2017.1.7/{0}vs/att unicopy/RES_BiDirtGRU_Net_mat1_data2-{1}.txt'.format(pick[0], pick[1])
     
     hist1, res1 = loadHistFileData(path1)
     hist2, res2 = loadHistFileData(path2)

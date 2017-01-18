@@ -4,6 +4,7 @@ encoding//core/feature.py=UTF-8
 encoding//core/layer.py=UTF-8
 encoding//core/svm.py=UTF-8
 encoding//core/test/testLayer.py=UTF-8
+encoding//plot/showExpPlot.py=UTF-8
 encoding//recog/cacheIndex.py=UTF-8
 encoding//recog/embedding/word2Vec.py=UTF-8
 encoding//recog/fileProcess.py=UTF-8
