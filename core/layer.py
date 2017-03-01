@@ -508,7 +508,8 @@ def recompileModel(model):
 #     optimizer = SGD(lr=0.1, decay=1e-5, nesterov=True)  # only CNNs_Net use SGD
     optimizer = RMSprop(lr=0.002)
     
-    model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+    # ps: if want use precision, recall and fmeasure, need to add these metrics
+    model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy', 'precision', 'recall', 'fmeasure'])
     return model
 
 def loadStoredModel(frame_path, record_path, recompile=False):

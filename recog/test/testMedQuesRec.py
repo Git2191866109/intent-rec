@@ -79,6 +79,7 @@ def testEvalNetPred(xy_data, frame_path):
     y_test = xy_data[3]
     score = medQuesRec.evaluateNetworkPredictor(model, x_test, y_test)
     
+    print(model.metrics_names) 
     print(score)
     return score
 

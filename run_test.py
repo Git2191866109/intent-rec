@@ -73,8 +73,8 @@ def batch_allModel_oneData(lb_data=2, encode_type=1):
     for name_net in name_nets:
         one_data(lb_data=lb_data, name_net=name_net, encode_type=encode_type)
         
-#batch_allModel_oneData(encode_type=0)
-batch_allModel_oneData(encode_type=1)
+# batch_allModel_oneData(encode_type=0)
+# batch_allModel_oneData(encode_type=1)
         
 '''
 batch process all model in all data 0~9
@@ -140,7 +140,7 @@ def batchload_store_matData(encode_type=1):
         
 # batchload_store_matData()
 
-def evalPreTrainedModel(frame_path, lb_data=2, encode_type=1):
+def evalPreTrainedModel(frame_path, lb_data=2, encode_type=0):
     xy_data, input_shape = testGetNpyData(lb_data=lb_data, encode_type=encode_type)
     print('x_train: {0}'.format(xy_data[0]))
     print(xy_data[0].shape)
@@ -153,5 +153,9 @@ def evalPreTrainedModel(frame_path, lb_data=2, encode_type=1):
     print('input_shape: {0}'.format(input_shape))
     
     testEvalNetPred(xy_data, frame_path)
+    del(xy_data, input_shape)
     
-# evalPreTrainedModel(frame_path='/home/superhy/intent-rec-file/model_cache/keras/2017.1.11 2500 att/BiDirtGRU_Net1000-5000_2.json')
+# evalPreTrainedModel(frame_path='D:/intent-rec-file/model_cache/keras/2017.1.14 2500 att unicopy/BiDirtGRU_Net1000-5000_2.json', lb_data=2, encode_type=1)
+evalPreTrainedModel(frame_path='D:/intent-rec-file/model_cache/keras/2017.1.16 3500 att unidecay/LSTM_Net1000-5000_2.json', lb_data=2, encode_type=1)
+# evalPreTrainedModel(frame_path='D:/intent-rec-file/model_cache/keras/2017.1.9 5000 att unidecay/BiDirtLSTM_Net1000-5000_2.json', lb_data=2, encode_type=1)
+# evalPreTrainedModel(frame_path='D:/intent-rec-file/model_cache/keras/2017.1.15 3500 basic/BiDirtGRU_Net1000-5000_2.json', lb_data=2, encode_type=0)
