@@ -27,7 +27,7 @@ def trainWord2VecModel(sentences, modelPath,
     model.save(modelPath)
     model.init_sims(replace=False)
     print('producing word2vec model ... ok! model store in {0}'.format(modelPath))
-    
+
     return model
 
 def getWordVec(model, queryWord):
