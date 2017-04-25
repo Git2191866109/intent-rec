@@ -5,7 +5,7 @@ Created on 2016年11月21日
 
 @author: super
 '''
-from recog import fileProcess, medQuesRec
+from interface import fileProcess, medQuesRec
 
 
 def testLoadBasicData(lb_data=0):

@@ -14,7 +14,7 @@ import random
 import sys
 
 import numpy as np
-from recog.embedding import word2Vec
+from interface.embedding import word2Vec
 
 '''
 need to fix into handle the sentences
@@ -72,10 +72,13 @@ def w2v_tensorization(corpus, vocab, vocab_indices, w2v_model, contLength=10):
     return x_train, y_train
 
 def LSTM_core(indices_dim, contLength=10):
-    # build the model: a single LSTM
+    ''' build the model: a single LSTM '''
+    
+    # some parameter
+    
     print('Build model...')
     model = Sequential()
-    model.add(LSTM(128, input_shape=(contLength, indices_dim)))
+    model.add(LSTM(output_dim=128, input_shape=(contLength, indices_dim)))
     model.add(Dense(output_dim=indices_dim))
     model.add(Activation('softmax'))
     
@@ -100,7 +103,9 @@ def sample(preds, temperature=1.0):
 def trainer(corpus, vocab, vocab_indices, w2v_model, contLength=10):
     '''
     need to pre-load the training data include:
-    1. the 
+    1. the corpus include list of question sentences
+    2. the vocab include all words
+    3,4. the dicts of (word, indicate) and (indicate, word)
     '''
     
     # some parameters
@@ -109,18 +114,18 @@ def trainer(corpus, vocab, vocab_indices, w2v_model, contLength=10):
     # load tensor data
     x_train, y_train = w2v_tensorization(corpus, vocab, vocab_indices, w2v_model, contLength)
     input_dim = len(vocab)
-    rnn_model = LSTM_core(indices_dim = input_dim, contLength = contLength)
+    generator = LSTM_core(indices_dim = input_dim, contLength = contLength)
     
     for iter in range(1, nbIter):
         print()
         print('-' * 50)
         print('Iteration', iter)
         
-        rnn_model.fit(x_train, y_train, batch_size=128, nb_epoch=1)  # keras 2.0: nb_epoch changed to epochs
+        generator.fit(x_train, y_train, batch_size=128, nb_epoch=1)  # keras 2.0: nb_epoch changed to epochs
         
-    return rnn_model
+    return generator
         
-def generator(rnn_model, profix_inputs, indices_vocab, w2v_model, contLength=10):
+def generator(generator, prefix_inputs, indices_vocab, w2v_model, contLength=10):
     
     # some parameters
     diversity = 1.0
@@ -129,24 +134,24 @@ def generator(rnn_model, profix_inputs, indices_vocab, w2v_model, contLength=10)
     print('----- diversity:', diversity)
     
     generateContext = []
-    generateContext.extend(profix_inputs)
-    print('----- Generating with seed: "' + profix_inputs + '"')
+    generateContext.extend(prefix_inputs)
+    print('----- Generating with seed: "' + prefix_inputs + '"')
     
     for word in generateContext:
         sys.stdout.write(word)
     
     for i in range(generateLength):
         x = np.zeros((1, contLength, w2v_model.vector_size))
-        for t, word in enumerate(profix_inputs):
+        for t, word in enumerate(prefix_inputs):
             vocab_vector = word2Vec.getWordVec(w2v_model, word)
             x[i, t] = vocab_vector
     
-        preds = rnn_model.predict(x, verbose=0)[0]
+        preds = generator.predict(x, verbose=0)[0]
         next_index = sample(preds, diversity)
         next_char = indices_vocab[next_index]
     
         generateContext.append(next_char)
-        profix_inputs = profix_inputs[1:] + next_char
+        prefix_inputs = prefix_inputs[1:] + next_char
         
         sys.stdout.write(next_char)
         sys.stdout.flush()
@@ -154,7 +159,9 @@ def generator(rnn_model, profix_inputs, indices_vocab, w2v_model, contLength=10)
     
     return generateContext
 
-def run_generator(corpus, vocab, vocab_indices, indices_vocab,
+#------------------------------------------------------------------------------ #
+
+def run_trainer_generator(corpus, vocab, vocab_indices, indices_vocab,
                   w2v_model, profix_input, contLength=10):
     
     trainFilePath = '/home/superhy/intent-rec-file/exp_mid_data/train_test-2500/sentences_labeled27500.txt'

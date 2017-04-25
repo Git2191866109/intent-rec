@@ -11,7 +11,7 @@ from numpy import float64
 
 import matplotlib.pyplot as plt
 import numpy as np
-from recog import fileProcess
+from interface import fileProcess
 from matplotlib.pyplot import subplot
 
 

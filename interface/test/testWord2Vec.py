@@ -5,8 +5,8 @@ Created on 2016年11月18日
 
 @author: superhy
 '''
-from recog import cacheIndex, fileProcess
-from recog.embedding import word2Vec
+from interface import cacheIndex, fileProcess
+from interface.embedding import word2Vec
 import time
 
 

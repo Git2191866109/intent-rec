@@ -10,8 +10,8 @@ import time
 import numpy
 
 from core import layer, feature, encoder
-from recog import fileProcess
-from recog.embedding import word2Vec
+from interface import fileProcess
+from interface.embedding import word2Vec
 
 
 def loadGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_classes):

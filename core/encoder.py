@@ -7,7 +7,7 @@ Created on 2016年12月2日
 '''
 import warnings
 import numpy
-from recog.embedding import word2Vec
+from interface import word2Vec
 import random
 from numpy import dtype
 

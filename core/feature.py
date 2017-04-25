@@ -14,7 +14,7 @@ import os
 import sys
 
 import numpy as np
-from recog import fileProcess
+from interface import fileProcess
 
 
 def load_info(filepath=''):
