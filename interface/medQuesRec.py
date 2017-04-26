@@ -221,7 +221,7 @@ def trainNetworkPredictor(x_train, y_train,
     print('store the best weight record on: {0}'.format(record_path))
     
     if frame_path != None:
-        layer.storageModel(model, frame_path, replace_record=False)
+        layer.storageModel(frame_path, replace_record=False)
         print('layer model has been stored in path: {0}.'.format(frame_path))
     
     return model, history_metrices

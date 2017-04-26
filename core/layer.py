@@ -489,7 +489,7 @@ def ploter(model, pic_path):
     print(model.summary())
     plot(model, to_file=pic_path)
 
-def storageModel(model, frame_path, replace_record=False):
+def storageModel(model, frame_path, replace_record=True):
     
     record_path = None
         

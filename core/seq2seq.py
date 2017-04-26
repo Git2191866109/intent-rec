@@ -6,18 +6,21 @@ Created on 2017年4月21日
 @author: superhy
 '''
 
-from keras.layers.core import Dense, Activation
-from keras.layers.recurrent import LSTM
-from keras.models import Sequential
-from keras.optimizers import RMSprop
-import sys
-
-import numpy as np
-from interface.embedding import word2Vec
-
 '''
 need to fix into handle the sentences
 '''
+
+import sys
+
+from keras.layers.core import Dense, Activation
+from keras.layers.recurrent import LSTM
+from keras.models import Sequential, model_from_json
+from keras.optimizers import RMSprop
+
+from interface.embedding import word2Vec
+import numpy as np
+
+
 def onehot_tensorization(text, vocab, vocab_indices):
     # cut the text in semi-redundant sequences of maxlen characters
     maxlen = 10
@@ -120,10 +123,10 @@ def trainer(corpus, vocab, vocab_indices, w2v_model, contLength=10):
     input_dim = len(vocab)
     generator = LSTM_core(w2v_dim=w2v_model.vector_size, indices_dim = input_dim, contLength = contLength)
     
-    for iter in range(0, nbIter):
+    for _iter in range(0, nbIter):
         print('')
         print('-' * 50)
-        print('Iteration', iter)
+        print('Iteration', _iter)
         
         generator.fit(x_train, y_train, batch_size=128, nb_epoch=1)  # keras 2.0: nb_epoch changed to epochs
         
@@ -133,22 +136,24 @@ def generator(generator, prefix_inputs, indices_vocab, w2v_model, contLength=10)
     
     # some parameters
     diversity = 1.0
-    generateLength = 100
+    generateLength = 50
     
     print('----- diversity:', diversity)
     
     generateContext = []
     generateContext.extend(prefix_inputs)
-    print('----- Generating with seed: "' + str(prefix_inputs) + '"')
+    print('----- Generating with seed: "' + str(prefix_inputs.encode('utf-8')) + '"\n')
     
+    print('-----Generating text: ')
     for word in generateContext:
         sys.stdout.write(word.split('/')[0])
     
-    for i in range(generateLength):
+    for _i in range(generateLength):
         x = np.zeros((1, contLength, w2v_model.vector_size))
+        prefix_inputs = prefix_inputs[:contLength] if len(prefix_inputs) > contLength else prefix_inputs
         for t, word in enumerate(prefix_inputs):
             vocab_vector = word2Vec.getWordVec(w2v_model, word)
-            x[0, t] = vocab_vector
+            x[0, t + (contLength - len(prefix_inputs))] = vocab_vector
     
         preds = generator.predict(x, verbose=0)[0]
         next_index = sample(preds, diversity)
@@ -163,56 +168,45 @@ def generator(generator, prefix_inputs, indices_vocab, w2v_model, contLength=10)
     
     return generateContext
 
-#------------------------------------------------------------------------------ #
+#===============================================================================
+# 
+#===============================================================================
 
-def run_trainer_generator(corpus, vocab, vocab_indices, indices_vocab,
-                  w2v_model, profix_input, contLength=10):
+def storageGenerator(generator, frame_path, replace_record=False):
     
-    trainFilePath = '/home/superhy/intent-rec-file/exp_mid_data/train_test-2500/sentences_labeled27500.txt'
-    
-    x_train, y_train = w2v_tensorization(corpus, vocab, vocab_indices)
-    
-    input_dim = len(vocab)
-    
-    model = LSTM_core(indices_dim=input_dim)
-    
-    # train the model, output generated corpus after each iteration
-    for iter in range(1, 20):
-        print()
-        print('-' * 50)
+    record_path = None
         
-        print('Iteration', iter)
-        model.fit(x_train, y_train, batch_size=128, nb_epoch=1)  # keras 2.0: nb_epoch changed to epochs
+    frameFile = open(frame_path, 'w')
+    json_str = generator.to_json()
+    frameFile.write(json_str)  # save model's framework file
+    frameFile.close()
+    if replace_record == True:
+        record_path = frame_path.replace('.json', '.h5')
+        generator.save_weights(record_path, overwrite=True)  # save model's data file
         
-#         start_index = random.randint(0, len(corpus) - contLength - 1)
+    return frame_path, record_path
+
+def recompileGenerator(generator):
+    
+#     optimizer = SGD(lr=0.1, decay=1e-5, nesterov=True)  # only CNNs_Net use SGD
+    optimizer = RMSprop(lr=0.002)
+    
+    # ps: if want use precision, recall and fmeasure, need to add these metrics
+    generator.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy', 'precision', 'recall', 'fmeasure'])
+    return generator
+
+def loadStoredGenerator(frame_path, record_path, recompile=False):
         
-        for diversity in [0.2, 0.5, 1.0, 1.2]:
-            print()
-            print('----- diversity:', diversity)
-            generated = ''
-#             sentence = corpus[start_index: start_index + contLength]
-            sentence = profix_input
-            generated += sentence
-            print('----- Generating with seed: "' + sentence + '"')
-            sys.stdout.write(generated)
-    
-            for i in range(100):
-                x = np.zeros((1, contLength, len(vocab)))
-                for t, word in enumerate(sentence):
-                    vocab_vector = word2Vec.getWordVec(w2v_model, word)
-                    # use Chinese wordvec as the training space
-                    x[i, t] = vocab_vector
-    
-                preds = model.predict(x, verbose=0)[0]
-                next_index = sample(preds, diversity)
-                next_char = indices_vocab[next_index]
-    
-                generated += next_char
-                sentence = sentence[1:] + next_char
-    
-                sys.stdout.write(next_char)
-                sys.stdout.flush()
-            print()
+    frameFile = open(frame_path, 'r')
+#     yaml_str = frameFile.readline()
+    json_str = frameFile.readline()
+    generator = model_from_json(json_str)
+    if recompile == True:
+        generator = recompileGenerator(generator)  # if need to recompile
+    generator.load_weights(record_path)
+    frameFile.close()
+        
+    return generator
 
 if __name__ == '__main__':
     pass

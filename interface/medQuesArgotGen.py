@@ -41,6 +41,10 @@ def trainTextGenerator(corpus, words_vocab, vocab_indices,
     '''
     
     generator = seq2seq.trainer(corpus, words_vocab, vocab_indices, w2v_model)
+    if frame_path != None:
+        seq2seq.storageGenerator(frame_path, replace_record=False)
+        print('Generator has been stored in path: {0}.'.format(frame_path))
+    
     return generator
 
 def runGenerator(generator, prefix_sentence,

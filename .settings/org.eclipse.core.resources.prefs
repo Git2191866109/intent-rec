@@ -14,4 +14,5 @@ encoding//interface/test/expDataProcess.py=UTF-8
 encoding//interface/test/testMedQuesRec.py=UTF-8
 encoding//interface/test/testWord2Vec.py=UTF-8
 encoding//plot/showExpPlot.py=UTF-8
+encoding/run_gen.py=UTF-8
 encoding/run_rec.py=UTF-8
