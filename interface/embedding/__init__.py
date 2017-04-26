@@ -1,1 +1,2 @@
-import word2Vec
+from .word2Vec import *
+from . import *

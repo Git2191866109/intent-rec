@@ -10,7 +10,6 @@ from keras.layers.core import Dense, Activation
 from keras.layers.recurrent import LSTM
 from keras.models import Sequential
 from keras.optimizers import RMSprop
-import random
 import sys
 
 import numpy as np
@@ -53,6 +52,8 @@ def w2v_tensorization(corpus, vocab, vocab_indices, w2v_model, contLength=10):
         if len(text) + 1 <= contLength:
             continue
         for i in range(0, len(text) - contLength, step):
+            if text[i + contLength] not in vocab:
+                continue
             sentences.append(text[i: i + contLength])
             next_chars.append(text[i + contLength])
     print('nb sequences:', len(sentences))
@@ -60,25 +61,28 @@ def w2v_tensorization(corpus, vocab, vocab_indices, w2v_model, contLength=10):
     # vectorization one-hot vector space
     # set up state transfer matrix in tensor space
     print('Word2vec_Tensorization...')
-    x_train = np.zeros((len(sentences), contLength, len(vocab)), dtype=np.float32)
+    x_train = np.zeros((len(sentences), contLength, w2v_model.vector_size), dtype=np.float32)
     y_train = np.zeros((len(sentences), len(vocab)), dtype=np.bool)
     for i, sentence in enumerate(sentences):
         for t, word in enumerate(sentence):
-            vocab_vector = word2Vec.getWordVec(w2v_model, word)
+            if word in vocab:
+                vocab_vector = word2Vec.getWordVec(w2v_model, word)
+            else:
+                vocab_vector = np.zeros((w2v_model.vector_size), dtype=np.float32)
             # use Chinese wordvec as the training space
             x_train[i, t] = vocab_vector
         y_train[i, vocab_indices[next_chars[i]]] = 1
 
     return x_train, y_train
 
-def LSTM_core(indices_dim, contLength=10):
+def LSTM_core(w2v_dim, indices_dim, contLength=10):
     ''' build the model: a single LSTM '''
     
     # some parameter
     
     print('Build model...')
     model = Sequential()
-    model.add(LSTM(output_dim=128, input_shape=(contLength, indices_dim)))
+    model.add(LSTM(output_dim=128, input_shape=(contLength, w2v_dim)))
     model.add(Dense(output_dim=indices_dim))
     model.add(Activation('softmax'))
     
@@ -114,10 +118,10 @@ def trainer(corpus, vocab, vocab_indices, w2v_model, contLength=10):
     # load tensor data
     x_train, y_train = w2v_tensorization(corpus, vocab, vocab_indices, w2v_model, contLength)
     input_dim = len(vocab)
-    generator = LSTM_core(indices_dim = input_dim, contLength = contLength)
+    generator = LSTM_core(w2v_dim=w2v_model.vector_size, indices_dim = input_dim, contLength = contLength)
     
-    for iter in range(1, nbIter):
-        print()
+    for iter in range(0, nbIter):
+        print('')
         print('-' * 50)
         print('Iteration', iter)
         
@@ -135,27 +139,27 @@ def generator(generator, prefix_inputs, indices_vocab, w2v_model, contLength=10)
     
     generateContext = []
     generateContext.extend(prefix_inputs)
-    print('----- Generating with seed: "' + prefix_inputs + '"')
+    print('----- Generating with seed: "' + str(prefix_inputs) + '"')
     
     for word in generateContext:
-        sys.stdout.write(word)
+        sys.stdout.write(word.split('/')[0])
     
     for i in range(generateLength):
         x = np.zeros((1, contLength, w2v_model.vector_size))
         for t, word in enumerate(prefix_inputs):
             vocab_vector = word2Vec.getWordVec(w2v_model, word)
-            x[i, t] = vocab_vector
+            x[0, t] = vocab_vector
     
         preds = generator.predict(x, verbose=0)[0]
         next_index = sample(preds, diversity)
         next_char = indices_vocab[next_index]
     
         generateContext.append(next_char)
-        prefix_inputs = prefix_inputs[1:] + next_char
+        prefix_inputs = prefix_inputs[1:] + [next_char]
         
-        sys.stdout.write(next_char)
+        sys.stdout.write(next_char.split('/')[0])
         sys.stdout.flush()
-    print()   
+    print('')   
     
     return generateContext
 
