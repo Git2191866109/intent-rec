@@ -5,9 +5,11 @@ Created on 2017年4月25日
 
 @author: super
 '''
-from embedding import word2Vec
-from core import seq2seq
 from gensim.models import word2vec
+import time
+
+from core import seq2seq
+from embedding import word2Vec
 
 
 def loadSentenceVocabData(trainFilePath, gensimW2VModelPath):
@@ -42,7 +44,7 @@ def trainTextGenerator(corpus, words_vocab, vocab_indices,
     
     generator = seq2seq.trainer(corpus, words_vocab, vocab_indices, w2v_model)
     if frame_path != None:
-        seq2seq.storageGenerator(frame_path, replace_record=False)
+        seq2seq.storageGenerator(generator, frame_path)
         print('Generator has been stored in path: {0}.'.format(frame_path))
     
     return generator
@@ -53,6 +55,12 @@ def runGenerator(generator, prefix_sentence,
                  res_path=None):
     
     generateContext = seq2seq.generator(generator, prefix_sentence, indices_vocab, w2v_model)
+    if res_path != None:
+        fw = open(res_path, 'a')
+        generate_text_str = 'seed: ' + ''.join(prefix_sentence) + '\n' + 'generate: ' + ''.join(generateContext) + '\n'
+        fw.write(generate_text_str)
+        fw.close()
+    
     return generateContext
 
 if __name__ == '__main__':

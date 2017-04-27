@@ -116,7 +116,7 @@ def trainer(corpus, vocab, vocab_indices, w2v_model, contLength=10):
     '''
     
     # some parameters
-    nbIter = 20
+    nbIter = 50
     
     # load tensor data
     x_train, y_train = w2v_tensorization(corpus, vocab, vocab_indices, w2v_model, contLength)
@@ -142,8 +142,11 @@ def generator(generator, prefix_inputs, indices_vocab, w2v_model, contLength=10)
     
     generateContext = []
     generateContext.extend(prefix_inputs)
-    print('----- Generating with seed: "' + str(prefix_inputs.encode('utf-8')) + '"\n')
-    
+    print('----- Generating with seed: '),
+    for prefix in prefix_inputs:
+        sys.stdout.write(prefix.split('/')[0].encode('utf-8'))
+    print('')
+        
     print('-----Generating text: ')
     for word in generateContext:
         sys.stdout.write(word.split('/')[0])
@@ -172,17 +175,14 @@ def generator(generator, prefix_inputs, indices_vocab, w2v_model, contLength=10)
 # 
 #===============================================================================
 
-def storageGenerator(generator, frame_path, replace_record=False):
-    
-    record_path = None
-        
+def storageGenerator(generator, frame_path):
     frameFile = open(frame_path, 'w')
     json_str = generator.to_json()
     frameFile.write(json_str)  # save model's framework file
     frameFile.close()
-    if replace_record == True:
-        record_path = frame_path.replace('.json', '.h5')
-        generator.save_weights(record_path, overwrite=True)  # save model's data file
+    
+    record_path = frame_path.replace('.json', '.h5')
+    generator.save_weights(record_path, overwrite=True)  # save model's data file
         
     return frame_path, record_path
 
