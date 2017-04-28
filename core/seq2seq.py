@@ -10,12 +10,11 @@ Created on 2017年4月21日
 need to fix into handle the sentences
 '''
 
-import sys
-
 from keras.layers.core import Dense, Activation
-from keras.layers.recurrent import LSTM
+from keras.layers.recurrent import LSTM, SimpleRNN
 from keras.models import Sequential, model_from_json
 from keras.optimizers import RMSprop
+import sys
 
 from interface.embedding import word2Vec
 import numpy as np
@@ -78,18 +77,34 @@ def w2v_tensorization(corpus, vocab, vocab_indices, w2v_model, contLength=10):
 
     return x_train, y_train
 
+def RNN_core(w2v_dim, indices_dim, contLength=10):
+    ''' build the model: a single LSTM '''
+    
+    # some parameter
+    
+    print('Build RNN model...')
+    model = Sequential()
+    model.add(SimpleRNN(output_dim=128, input_shape=(contLength, w2v_dim)))
+    model.add(Dense(output_dim=indices_dim))
+    model.add(Activation('softmax'))
+    
+    rms_optimizer = RMSprop(lr=0.005)
+    model.compile(loss='categorical_crossentropy', optimizer=rms_optimizer)
+    
+    return model
+
 def LSTM_core(w2v_dim, indices_dim, contLength=10):
     ''' build the model: a single LSTM '''
     
     # some parameter
     
-    print('Build model...')
+    print('Build LSTM model...')
     model = Sequential()
     model.add(LSTM(output_dim=128, input_shape=(contLength, w2v_dim)))
     model.add(Dense(output_dim=indices_dim))
     model.add(Activation('softmax'))
     
-    rms_optimizer = RMSprop(lr=0.01)
+    rms_optimizer = RMSprop(lr=0.001)
     model.compile(loss='categorical_crossentropy', optimizer=rms_optimizer)
     
     return model
@@ -116,7 +131,7 @@ def trainer(corpus, vocab, vocab_indices, w2v_model, contLength=10):
     '''
     
     # some parameters
-    nbIter = 20
+    nbIter = 30
     
     # load tensor data
     x_train, y_train = w2v_tensorization(corpus, vocab, vocab_indices, w2v_model, contLength)
@@ -135,8 +150,9 @@ def trainer(corpus, vocab, vocab_indices, w2v_model, contLength=10):
 def generator(generator, prefix_inputs, indices_vocab, w2v_model, contLength=10):
     
     # some parameters
-    diversity = 1.0
-    generateLength = 50
+    diversity = 0.5
+#     diversity = 1.0
+    generateLength = 30
     
     print('----- diversity:', diversity)
     
