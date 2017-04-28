@@ -116,7 +116,7 @@ def trainer(corpus, vocab, vocab_indices, w2v_model, contLength=10):
     '''
     
     # some parameters
-    nbIter = 50
+    nbIter = 20
     
     # load tensor data
     x_train, y_train = w2v_tensorization(corpus, vocab, vocab_indices, w2v_model, contLength)
@@ -128,7 +128,7 @@ def trainer(corpus, vocab, vocab_indices, w2v_model, contLength=10):
         print('-' * 50)
         print('Iteration', _iter)
         
-        generator.fit(x_train, y_train, batch_size=128, nb_epoch=1)  # keras 2.0: nb_epoch changed to epochs
+        generator.fit(x_train, y_train, batch_size=256, nb_epoch=1)  # keras 2.0: nb_epoch changed to epochs
         
     return generator
         
