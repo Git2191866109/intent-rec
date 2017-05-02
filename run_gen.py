@@ -83,7 +83,7 @@ def test_mental_text_generate(test_num=100):
             break
     
     mental_w2v_path = '/home/superhy/intent-rec-file/model_cache/gensim/mental.vector'
-    mental_generator_model_path = '/home/superhy/intent-rec-file/model_cache/mental.json'
+    mental_generator_model_path = '/home/superhy/intent-rec-file/model_cache/mental_gen.json'
     
     corpus, words_vocab, vocab_indices, indices_vocab, w2v_model = loadSentenceVocabData(mental_all_path, mental_w2v_path)
     generator = trainTextGenerator(corpus, words_vocab, vocab_indices, w2v_model, frame_path=mental_generator_model_path)
@@ -97,5 +97,35 @@ def test_mental_text_generate(test_num=100):
     for i in range(10):    
         gen_context = runGenerator(generator, prefix[i], indices_vocab, w2v_model, res_path=mental_res_path)
         
-test_mental_text_generate()
+# test_mental_text_generate()
     
+def test_zhongyinopos_text_generate(test_num = 1000):
+    # load short prefix question sentences
+    zhongyi_all_path = '/home/superhy/intent-rec-file/fenke_org/zhongyi_all.txt'
+    fr = open(zhongyi_all_path, 'r')
+    lines = fr.readlines()
+    contLength = 10
+    prefix = []
+    for line in lines:
+        words = list(word.decode('utf-8') for word in line[line.find('[') + 1 : line.find(']')].split(','))
+        if len(words) <= contLength:
+            prefix.append(words)
+        if len(prefix) >= test_num:
+            break
+    
+    zhongyi_w2v_path = '/home/superhy/intent-rec-file/model_cache/gensim/zhongyi_nopos.vector'
+    zhongyi_generator_model_path = '/home/superhy/intent-rec-file/model_cache/zhongyi_nopos_gen.json'
+    
+    corpus, words_vocab, vocab_indices, indices_vocab, w2v_model = loadSentenceVocabData(zhongyi_all_path, zhongyi_w2v_path)
+    generator = trainTextGenerator(corpus, words_vocab, vocab_indices, w2v_model, frame_path=zhongyi_generator_model_path)
+    
+    ISOTIMEFORMAT = '%Y-%m-%d %X'
+    time_str = str(time.strftime(ISOTIMEFORMAT, time.localtime())) + '\n'
+    zhongyi_res_path = '/home/superhy/intent-rec-file/fenke_org/zhongyi_generator_res.txt'
+    fw = open(zhongyi_res_path, 'w')
+    fw.write(time_str)
+    fw.close()
+    for i in range(test_num):    
+        gen_context = runGenerator(generator, prefix[i], indices_vocab, w2v_model, res_path=zhongyi_res_path)
+        
+test_zhongyinopos_text_generate()
