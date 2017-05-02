@@ -35,6 +35,7 @@ def getWordVec(model, queryWord):
     fileProcess.reLoadEncoding()
     
     vector = model[queryWord.decode('utf-8')]
+#     vector = model[queryWord]
     return vector
 
 def queryMostSimWords(model, wordStr, topN=20):

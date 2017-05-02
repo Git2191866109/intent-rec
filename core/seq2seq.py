@@ -131,7 +131,7 @@ def trainer(corpus, vocab, vocab_indices, w2v_model, contLength=10):
     '''
     
     # some parameters
-    nbIter = 30
+    nbIter = 20
     
     # load tensor data
     x_train, y_train = w2v_tensorization(corpus, vocab, vocab_indices, w2v_model, contLength)

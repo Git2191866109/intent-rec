@@ -72,8 +72,9 @@ def prodCorpusW2V(totalCorpusFilePath, totalW2VPath):
     
     sentences = []
     for line in lines:
-        line_sentence = ' '.join(line[line.find('[') + 1 : line.find(']')].split(','))
-        sentences.append(line_sentence.decode('utf-8'))
+        line_sentence = list(word.decode('utf-8') for word in line[line.find('[') + 1 : line.find(']')].split(','))
+        print(line_sentence)
+        sentences.append(line_sentence)
         
     start_w2v = time.clock()
     w2v_model = word2Vec.trainWord2VecModel(sentences, modelPath=totalW2VPath)

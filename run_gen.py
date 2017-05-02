@@ -117,15 +117,17 @@ def test_zhongyinopos_text_generate(test_num = 1000):
     zhongyi_generator_model_path = '/home/superhy/intent-rec-file/model_cache/zhongyi_nopos_gen.json'
     
     corpus, words_vocab, vocab_indices, indices_vocab, w2v_model = loadSentenceVocabData(zhongyi_all_path, zhongyi_w2v_path)
+#     for word in w2v_model.vocab.keys():
+#         print(word)
     generator = trainTextGenerator(corpus, words_vocab, vocab_indices, w2v_model, frame_path=zhongyi_generator_model_path)
-    
+     
     ISOTIMEFORMAT = '%Y-%m-%d %X'
     time_str = str(time.strftime(ISOTIMEFORMAT, time.localtime())) + '\n'
     zhongyi_res_path = '/home/superhy/intent-rec-file/fenke_org/zhongyi_generator_res.txt'
     fw = open(zhongyi_res_path, 'w')
     fw.write(time_str)
     fw.close()
-    for i in range(test_num):    
+    for i in range(10):    
         gen_context = runGenerator(generator, prefix[i], indices_vocab, w2v_model, res_path=zhongyi_res_path)
         
 test_zhongyinopos_text_generate()
