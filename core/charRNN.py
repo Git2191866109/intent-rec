@@ -101,7 +101,7 @@ def LSTM_core(w2v_dim, indices_dim, contLength=10):
     ''' build the model: a single LSTM '''
     
     # some parameter
-    dropout_rate = 0.2
+    dropout_rate = 0.0
     
     print('Build LSTM model...')
     model = Sequential()
