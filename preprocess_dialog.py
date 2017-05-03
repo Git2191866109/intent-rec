@@ -1,13 +1,9 @@
 # -*- coding: UTF-8 -*-
 
 '''
-Created on 2017年5月2日
+Created on 2017年5月3日
 
 @author: superhy
-'''
-'''
-pre-process from original string file to seg file like '[1,2,3]'
-different from the other partly file and data handle process
 '''
 
 import time
@@ -19,7 +15,7 @@ from interface.wordSeg import singleSegEngine
 import re
 
 def extQues(textFilePath):
-    ''' return the list of question string (only one is [1]) '''
+    ''' return the list of question_answer string tuples (only one is [(q, a)]) '''
     fr = open(textFilePath, 'r')
     lines = fr.readlines()
     fr.close()
@@ -28,13 +24,14 @@ def extQues(textFilePath):
     pat = re.compile(r'(！！|？？|。。)+\Z')
     
     ques_strs = []
+    ques_string = ''
     for line in lines:
-        if line.startswith('w'):
+        if line.startswith('w') and len(line.split(':')[1]) > 2:
             ques_string = line.split(':')[1]
-            if len(ques_string) > 2:
-                ques_string = ques_string[ : ques_string.find('\n') - 1]
-                ques_strs.append(pat.sub('', ques_string))  # remove the line breaks
-            
+            ques_string = pat.sub('', ques_string[ : ques_string.find('\n') - 1])
+        if line.startswith('d'):
+            pass
+        
     return ques_strs
 
 def segQues(quesStrs):
@@ -88,32 +85,6 @@ def prodCorpusW2V(totalCorpusFilePath, totalW2VPath):
     print('train gensim word2vec model finish, use time: {0}'.format(end_w2v - start_w2v))
     print('vocab size: {0}'.format(len(w2v_model.vocab)))
     print('corpus count size: {0}'.format(w2v_model.corpus_count))
-    
+
 if __name__ == '__main__':
-    
-    path = '/home/superhy/intent-rec-file/fenke_org/zhongyi/肾虚怎么办(中医综合-中医科).txt'
-#     ques_strs = extQues(path)
-#     
-#     for str in ques_strs:
-#         print(str)
-#     print('#----------------------------------------------------#')
-#     
-#     seg_queses = segQues(ques_strs)
-#     for ques in seg_queses:
-#         for word in ques:
-#             print(word),
-
-    zhongyi_dir_path = '/home/superhy/intent-rec-file/fenke_org/zhongyi/'
-    zhongyi_corpus_file_path = '/home/superhy/intent-rec-file/fenke_org/zhongyi_all.txt'
-    
-#     prodTotalSegCorpus(zhongyi_dir_path, zhongyi_corpus_file_path)
-
-    zhongyi_w2v_path = '/home/superhy/intent-rec-file/model_cache/gensim/zhongyi_nopos.vector'
-    
-    prodCorpusW2V(zhongyi_corpus_file_path, zhongyi_w2v_path)
-
-#     string = '用艾灸条烤穴位几分钟了什么方法可以治疗啊。请问有没有什么药？谢谢？'
-#     print(string)
-#     p = re.compile(r'(！|？|。)+\Z')
-#     string = p.sub(',', string)
-#     print(string)
+    pass

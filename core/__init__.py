@@ -2,5 +2,5 @@ from test import *
 import encoder
 import feature
 import layer
-import seq2seq
+from core import charRNN
 import svm

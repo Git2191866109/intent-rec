@@ -99,7 +99,7 @@ def test_mental_text_generate(test_num=100):
         
 # test_mental_text_generate()
     
-def test_zhongyinopos_text_generate(test_num = 1000):
+def test_zhongyinopos_text_generate(test_num = 2000):
     # load short prefix question sentences
     zhongyi_all_path = '/home/superhy/intent-rec-file/fenke_org/zhongyi_all.txt'
     fr = open(zhongyi_all_path, 'r')
@@ -127,7 +127,7 @@ def test_zhongyinopos_text_generate(test_num = 1000):
     fw = open(zhongyi_res_path, 'w')
     fw.write(time_str)
     fw.close()
-    for i in range(10):    
+    for i in range(test_num):    
         gen_context = runGenerator(generator, prefix[i], indices_vocab, w2v_model, res_path=zhongyi_res_path)
         
 test_zhongyinopos_text_generate()
