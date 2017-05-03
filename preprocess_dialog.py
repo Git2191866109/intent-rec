@@ -23,16 +23,19 @@ def extQues(textFilePath):
 #     pat = re.compile(r'(！|？|。)+\Z')
     pat = re.compile(r'(！！|？？|。。)+\Z')
     
-    ques_strs = []
+    ques_ans_tuples = []
     ques_string = ''
     for line in lines:
         if line.startswith('w') and len(line.split(':')[1]) > 2:
             ques_string = line.split(':')[1]
             ques_string = pat.sub('', ques_string[ : ques_string.find('\n') - 1])
         if line.startswith('d'):
-            pass
+            if ques_string != '' and len(line.split(':')[1]) > 2:
+                ans_string = line.split(':')[1]
+                ans_string = pat.sub('', ans_string[ : ans_string.find('\n') - 1])
+                ques_ans_tuples.append((ques_string, ans_string))
         
-    return ques_strs
+    return ques_ans_tuples
 
 def segQues(quesStrs):
     ''' 
@@ -54,8 +57,8 @@ def prodTotalSegCorpus(orgTextsDirPath, corpusFilePath):
     
     fw = open(corpusFilePath, 'a')
     for textFilePath in loadedFilesPath:
-        ques_strs = extQues(textFilePath)
-        seg_queses = segQues(ques_strs)
+        ques_ans_tuples = extQues(textFilePath)
+        seg_queses = segQues(ques_ans_tuples)
         sentences_strs = []
         for i in range(len(seg_queses)):
             words_str = '[' + ','.join(seg_queses[i]) + ']'
@@ -87,4 +90,10 @@ def prodCorpusW2V(totalCorpusFilePath, totalW2VPath):
     print('corpus count size: {0}'.format(w2v_model.corpus_count))
 
 if __name__ == '__main__':
-    pass
+    
+    path = '/home/superhy/intent-rec-file/fenke_org/zhongyi/肾虚怎么办(中医综合-中医科).txt'
+    ques_ans_tuples = extQues(path)
+     
+    for tuple in ques_ans_tuples:
+        print(tuple[0]),
+        print(tuple[1])

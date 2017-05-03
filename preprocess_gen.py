@@ -27,15 +27,15 @@ def extQues(textFilePath):
 #     pat = re.compile(r'(！|？|。)+\Z')
     pat = re.compile(r'(！！|？？|。。)+\Z')
     
-    ques_strs = []
+    ques_ans_tuples = []
     for line in lines:
         if line.startswith('w'):
             ques_string = line.split(':')[1]
             if len(ques_string) > 2:
                 ques_string = ques_string[ : ques_string.find('\n') - 1]
-                ques_strs.append(pat.sub('', ques_string))  # remove the line breaks
+                ques_ans_tuples.append(pat.sub('', ques_string))  # remove the line breaks
             
-    return ques_strs
+    return ques_ans_tuples
 
 def segQues(quesStrs):
     ''' 
@@ -57,8 +57,8 @@ def prodTotalSegCorpus(orgTextsDirPath, corpusFilePath):
     
     fw = open(corpusFilePath, 'a')
     for textFilePath in loadedFilesPath:
-        ques_strs = extQues(textFilePath)
-        seg_queses = segQues(ques_strs)
+        ques_ans_tuples = extQues(textFilePath)
+        seg_queses = segQues(ques_ans_tuples)
         sentences_strs = []
         for i in range(len(seg_queses)):
             words_str = '[' + ','.join(seg_queses[i]) + ']'
@@ -92,13 +92,13 @@ def prodCorpusW2V(totalCorpusFilePath, totalW2VPath):
 if __name__ == '__main__':
     
     path = '/home/superhy/intent-rec-file/fenke_org/zhongyi/肾虚怎么办(中医综合-中医科).txt'
-#     ques_strs = extQues(path)
+#     ques_ans_tuples = extQues(path)
 #     
-#     for str in ques_strs:
+#     for str in ques_ans_tuples:
 #         print(str)
 #     print('#----------------------------------------------------#')
 #     
-#     seg_queses = segQues(ques_strs)
+#     seg_queses = segQues(ques_ans_tuples)
 #     for ques in seg_queses:
 #         for word in ques:
 #             print(word),
