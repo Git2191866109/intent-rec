@@ -108,7 +108,7 @@ def test_zhongyinopos_text_generate(test_num = 2000):
     prefix = []
     for line in lines:
         words = list(word.decode('utf-8') for word in line[line.find('[') + 1 : line.find(']')].split(','))
-        if len(words) <= contLength:
+        if len(words) > 0 and len(words) <= contLength:
             prefix.append(words)
         if len(prefix) >= test_num:
             break

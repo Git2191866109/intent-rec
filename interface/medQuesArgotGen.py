@@ -21,7 +21,8 @@ def loadSentenceVocabData(trainFilePath, gensimW2VModelPath):
     corpus = []
     for line in trainLines:
         words = list(word.decode('utf-8') for word in line[line.find('[') + 1 : line.find(']')].split(','))
-        corpus.append(words)
+        if len(words) > 0:
+            corpus.append(words)
 #     print(type(corpus[0][0]))
     
     # load words vocab indices data

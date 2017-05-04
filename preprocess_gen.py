@@ -18,7 +18,7 @@ from interface.wordSeg import singleSegEngine
 
 import re
 
-def extQues(textFilePath):
+def extQuesAns(textFilePath):
     ''' return the list of question string (only one is [1]) '''
     fr = open(textFilePath, 'r')
     lines = fr.readlines()
@@ -37,13 +37,13 @@ def extQues(textFilePath):
             
     return ques_ans_tuples
 
-def segQues(quesStrs):
+def segQuesAns(ques_ans_tuples):
     ''' 
     seg the question strings by jieba 
     return the results as double-list: [[], [], ...] 
     '''
     seg_queses = []
-    for str in quesStrs:
+    for str in ques_ans_tuples:
         seg_queses.append(singleSegEngine(str))
         
     return seg_queses
@@ -57,8 +57,8 @@ def prodTotalSegCorpus(orgTextsDirPath, corpusFilePath):
     
     fw = open(corpusFilePath, 'a')
     for textFilePath in loadedFilesPath:
-        ques_ans_tuples = extQues(textFilePath)
-        seg_queses = segQues(ques_ans_tuples)
+        ques_ans_tuples = extQuesAns(textFilePath)
+        seg_queses = segQuesAns(ques_ans_tuples)
         sentences_strs = []
         for i in range(len(seg_queses)):
             words_str = '[' + ','.join(seg_queses[i]) + ']'
@@ -92,13 +92,13 @@ def prodCorpusW2V(totalCorpusFilePath, totalW2VPath):
 if __name__ == '__main__':
     
     path = '/home/superhy/intent-rec-file/fenke_org/zhongyi/肾虚怎么办(中医综合-中医科).txt'
-#     ques_ans_tuples = extQues(path)
+#     ques_ans_tuples = extQuesAns(path)
 #     
 #     for str in ques_ans_tuples:
 #         print(str)
 #     print('#----------------------------------------------------#')
 #     
-#     seg_queses = segQues(ques_ans_tuples)
+#     seg_queses = segQuesAns(ques_ans_tuples)
 #     for ques in seg_queses:
 #         for word in ques:
 #             print(word),
