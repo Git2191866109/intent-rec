@@ -9,7 +9,7 @@ Created on 2017年4月28日
 from keras import backend as K
 from keras.layers import LSTM
 
-class AttentionLSTM(object):
+class AttentionLSTM(LSTM):
 
     def __init__(self, output_dim, attention_vec, **kwargs):
         self.attention_vec = attention_vec

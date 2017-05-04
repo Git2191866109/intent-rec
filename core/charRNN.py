@@ -54,7 +54,7 @@ def w2v_tensorization(corpus, vocab, vocab_indices, w2v_model, contLength=10):
     return x_train, y_train
 
 def RNN_core(w2v_dim, indices_dim, contLength=10):
-    ''' build the model: a single LSTM '''
+    ''' build the model: a single RNN '''
     
     # some parameter
     dropout_rate = 0.2
