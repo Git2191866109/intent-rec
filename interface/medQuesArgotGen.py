@@ -18,6 +18,7 @@ def loadSentenceVocabData(trainFilePath, gensimW2VModelPath):
     trainLines = fr_train.readlines()
     fr_train.close()
     del(fr_train)
+   
     corpus = []
     for line in trainLines:
         words = list(word.decode('utf-8') for word in line[line.find('[') + 1 : line.find(']')].split(','))

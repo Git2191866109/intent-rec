@@ -93,7 +93,7 @@ def LSTM_core(w2v_dim, indices_dim, contLength=10):
     
     return model
 
-def sample(preds, temperature=1.0):
+def sample(preds, temperature=0.5):
     
     # helper function to sample an index from a probability array
     preds = np.asarray(preds).astype('float64')
@@ -115,12 +115,13 @@ def trainer(corpus, vocab, vocab_indices, w2v_model, contLength=10):
     '''
     
     # some parameters
+#     nbIter = 1 # for test
     nbIter = 20
     
     # load tensor data
     x_train, y_train = w2v_tensorization(corpus, vocab, vocab_indices, w2v_model, contLength)
-    input_dim = len(vocab)
-    generator = LSTM_core(w2v_dim=w2v_model.vector_size, indices_dim=input_dim, contLength=contLength)
+    vocab_dim = len(vocab)
+    generator = LSTM_core(w2v_dim=w2v_model.vector_size, indices_dim=vocab_dim, contLength=contLength)
     
     for _iter in range(0, nbIter):
         print('')
@@ -155,8 +156,8 @@ def generator(generator, prefix_inputs, indices_vocab, w2v_model, contLength=10)
         x = np.zeros((1, contLength, w2v_model.vector_size))
         prefix_inputs = prefix_inputs[:contLength] if len(prefix_inputs) > contLength else prefix_inputs
         for t, word in enumerate(prefix_inputs):
-            vocab_vector = word2Vec.getWordVec(w2v_model, word)
-            x[0, t + (contLength - len(prefix_inputs))] = vocab_vector
+            word_vector = word2Vec.getWordVec(w2v_model, word)
+            x[0, t + (contLength - len(prefix_inputs))] = word_vector
     
         preds = generator.predict(x, verbose=0)[0]
         next_index = sample(preds, diversity)
@@ -172,7 +173,7 @@ def generator(generator, prefix_inputs, indices_vocab, w2v_model, contLength=10)
     return generateContext
 
 #===============================================================================
-# 
+# additional operation
 #===============================================================================
 
 def storageGenerator(generator, frame_path):
