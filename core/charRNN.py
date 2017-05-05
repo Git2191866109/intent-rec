@@ -106,10 +106,10 @@ def sample(preds, temperature=0.5):
     
     return np.argmax(probas)
 
-def trainer(corpus, vocab, vocab_indices, w2v_model, contLength=10):
+def trainer(corpus_tuple, vocab, vocab_indices, w2v_model, contLength=10):
     '''
     need to pre-load the training data include:
-    1. the corpus include list of question sentences
+    1. the corpus_tuple include list of question sentences
     2. the vocab include all words
     3,4. the dicts of (word, indicate) and (indicate, word)
     '''
@@ -119,7 +119,7 @@ def trainer(corpus, vocab, vocab_indices, w2v_model, contLength=10):
     nbIter = 20
     
     # load tensor data
-    x_train, y_train = w2v_tensorization(corpus, vocab, vocab_indices, w2v_model, contLength)
+    x_train, y_train = w2v_tensorization(corpus_tuple, vocab, vocab_indices, w2v_model, contLength)
     vocab_dim = len(vocab)
     generator = LSTM_core(w2v_dim=w2v_model.vector_size, indices_dim=vocab_dim, contLength=contLength)
     

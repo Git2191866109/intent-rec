@@ -10,6 +10,7 @@ encoding//core/test/testLayer.py=UTF-8
 encoding//interface/cacheIndex.py=UTF-8
 encoding//interface/embedding/word2Vec.py=UTF-8
 encoding//interface/fileProcess.py=UTF-8
+encoding//interface/medQuesAnswering.py=UTF-8
 encoding//interface/medQuesArgotGen.py=UTF-8
 encoding//interface/medQuesRec.py=UTF-8
 encoding//interface/test/expDataProcess.py=UTF-8

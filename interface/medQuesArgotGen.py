@@ -35,7 +35,7 @@ def loadSentenceVocabData(trainFilePath, gensimW2VModelPath):
     
     return corpus, words_vocab, vocab_indices, indices_vocab, gensimW2VModel
         
-def trainTextGenerator(corpus, words_vocab, vocab_indices,
+def trainTextGenerator(corcorpus_tupleords_vocab, vocab_indices,
                        w2v_model,
                        network='LSTM_core',
                        frame_path=None):
@@ -44,7 +44,7 @@ def trainTextGenerator(corpus, words_vocab, vocab_indices,
     frame_path: the storage path of the neural network framework model
     '''
     
-    generator = charRNN.trainer(corpus, words_vocab, vocab_indices, w2v_model)
+    generator = charRNN.trainer(corcorpus_tupleords_vocab, vocab_indices, w2v_model)
     if frame_path != None:
         charRNN.storageGenerator(generator, frame_path)
         print('Generator has been stored in path: {0}.'.format(frame_path))

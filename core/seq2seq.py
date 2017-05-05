@@ -96,10 +96,10 @@ def sample(preds, temperature=0.5):
     
     return np.argmax(probas)
 
-def trainer(corpus, vocab, vocab_indices, w2v_model, ques_token_len, ans_token_len):
+def trainer(corpus_tuple, vocab, vocab_indices, w2v_model, ques_token_len, ans_token_len):
     '''
     need to pre-load the training data include:
-    1. the corpus include list of question sentences
+    1. the corpus_tuple include list of question sentences
     2. the vocab include all words
     3,4. the dicts of (word, indicate) and (indicate, word)
     5,6. ques_token_len, ans_token_len are counted in seq2seq interface with qa_corpus
@@ -110,7 +110,7 @@ def trainer(corpus, vocab, vocab_indices, w2v_model, ques_token_len, ans_token_l
     nbIter = 20
     batch_size = 256
     
-    x_train, y_train, token_len = w2v_seqs_tensorization(corpus, vocab, vocab_indices,
+    x_train, y_train, token_len = w2v_seqs_tensorization(corpus_tuple, vocab, vocab_indices,
                                               w2v_model, ques_token_len, ans_token_len)
     vocab_dim = len(vocab)
     generator = LSTM_core(w2v_dim=w2v_model.vector_size,
