@@ -6,34 +6,37 @@ Created on 2017年5月3日
 @author: superhy
 '''
 
+import sys
+
+from click.core import batch
+from gensim.models.word2vec import corpus
 from keras.layers import Input
 from keras.layers.core import Dense, Masking
 from keras.layers.recurrent import LSTM
 from keras.layers.wrappers import TimeDistributed
 from keras.models import Sequential, Model, model_from_json
 from keras.optimizers import RMSprop
-import sys
+from keras.utils.generic_utils import Progbar
 
 from interface.embedding import word2Vec
 import numpy as np
 
 
-def w2v_seqs_tensorization(corpus, vocab, vocab_indices, w2v_model, ques_token_len, ans_token_len):
+def w2v_batchseqs_tensorization(corpus_tuple_part, vocab, vocab_indices, w2v_model, normalized_token_len):
     # need input word2vec model for query the word embeddings
     
-    # corpus is the list of tuples include pair like: (ques, ans)
+    # corpus_tuple_part is the list of tuples include pair like: (ques, ans)
     #===========================================================================
     # ques_token_len and ans_token_len are the max length of
     # question sequences and answer sequences, which are setted by system
     # the length of generated answer is expected as ans_token_len
     #===========================================================================
     
-    ''' keras need output_length equal as input_length '''
-    normalized_token_len = max(ques_token_len, ans_token_len) 
+    ''' keras need output_length equal as input_length ''' 
     
-    x_train = np.zeros((len(corpus), normalized_token_len, w2v_model.vector_size), dtype=np.float32)
-    y_train = np.zeros((len(corpus), normalized_token_len, len(vocab)), dtype=np.bool)
-    for qa_index, qa_tuple in enumerate(corpus):
+    x_train = np.zeros((len(corpus_tuple_part), normalized_token_len, w2v_model.vector_size), dtype=np.float32)
+    y_train = np.zeros((len(corpus_tuple_part), normalized_token_len, len(vocab)), dtype=np.bool)
+    for qa_index, qa_tuple in enumerate(corpus_tuple_part):
         ques_sentence = qa_tuple[0]
         ans_sentence = qa_tuple[1]
         for ques_t_index, ques_token in enumerate(ques_sentence[ : normalized_token_len]):
@@ -43,7 +46,7 @@ def w2v_seqs_tensorization(corpus, vocab, vocab_indices, w2v_model, ques_token_l
             if ans_token in vocab:
                 y_train[qa_index, ans_t_index, vocab_indices[ans_token]] = 1
                 
-    return x_train, y_train, normalized_token_len
+    return x_train, y_train
 
 def LSTM_core(w2v_dim, indices_dim, token_len):
     ''' build the model: a simple RNN encoder-decoder framework '''
@@ -103,6 +106,8 @@ def trainer(corpus_tuple, vocab, vocab_indices, w2v_model, ques_token_len, ans_t
     2. the vocab include all words
     3,4. the dicts of (word, indicate) and (indicate, word)
     5,6. ques_token_len, ans_token_len are counted in seq2seq interface with qa_corpus
+    
+    this trainer use train_on_batch to face the memory_error
     '''
     
     # some parameter
@@ -110,19 +115,28 @@ def trainer(corpus_tuple, vocab, vocab_indices, w2v_model, ques_token_len, ans_t
 #     nbIter = 20
     batch_size = 256
     
-    x_train, y_train, token_len = w2v_seqs_tensorization(corpus_tuple, vocab, vocab_indices,
-                                              w2v_model, ques_token_len, ans_token_len)
+#     x_train, y_train, token_len = w2v_batchseqs_tensorization(corpus_tuple, vocab, vocab_indices,
+#                                               w2v_model, ques_token_len, ans_token_len)
+
+    token_len = max(ques_token_len, ans_token_len)
     vocab_dim = len(vocab)
     generator = LSTM_core(w2v_dim=w2v_model.vector_size,
                           indices_dim=vocab_dim,
                           token_len=token_len)
     
     for _iter in range(0, nbIter):
-        print('')
-        print('-' * 50)
-        print('Iteration', _iter)
+        print('\n-' * 50 + '\nIteration: {0}'.format(_iter))
         
-        generator.fit(x_train, y_train, batch_size=256, nb_epoch=1)  # keras 2.0: nb_epoch changed to epochs
+        progress_bar = Progbar(target=batch_size) # set the progress bar
+        for p in range(0, len(corpus_tuple), batch_size):
+            progress_bar.update(p)           
+            # corpus_tuple_part is from index p to p + batch_size in all corpus_tuple
+            x_batch, y_batch = w2v_batchseqs_tensorization(corpus_tuple[p : p + batch_size],
+                                                           vocab, vocab_indices, w2v_model,
+                                                           normalized_token_len=token_len)
+            generator.train_on_batch(x_batch, y_batch)
+            del(x_batch, y_batch)
+        del(progress_bar)
         
     return generator
 
