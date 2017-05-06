@@ -38,7 +38,7 @@ def loadQuesAnsVocabData(trainFilePath, gensimW2VModelPath):
     
     return corpus_tuple, words_vocab, vocab_indices, indices_vocab, gensimW2VModel, ques_token_len, ans_token_len
 
-def trainTextGenerator(corpus_tuple, words_vocab, vocab_indices,
+def trainQuesAnsChatbot(corpus_tuple, words_vocab, vocab_indices,
                        w2v_model,
                        ques_token_len, ans_token_len,
                        network='LSTM_core',
@@ -55,7 +55,7 @@ def trainTextGenerator(corpus_tuple, words_vocab, vocab_indices,
     
     return generator
 
-def runGenerator(generator, ques_test_input,
+def runChatbot(generator, ques_test_input,
                  indices_vocab,
                  w2v_model, token_len,
                  res_path=None):

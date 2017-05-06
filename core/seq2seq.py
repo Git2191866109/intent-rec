@@ -106,8 +106,8 @@ def trainer(corpus_tuple, vocab, vocab_indices, w2v_model, ques_token_len, ans_t
     '''
     
     # some parameter
-#     nbIter = 1 # for test
-    nbIter = 20
+    nbIter = 1 # for test
+#     nbIter = 20
     batch_size = 256
     
     x_train, y_train, token_len = w2v_seqs_tensorization(corpus_tuple, vocab, vocab_indices,

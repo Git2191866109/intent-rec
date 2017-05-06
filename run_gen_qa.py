@@ -9,6 +9,7 @@ import os
 import time
 
 from interface import fileProcess
+from interface.medQuesAnswering import *
 from interface.medQuesArgotGen import *
 
 
@@ -99,7 +100,7 @@ def test_mental_text_generate(test_num=100):
         
 # test_mental_text_generate()
     
-def test_zhongyinopos_text_generate(test_num = 2000):
+def test_zhongyinopos_text_generate(test_num=2000):
     # load short prefix question sentences
     zhongyi_all_path = '/home/superhy/intent-rec-file/fenke_org/zhongyi_all.txt'
     fr = open(zhongyi_all_path, 'r')
@@ -130,4 +131,43 @@ def test_zhongyinopos_text_generate(test_num = 2000):
     for i in range(test_num):    
         gen_context = runGenerator(generator, prefix[i], indices_vocab, w2v_model, res_path=zhongyi_res_path)
         
-test_zhongyinopos_text_generate()
+# test_zhongyinopos_text_generate()
+
+def test_zhongyinopos_qa(test_num=2000):
+    # load short question question sentences
+    zhongyi_qa_all_path = '/home/superhy/intent-rec-file/fenke_org/zhongyi_qa_all.txt'
+    fr = open(zhongyi_qa_all_path, 'r')
+    lines = fr.readlines()
+    question = []
+    for line in lines:
+        ques_line = line.split('-')[0]
+        words = list(word.decode('utf-8') for word in ques_line[ques_line.find('[') + 1 : ques_line.find(']')].split(','))
+        question.append(words)
+        if len(question) >= test_num:
+            break
+    
+    zhongyi_qa_w2v_path = '/home/superhy/intent-rec-file/model_cache/gensim/zhongyi_qa_nopos.vector'
+    zhongyi_qa_model_path = '/home/superhy/intent-rec-file/model_cache/zhongyi_qa_nopos.json'
+    
+    corpus_tuple, words_vocab, vocab_indices, indices_vocab, w2v_model, ques_token_len, ans_token_len = loadQuesAnsVocabData(zhongyi_qa_all_path, zhongyi_qa_w2v_path)
+#     for word in w2v_model.vocab.keys():
+#         print(word)
+    generator = trainQuesAnsChatbot(corpus_tuple,
+                                    words_vocab, vocab_indices, w2v_model,
+                                    ques_token_len, ans_token_len,
+                                    frame_path=zhongyi_qa_model_path)
+     
+    ISOTIMEFORMAT = '%Y-%m-%d %X'
+    time_str = str(time.strftime(ISOTIMEFORMAT, time.localtime())) + '\n'
+    zhongyi_qa_res_path = '/home/superhy/intent-rec-file/fenke_org/zhongyi_qa_res.txt'
+    fw = open(zhongyi_qa_res_path, 'w')
+    fw.write(time_str)
+    fw.close()
+    for i in range(test_num):
+        token_len = ques_token_len if ques_token_len > ans_token_len else ans_token_len
+        ans_context = runChatbot(generator, question[i],
+                                 indices_vocab, w2v_model,
+                                 token_len,
+                                 res_path=zhongyi_qa_res_path)
+        
+test_zhongyinopos_qa()

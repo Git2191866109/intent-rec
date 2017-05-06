@@ -20,5 +20,5 @@ encoding//interface/wordSeg.py=UTF-8
 encoding//plot/showExpPlot.py=UTF-8
 encoding/preprocess_dialog.py=UTF-8
 encoding/preprocess_gen.py=UTF-8
-encoding/run_gen.py=UTF-8
+encoding/run_gen_qa.py=UTF-8
 encoding/run_rec.py=UTF-8
