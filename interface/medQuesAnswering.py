@@ -19,6 +19,8 @@ def loadQuesAnsVocabData(trainFilePath, gensimW2VModelPath):
     ques_token_len = 0
     ans_token_len = 0
     for line in trainLines:
+        if line.find('-') == -1:
+            continue
         ques_line = line.split('-')[0]
         ans_line = line.split('-')[1]
         ques_words = list(word.decode('utf-8') for word in ques_line[ques_line.find('[') + 1 : ques_line.find(']')].split(','))
