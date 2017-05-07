@@ -53,11 +53,13 @@ def LSTM_core(w2v_dim, indices_dim, token_len):
     encoder_dropout = 0.0
     decoder_dropout = 0.0
     
-    encoder_hidden_size = 128
-    decoder_hidden_size = 128
+    encoder_hidden_size = 64
+    decoder_hidden_size = 50
     
     output_activation = 'softmax'
     optimizer_lr = 0.001
+#     loss = 'categorical_crossentropy'
+    loss = 'mse'
     
     encoder_decoder = Sequential()
     # add masking layer to skip the [0.0, 0.0, ...] part
@@ -79,7 +81,7 @@ def LSTM_core(w2v_dim, indices_dim, token_len):
     model = Model(input=ques_input, output=decoded)
     
     rms_optimizer = RMSprop(lr=optimizer_lr)
-    model.compile(optimizer=rms_optimizer, loss='categorical_crossentropy')
+    model.compile(optimizer=rms_optimizer, loss=loss)
     
     return model
 
@@ -109,7 +111,7 @@ def trainer(corpus_tuple, vocab, vocab_indices, w2v_model, ques_token_len, ans_t
     
     # some parameter
 #     nbIter = 1  # for test
-    nbIter = 20
+    nbIter = 10
     batch_size = 32
     
 #     x_train, y_train, token_len = w2v_batchseqs_tensorization(corpus_tuple, vocab, vocab_indices,
@@ -142,8 +144,8 @@ def trainer(corpus_tuple, vocab, vocab_indices, w2v_model, ques_token_len, ans_t
 def chatbot(generator, ques_test_input, indices_vocab, w2v_model, token_len):
     
     # some parameters
-    diversity = 0.5
-#     diversity = 1.0
+#     diversity = 0.5
+    diversity = 1.0
     
     print('----- diversity:', diversity)
     print('----- Generating with seed: '),
