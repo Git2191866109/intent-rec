@@ -8,8 +8,6 @@ Created on 2017年5月3日
 
 import sys
 
-from click.core import batch
-from gensim.models.word2vec import corpus
 from keras.layers import Input
 from keras.layers.core import Dense, Masking
 from keras.layers.recurrent import LSTM
@@ -34,7 +32,7 @@ def w2v_batchseqs_tensorization(corpus_tuple_part, vocab, vocab_indices, w2v_mod
     
     ''' keras need output_length equal as input_length ''' 
     
-    x_train = np.zeros((len(corpus_tuple_part), normalized_token_len, w2v_model.vector_size), dtype=np.float32)
+    x_train = np.zeros((len(corpus_tuple_part), normalized_token_len, w2v_model.vector_size), dtype=np.float)
     y_train = np.zeros((len(corpus_tuple_part), normalized_token_len, len(vocab)), dtype=np.bool)
     for qa_index, qa_tuple in enumerate(corpus_tuple_part):
         ques_sentence = qa_tuple[0]
@@ -49,7 +47,7 @@ def w2v_batchseqs_tensorization(corpus_tuple_part, vocab, vocab_indices, w2v_mod
     return x_train, y_train
 
 def LSTM_core(w2v_dim, indices_dim, token_len):
-    ''' build the model: a simple RNN encoder-decoder framework '''
+    ''' build the model: a simple RNN encoder_decoder-decoder framework '''
     
     # some parameter
     encoder_dropout = 0.0
@@ -61,23 +59,22 @@ def LSTM_core(w2v_dim, indices_dim, token_len):
     output_activation = 'softmax'
     optimizer_lr = 0.001
     
-    encoder = Sequential()
+    encoder_decoder = Sequential()
     # add masking layer to skip the [0.0, 0.0, ...] part
-    encoder.add(Masking(mask_value=0., input_shape=(token_len, w2v_dim)))
-    encoder.add(LSTM(output_dim=encoder_hidden_size,
-                     return_sequences=True,
-                     dropout_U=encoder_dropout))
-    decoder = Sequential()
-    decoder.add(LSTM(output_dim=decoder_hidden_size,
-                     return_sequences=True,
-                     dropout_U=decoder_dropout))
-    decoder.add(TimeDistributed(Dense(output_dim=indices_dim,
-                                      activation=output_activation)))
+    encoder_decoder.add(Masking(mask_value=0.0, input_shape=(token_len, w2v_dim)))
+    encoder_decoder.add(LSTM(output_dim=encoder_hidden_size,
+                             return_sequences=True,
+                             dropout_U=encoder_dropout))
+#     encoder_decoder.add(Masking(mask_value=0.0, input_shape=(token_len, w2v_dim)))
+    encoder_decoder.add(LSTM(output_dim=decoder_hidden_size,
+                             return_sequences=True,
+                             dropout_U=decoder_dropout))
+    encoder_decoder.add(TimeDistributed(Dense(output_dim=indices_dim,
+                                              activation=output_activation)))
     
     ques_input = Input(shape=((token_len, w2v_dim)))
     
-    encoded = encoder(ques_input)
-    decoded = decoder(encoded)
+    decoded = encoder_decoder(ques_input)
     
     model = Model(input=ques_input, output=decoded)
     
@@ -111,9 +108,9 @@ def trainer(corpus_tuple, vocab, vocab_indices, w2v_model, ques_token_len, ans_t
     '''
     
     # some parameter
-    nbIter = 1 # for test
-#     nbIter = 20
-    batch_size = 256
+#     nbIter = 1  # for test
+    nbIter = 20
+    batch_size = 32
     
 #     x_train, y_train, token_len = w2v_batchseqs_tensorization(corpus_tuple, vocab, vocab_indices,
 #                                               w2v_model, ques_token_len, ans_token_len)
@@ -125,15 +122,16 @@ def trainer(corpus_tuple, vocab, vocab_indices, w2v_model, ques_token_len, ans_t
                           token_len=token_len)
     
     for _iter in range(0, nbIter):
-        print('\n-' * 50 + '\nIteration: {0}'.format(_iter))
+        print('\n' + '-' * 50 + '\nIteration: {0}'.format(_iter))
         
-        progress_bar = Progbar(target=batch_size) # set the progress bar
+        progress_bar = Progbar(target=len(corpus_tuple))  # set the progress bar
         for p in range(0, len(corpus_tuple), batch_size):
             progress_bar.update(p)           
             # corpus_tuple_part is from index p to p + batch_size in all corpus_tuple
             x_batch, y_batch = w2v_batchseqs_tensorization(corpus_tuple[p : p + batch_size],
                                                            vocab, vocab_indices, w2v_model,
                                                            normalized_token_len=token_len)
+#             print(y_batch.shape),
             generator.train_on_batch(x_batch, y_batch)
             del(x_batch, y_batch)
         del(progress_bar)

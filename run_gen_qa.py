@@ -133,7 +133,7 @@ def test_zhongyinopos_text_generate(test_num=2000):
         
 # test_zhongyinopos_text_generate()
 
-def test_zhongyinopos_qa(test_num=2000):
+def test_zhongyinopos_qa(test_num=500):
     # load short question question sentences
     zhongyi_qa_all_path = '/home/superhy/intent-rec-file/fenke_org/zhongyi_qa_all.txt'
     fr = open(zhongyi_qa_all_path, 'r')
@@ -141,8 +141,10 @@ def test_zhongyinopos_qa(test_num=2000):
     question = []
     for line in lines:
         ques_line = line.split('-')[0]
-        words = list(word.decode('utf-8') for word in ques_line[ques_line.find('[') + 1 : ques_line.find(']')].split(','))
-        question.append(words)
+        ques_words = list(word.decode('utf-8') for word in ques_line[ques_line.find('[') + 1 : ques_line.find(']')].split(','))
+        if len(ques_words) > 50:
+            continue
+        question.append(ques_words)
         if len(question) >= test_num:
             break
     
@@ -164,7 +166,7 @@ def test_zhongyinopos_qa(test_num=2000):
     fw.write(time_str)
     fw.close()
     for i in range(test_num):
-        token_len = ques_token_len if ques_token_len > ans_token_len else ans_token_len
+        token_len = max(ques_token_len, ans_token_len)
         ans_context = runChatbot(generator, question[i],
                                  indices_vocab, w2v_model,
                                  token_len,

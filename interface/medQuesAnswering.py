@@ -24,11 +24,11 @@ def loadQuesAnsVocabData(trainFilePath, gensimW2VModelPath):
         ques_line = line.split('-')[0]
         ans_line = line.split('-')[1]
         ques_words = list(word.decode('utf-8') for word in ques_line[ques_line.find('[') + 1 : ques_line.find(']')].split(','))
-        ans_words = list(word.decode('utf-8') for word in ans_line[ques_line.find('[') + 1 : ans_line.find(']')].split(','))
+        ans_words = list(word.decode('utf-8') for word in ans_line[ans_line.find('[') + 1 : ans_line.find(']')].split(','))
         
-        if len(ques_words) > 0 and len(ans_words) > 0:
-            ques_token_len = len(ques_words) if len(ques_words) > ques_token_len else ques_token_len
-            ans_token_len = len(ans_words) if len(ans_words) > ans_token_len else ans_token_len
+        if len(ques_words) > 0 and len(ques_words) <= 50 and len(ans_words) > 0 and len(ans_words) <= 50:
+            ques_token_len = max(ques_token_len, len(ques_words))
+            ans_token_len = max(ans_token_len, len(ans_words))
             corpus_tuple.append((ques_words, ans_words))
             
     # load word vocab indices data
