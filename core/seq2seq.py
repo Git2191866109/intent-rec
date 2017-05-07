@@ -134,6 +134,7 @@ def trainer(corpus_tuple, vocab, vocab_indices, w2v_model, ques_token_len, ans_t
 #             print(y_batch.shape),
             generator.train_on_batch(x_batch, y_batch)
             del(x_batch, y_batch)
+        progress_bar.update(len(corpus_tuple))
         del(progress_bar)
         
     return generator
