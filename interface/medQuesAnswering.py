@@ -6,7 +6,7 @@ Created on 2017年5月5日
 @author: superhy
 '''
 from interface.embedding import word2Vec
-from core import seq2seq
+from core import Seq2Seq
 
 def loadQuesAnsVocabData(trainFilePath, gensimW2VModelPath):
     # load file data
@@ -50,9 +50,9 @@ def trainQuesAnsChatbot(corpus_tuple, words_vocab, vocab_indices,
     frame_path: the storage path of the neural network framework model
     '''
     
-    generator = seq2seq.trainer(corpus_tuple, words_vocab, vocab_indices, w2v_model, ques_token_len, ans_token_len)
+    generator = Seq2Seq.trainer(corpus_tuple, words_vocab, vocab_indices, w2v_model, ques_token_len, ans_token_len)
     if frame_path != None:
-        seq2seq.storageGenerator(generator, frame_path)
+        Seq2Seq.storageGenerator(generator, frame_path)
         print('Chatbot has been stored in path: {0}.'.format(frame_path))
     
     return generator
@@ -62,7 +62,7 @@ def runChatbot(generator, ques_test_input,
                  w2v_model, token_len,
                  res_path=None):
     
-    answeringContext = seq2seq.chatbot(generator, ques_test_input, indices_vocab, w2v_model, token_len)
+    answeringContext = Seq2Seq.chatbot(generator, ques_test_input, indices_vocab, w2v_model, token_len)
     if res_path != None:
         fw = open(res_path, 'a')
         generate_text_str = 'Question: ' + ''.join(ques_test_input) + '\n' + 'Answering: ' + ''.join(answeringContext) + '\n'

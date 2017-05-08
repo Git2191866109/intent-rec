@@ -6,8 +6,6 @@ Created on 2017年5月3日
 @author: superhy
 '''
 
-import sys
-
 from keras.layers import Input
 from keras.layers.core import Dense, Masking
 from keras.layers.recurrent import LSTM
@@ -15,11 +13,17 @@ from keras.layers.wrappers import TimeDistributed
 from keras.models import Sequential, Model, model_from_json
 from keras.optimizers import RMSprop
 from keras.utils.generic_utils import Progbar
+from seq2seq import *
+from seq2seq import *
+import sys
 
 from interface.embedding import word2Vec
 import numpy as np
 
+# import seq2seq shop
+from seq2seq import *
 
+# import seq2seq shop
 def w2v_batchseqs_tensorization(corpus_tuple_part, vocab, vocab_indices, w2v_model, normalized_token_len):
     # need input word2vec model for query the word embeddings
     
@@ -84,6 +88,9 @@ def LSTM_core(w2v_dim, indices_dim, token_len):
     model.compile(optimizer=rms_optimizer, loss=loss)
     
     return model
+
+def SimpleSeq2Seq_shopcore():
+    pass
 
 def sample(preds, temperature=0.5):
     

@@ -1,10 +1,10 @@
 eclipse.preferences.version=1
+encoding//core/Seq2Seq.py=UTF-8
 encoding//core/advanceLayer.py=UTF-8
 encoding//core/charRNN.py=UTF-8
 encoding//core/encoder.py=UTF-8
 encoding//core/feature.py=UTF-8
 encoding//core/layer.py=UTF-8
-encoding//core/seq2seq.py=UTF-8
 encoding//core/svm.py=UTF-8
 encoding//core/test/testLayer.py=UTF-8
 encoding//interface/cacheIndex.py=UTF-8
