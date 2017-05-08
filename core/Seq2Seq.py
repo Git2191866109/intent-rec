@@ -89,8 +89,16 @@ def LSTM_core(w2v_dim, indices_dim, token_len):
     
     return model
 
-def SimpleSeq2Seq_shopcore():
-    pass
+def SimpleSeq2Seq_shopcore(w2v_dim, indices_dim, ques_token_len, ans_token_len):
+    '''
+    w2v_dim = input_dim
+    indices_dim = output_dim
+    ques_token_len = input_length
+    ans_token_len = output_length
+    '''
+    
+    # some parameters
+    deep = 1
 
 def sample(preds, temperature=0.5):
     
@@ -151,8 +159,8 @@ def trainer(corpus_tuple, vocab, vocab_indices, w2v_model, ques_token_len, ans_t
 def chatbot(generator, ques_test_input, indices_vocab, w2v_model, token_len):
     
     # some parameters
-#     diversity = 0.5
-    diversity = 1.0
+    diversity = 0.5
+#     diversity = 1.0
     
     print('----- diversity:', diversity)
     print('----- Generating with seed: '),
