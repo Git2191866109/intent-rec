@@ -9,7 +9,8 @@ import time
 
 import numpy
 
-from core import layer, feature, encoder
+from core import layer, feature
+from core import prencoder
 from interface import fileProcess
 from interface.embedding import word2Vec
 
@@ -114,7 +115,7 @@ def loadAttentionGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_class
     # save the border of train & test data for split mix-data in future
     train_test_border = len(trainLines)  
     
-    '''attentional encoder pre-processing'''
+    '''attentional prencoder pre-processing'''
     start_org = time.clock()
     # init attentional values
     f_model, auto_attention_T = initAttentionValues(org_filepath)
@@ -131,7 +132,7 @@ def loadAttentionGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_class
     attention_seqs = []
     labelList = []
     for line in trainLines + testLines:
-        # count the parameters which needed by attentional encoder
+        # count the parameters which needed by attentional prencoder
         words = line[line.find('[') + 1 : line.find(']')].split(',')
         label = line[line.find(']') + 1: len(line)]
         sentences.append(words)
@@ -154,10 +155,10 @@ def loadAttentionGensimMatData(trainTestFileTuples, gensimW2VModelPath, nb_class
     end_org = time.clock()
     print('finish load original data and generate attentional pre-data in {0}s'.format(end_org - start_org))
     
-    '''run attentional encoder'''
+    '''run attentional prencoder'''
     start_att = time.clock()
-    attExt_vec_seqs = encoder.seqUniDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attention_T=auto_attention_T)
-#     attExt_vec_seqs = encoder.seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attention_T=auto_attention_T)
+    attExt_vec_seqs = prencoder.seqUniDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attention_T=auto_attention_T)
+#     attExt_vec_seqs = prencoder.seqBiDirtExt(gensimW2VModel, sentences, vector_seqs, attention_seqs, attention_T=auto_attention_T)
     del(gensimW2VModel, sentences, vector_seqs, attention_seqs)
     
     '''produce and load the attentional train & test mat data'''

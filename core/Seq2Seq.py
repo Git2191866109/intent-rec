@@ -7,21 +7,17 @@ Created on 2017年5月3日
 '''
 
 from keras.layers import Input
-from keras.layers.core import Dense, Masking
+from keras.layers.core import Dense, Masking, Dropout
 from keras.layers.recurrent import LSTM
 from keras.layers.wrappers import TimeDistributed
 from keras.models import Sequential, Model, model_from_json
 from keras.optimizers import RMSprop
 from keras.utils.generic_utils import Progbar
-from seq2seq import *
-from seq2seq import *
 import sys
 
 from interface.embedding import word2Vec
 import numpy as np
 
-# import seq2seq shop
-from seq2seq import *
 
 # import seq2seq shop
 def w2v_batchseqs_tensorization(corpus_tuple_part, vocab, vocab_indices, w2v_model, normalized_token_len):
@@ -89,17 +85,6 @@ def LSTM_core(w2v_dim, indices_dim, token_len):
     
     return model
 
-def SimpleSeq2Seq_shopcore(w2v_dim, indices_dim, ques_token_len, ans_token_len):
-    '''
-    w2v_dim = input_dim
-    indices_dim = output_dim
-    ques_token_len = input_length
-    ans_token_len = output_length
-    '''
-    
-    # some parameters
-    deep = 1
-
 def sample(preds, temperature=0.5):
     
     # helper function to sample an index from a probability array
@@ -125,18 +110,16 @@ def trainer(corpus_tuple, vocab, vocab_indices, w2v_model, ques_token_len, ans_t
     '''
     
     # some parameter
-#     nbIter = 1  # for test
-    nbIter = 10
-    batch_size = 32
+    nbIter = 1  # for test
+#     nbIter = 20
+    batch_size = 2
     
 #     x_train, y_train, token_len = w2v_batchseqs_tensorization(corpus_tuple, vocab, vocab_indices,
 #                                               w2v_model, ques_token_len, ans_token_len)
 
     token_len = max(ques_token_len, ans_token_len)
     vocab_dim = len(vocab)
-    generator = LSTM_core(w2v_dim=w2v_model.vector_size,
-                          indices_dim=vocab_dim,
-                          token_len=token_len)
+    generator = LSTM_core(w2v_dim=w2v_model.vector_size, indices_dim=vocab_dim, token_len=token_len)
     
     for _iter in range(0, nbIter):
         print('\n' + '-' * 50 + '\nIteration: {0}'.format(_iter))

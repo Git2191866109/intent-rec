@@ -1,6 +1,7 @@
 from test import *
-import encoder
+from core import prencoder
 import feature
 import layer
-from core import charRNN
+import charRNN
 import svm
+from advance_layer import *
