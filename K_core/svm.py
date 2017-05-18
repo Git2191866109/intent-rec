@@ -15,7 +15,7 @@ def SVCClassify(x_train, y_train):
         
     # the parameter can be set
     kernel = 'rbf'
-    # init core and train it
+    # init K_core and train it
     # if need the proba-predict result, parameter probability must be =True
     clf = SVC(kernel=kernel, probability=True)
     clf.fit(x_train, y_train)

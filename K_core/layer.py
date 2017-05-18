@@ -22,8 +22,8 @@ import warnings
 def CNNs_Net(input_shape, nb_classes):
     
     # set some fixed parameter in Convolution layer
-    nb_filter = 260  # convolution core num       
-    filter_length = 5  # convolution core size
+    nb_filter = 260  # convolution K_core num       
+    filter_length = 5  # convolution K_core size
     border_mode = 'valid'
     cnn_activation = 'relu'
     subsample_length = 1
@@ -301,8 +301,8 @@ def StackLSTMs_Net(input_shape, nb_classes):
 
 def CNNs_LSTM_Net(input_shape, nb_classes):
     # set some fixed parameter in Convolution layer
-    nb_filter = 260  # convolution core num       
-    filter_length = 5  # convolution core size
+    nb_filter = 260  # convolution K_core num       
+    filter_length = 5  # convolution K_core size
     border_mode = 'valid'
     cnn_activation = 'relu'
     subsample_length = 1
@@ -361,8 +361,8 @@ def LSTM_CNNs_Net(input_shape, nb_classes):
     lstm_output_size = 200
     lstm_activation = 'tanh'
     # set some fixed parameter in Convolution layer
-    nb_filter = 180  # convolution core num       
-    filter_length = 5  # convolution core size
+    nb_filter = 180  # convolution K_core num       
+    filter_length = 5  # convolution K_core size
     border_mode = 'valid'
     cnn_activation = 'relu'
     subsample_length = 1

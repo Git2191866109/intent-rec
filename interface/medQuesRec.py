@@ -9,8 +9,8 @@ import time
 
 import numpy
 
-from core import layer, feature
-from core import prencoder
+from K_core import layer, feature
+from K_core import prencoder
 from interface import fileProcess
 from interface.embedding import word2Vec
 

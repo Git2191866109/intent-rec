@@ -152,7 +152,7 @@ def f_values(doc_terms_list, doc_class_list, fs_method='MI'):
     f_model = {}
     
     # reflect from self function
-    from core import feature
+    from K_core import feature
     f_model = getattr(feature, fs_method)(class_df_list, term_set, term_class_df_mat)
         
     return f_model

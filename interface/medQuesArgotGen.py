@@ -8,7 +8,7 @@ Created on 2017年4月25日
 from gensim.models import word2vec
 import time
 
-from core import charRNN
+from K_core import charRNN
 from embedding import word2Vec
 
 
@@ -40,7 +40,7 @@ def trainTextGenerator(corcorpus_tupleords_vocab, vocab_indices,
                        network='LSTM_core',
                        frame_path=None):
     '''
-    network: the generator neural network core (only LSTM_core now)
+    network: the generator neural network K_core (only LSTM_core now)
     frame_path: the storage path of the neural network framework model
     '''
     

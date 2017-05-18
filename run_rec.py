@@ -19,7 +19,7 @@ Created on 2016年11月22日
 
 import time
 
-from core import layer
+from K_core import layer
 from interface.testMedQuesRec import testLoadBasicData, testTrainNetPred, \
     testEvalNetPred, testShowNetPred, testLoadAttentionData, testGetNpyData
 

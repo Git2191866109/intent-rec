@@ -1,5 +1,4 @@
 from test import *
-from core import prencoder
 import feature
 import layer
 import charRNN

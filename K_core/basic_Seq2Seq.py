@@ -7,7 +7,7 @@ Created on 2017年5月3日
 '''
 
 from keras.layers import Input
-from keras.layers.core import Dense, Masking, Dropout
+from keras.layers.core import Dense, Masking, Dropout, RepeatVector
 from keras.layers.recurrent import LSTM
 from keras.layers.wrappers import TimeDistributed
 from keras.models import Sequential, Model, model_from_json
@@ -20,7 +20,7 @@ import numpy as np
 
 
 # import seq2seq shop
-def w2v_batchseqs_tensorization(corpus_tuple_part, vocab, vocab_indices, w2v_model, normalized_token_len):
+def w2v_batchseqs_tensorization(corpus_tuple_part, vocab, vocab_indices, w2v_model, ques_token_len, ans_token_len):
     # need input word2vec model for query the word embeddings
     
     # corpus_tuple_part is the list of tuples include pair like: (ques, ans)
@@ -32,21 +32,21 @@ def w2v_batchseqs_tensorization(corpus_tuple_part, vocab, vocab_indices, w2v_mod
     
     ''' keras need output_length equal as input_length ''' 
     
-    x_train = np.zeros((len(corpus_tuple_part), normalized_token_len, w2v_model.vector_size), dtype=np.float)
-    y_train = np.zeros((len(corpus_tuple_part), normalized_token_len, len(vocab)), dtype=np.bool)
+    x_train = np.zeros((len(corpus_tuple_part), ques_token_len, w2v_model.vector_size), dtype=np.float)
+    y_train = np.zeros((len(corpus_tuple_part), ans_token_len, len(vocab)), dtype=np.bool)
     for qa_index, qa_tuple in enumerate(corpus_tuple_part):
         ques_sentence = qa_tuple[0]
         ans_sentence = qa_tuple[1]
-        for ques_t_index, ques_token in enumerate(ques_sentence[ : normalized_token_len]):
+        for ques_t_index, ques_token in enumerate(ques_sentence[ : ques_token_len]):
             if ques_token in vocab:
                 x_train[qa_index, ques_t_index] = word2Vec.getWordVec(w2v_model, ques_token)
-        for ans_t_index, ans_token in enumerate(ans_sentence[ : normalized_token_len]):
+        for ans_t_index, ans_token in enumerate(ans_sentence[ : ans_token_len]):
             if ans_token in vocab:
                 y_train[qa_index, ans_t_index, vocab_indices[ans_token]] = 1
                 
     return x_train, y_train
 
-def LSTM_core(w2v_dim, indices_dim, token_len):
+def LSTM_core(w2v_dim, indices_dim, ques_token_len, ans_token_len):
     ''' build the model: a simple RNN encoder_decoder-decoder framework '''
     
     # some parameter
@@ -63,18 +63,18 @@ def LSTM_core(w2v_dim, indices_dim, token_len):
     
     encoder_decoder = Sequential()
     # add masking layer to skip the [0.0, 0.0, ...] part
-    encoder_decoder.add(Masking(mask_value=0.0, input_shape=(token_len, w2v_dim)))
+    encoder_decoder.add(Masking(mask_value=0.0, input_shape=(ques_token_len, w2v_dim)))
     encoder_decoder.add(LSTM(output_dim=encoder_hidden_size,
-                             return_sequences=True,
                              dropout_U=encoder_dropout))
 #     encoder_decoder.add(Masking(mask_value=0.0, input_shape=(token_len, w2v_dim)))
+    encoder_decoder.add(RepeatVector(n=ans_token_len))
     encoder_decoder.add(LSTM(output_dim=decoder_hidden_size,
                              return_sequences=True,
                              dropout_U=decoder_dropout))
     encoder_decoder.add(TimeDistributed(Dense(output_dim=indices_dim,
                                               activation=output_activation)))
     
-    ques_input = Input(shape=((token_len, w2v_dim)))
+    ques_input = Input(shape=((ques_token_len, w2v_dim)))
     
     decoded = encoder_decoder(ques_input)
     
@@ -117,9 +117,10 @@ def trainer(corpus_tuple, vocab, vocab_indices, w2v_model, ques_token_len, ans_t
 #     x_train, y_train, token_len = w2v_batchseqs_tensorization(corpus_tuple, vocab, vocab_indices,
 #                                               w2v_model, ques_token_len, ans_token_len)
 
-    token_len = max(ques_token_len, ans_token_len)
+#     token_len = max(ques_token_len, ans_token_len)
     vocab_dim = len(vocab)
-    generator = LSTM_core(w2v_dim=w2v_model.vector_size, indices_dim=vocab_dim, token_len=token_len)
+    generator = LSTM_core(w2v_dim=w2v_model.vector_size, indices_dim=vocab_dim,
+                          ques_token_len, ans_token_len)
     
     for _iter in range(0, nbIter):
         print('\n' + '-' * 50 + '\nIteration: {0}'.format(_iter))
@@ -130,7 +131,7 @@ def trainer(corpus_tuple, vocab, vocab_indices, w2v_model, ques_token_len, ans_t
             # corpus_tuple_part is from index p to p + batch_size in all corpus_tuple
             x_batch, y_batch = w2v_batchseqs_tensorization(corpus_tuple[p : p + batch_size],
                                                            vocab, vocab_indices, w2v_model,
-                                                           normalized_token_len=token_len)
+                                                           ques_token_len, ans_token_len)
 #             print(y_batch.shape),
             generator.train_on_batch(x_batch, y_batch)
             del(x_batch, y_batch)
