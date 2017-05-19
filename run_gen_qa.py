@@ -133,10 +133,10 @@ def test_zhongyinopos_text_generate(test_num=2000):
         
 # test_zhongyinopos_text_generate()
 
-def test_zhongyinopos_qa(test_num=500):
+def test_zhongyinopos_qa(test_num=5000):
     # load short question question sentences
-    zhongyi_qa_all_path = '/home/superhy/intent-rec-file/fenke_org/zhongyi_qa_all20000.txt'
-#     zhongyi_qa_all_path = '/home/superhy/intent-rec-file/fenke_org/zhongyi_qa_all50000.txt'
+#     zhongyi_qa_all_path = '/home/superhy/intent-rec-file/fenke_org/zhongyi_qa_all20000.txt'
+    zhongyi_qa_all_path = '/home/superhy/intent-rec-file/fenke_org/zhongyi_qa_all50000.txt'
     fr = open(zhongyi_qa_all_path, 'r')
     lines = fr.readlines()
     question = []
@@ -149,10 +149,10 @@ def test_zhongyinopos_qa(test_num=500):
         if len(question) >= test_num:
             break
     
-    zhongyi_qa_w2v_path = '/home/superhy/intent-rec-file/model_cache/gensim/zhongyi_qa_nopos20000.vector'
-#     zhongyi_qa_w2v_path = '/home/superhy/intent-rec-file/model_cache/gensim/zhongyi_qa_nopos50000.vector'
-    zhongyi_qa_model_path = '/home/superhy/intent-rec-file/model_cache/zhongyi_qa_nopos20000.json'
-#     zhongyi_qa_model_path = '/home/superhy/intent-rec-file/model_cache/zhongyi_qa_nopos50000.json'
+#     zhongyi_qa_w2v_path = '/home/superhy/intent-rec-file/model_cache/gensim/zhongyi_qa_nopos20000.vector'
+    zhongyi_qa_w2v_path = '/home/superhy/intent-rec-file/model_cache/gensim/zhongyi_qa_nopos50000.vector'
+#     zhongyi_qa_model_path = '/home/superhy/intent-rec-file/model_cache/zhongyi_qa_nopos20000.json'
+    zhongyi_qa_model_path = '/home/superhy/intent-rec-file/model_cache/zhongyi_qa_nopos50000.json'
     
     corpus_tuple, words_vocab, vocab_indices, indices_vocab, w2v_model, ques_token_len, ans_token_len = loadQuesAnsVocabData(zhongyi_qa_all_path, zhongyi_qa_w2v_path)
 #     for word in w2v_model.vocab.keys():
@@ -164,8 +164,8 @@ def test_zhongyinopos_qa(test_num=500):
      
     ISOTIMEFORMAT = '%Y-%m-%d %X'
     time_str = str(time.strftime(ISOTIMEFORMAT, time.localtime())) + '\n'
-    zhongyi_qa_res_path = '/home/superhy/intent-rec-file/fenke_org/zhongyi_qa_res20000.txt'
-#     zhongyi_qa_res_path = '/home/superhy/intent-rec-file/fenke_org/zhongyi_qa_res50000.txt'
+#     zhongyi_qa_res_path = '/home/superhy/intent-rec-file/fenke_org/zhongyi_qa_res20000.txt'
+    zhongyi_qa_res_path = '/home/superhy/intent-rec-file/fenke_org/zhongyi_qa_res50000-5.19gpu-test.txt'
     fw = open(zhongyi_qa_res_path, 'w')
     fw.write(time_str)
     fw.close()

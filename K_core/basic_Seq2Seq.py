@@ -120,7 +120,7 @@ def trainer(corpus_tuple, vocab, vocab_indices, w2v_model, ques_token_len, ans_t
 #     token_len = max(ques_token_len, ans_token_len)
     vocab_dim = len(vocab)
     generator = LSTM_core(w2v_dim=w2v_model.vector_size, indices_dim=vocab_dim,
-                          ques_token_len, ans_token_len)
+                          ques_token_len=ques_token_len, ans_token_len=ques_token_len)
     
     for _iter in range(0, nbIter):
         print('\n' + '-' * 50 + '\nIteration: {0}'.format(_iter))
