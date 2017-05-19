@@ -133,7 +133,7 @@ def test_zhongyinopos_text_generate(test_num=2000):
         
 # test_zhongyinopos_text_generate()
 
-def test_zhongyinopos_qa(test_num=5000):
+def test_zhongyinopos_qa(test_num=500):
     # load short question question sentences
 #     zhongyi_qa_all_path = '/home/superhy/intent-rec-file/fenke_org/zhongyi_qa_all20000.txt'
     zhongyi_qa_all_path = '/home/superhy/intent-rec-file/fenke_org/zhongyi_qa_all50000.txt'
