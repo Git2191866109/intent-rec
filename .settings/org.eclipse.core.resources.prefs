@@ -16,6 +16,7 @@ encoding//interface/medQuesRec.py=UTF-8
 encoding//interface/test/expDataProcess.py=UTF-8
 encoding//interface/test/testMedQuesRec.py=UTF-8
 encoding//interface/test/testWord2Vec.py=UTF-8
+encoding//interface/topic/LDA.py=UTF-8
 encoding//interface/wordSeg.py=UTF-8
 encoding//plot/showExpPlot.py=UTF-8
 encoding/preprocess_dialog.py=UTF-8
