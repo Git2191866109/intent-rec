@@ -14,6 +14,7 @@ encoding//interface/medQuesAnswering.py=UTF-8
 encoding//interface/medQuesArgotGen.py=UTF-8
 encoding//interface/medQuesRec.py=UTF-8
 encoding//interface/test/expDataProcess.py=UTF-8
+encoding//interface/test/testLDA.py=UTF-8
 encoding//interface/test/testMedQuesRec.py=UTF-8
 encoding//interface/test/testWord2Vec.py=UTF-8
 encoding//interface/topic/LDA.py=UTF-8
