@@ -11,7 +11,7 @@ from gensim import corpora
 from gensim.models.ldamodel import LdaModel
 from gensim.models.ldamulticore import LdaMulticore
 
-from interface import fileProcess
+from interface import fileProcess, wordSeg
 
 
 def trainLDA_Model(sentences, modelPath, nb_topics=500, multicore=False):
@@ -27,15 +27,21 @@ def trainLDA_Model(sentences, modelPath, nb_topics=500, multicore=False):
     if multicore == True:
         # can just use in linux
         # very hard for CPU, cautiously use it
-        lda = LdaMulticore(corpus=corpus, num_topics=nb_topics)
+        lda = LdaMulticore(
+            corpus=corpus, num_topics=nb_topics, id2word=dictionary)
     else:
-        lda = LdaModel(corpus=corpus, num_topics=nb_topics)
+        lda = LdaModel(corpus=corpus, num_topics=nb_topics, id2word=dictionary)
 
     # save lda model on disk
     lda.save(fname=modelPath)
     print('producing lda model ... ok! model store in {0}'.format(modelPath))
 
     return lda
+
+
+def getTopicsfromLDA(lda, nb_topics=500, scan_range=50, res_range=10):
+    
+    filter_pos = wordSeg.noun
 
 
 def loadModelfromFile(modelPath, readOnly=False):
@@ -62,9 +68,11 @@ def getAnsweringSentencesfromQAFile(qaFilePath):
         if line.find('-') == -1:
             continue
         ans_str = line.split('-')[1]
-        sentences.append(ans_str[ans_str.find('[') + 1 : ans_str.find(']')].split(','))
-    
+        sentences.append(ans_str[ans_str.find(
+            '[') + 1: ans_str.find(']')].split(','))
+
     return sentences
+
 
 if __name__ == '__main__':
     pass
