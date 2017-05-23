@@ -14,7 +14,7 @@ import time
 
 from interface import fileProcess
 from interface.embedding import word2Vec
-from interface.wordSeg import singleSegEngine
+from interface.semantic.wordSeg import singleSegEngine
 
 import re
 

@@ -7,9 +7,9 @@ Created on 2017.5.21
 '''
 import time
 
-from interface import fileProcess, wordSeg
-from interface.topic.LDA import trainLDA_Model, getAnsweringSentencesfromQAFile, loadModelfromFile
-from interface.wordSeg import singlePosSegEngine
+from interface import fileProcess
+from interface.semantic.LDA import getAnsweringSentencesfromQAFile,\
+    trainLDA_Model, getTopicsfromLDA, loadModelfromFile
 
 
 def getAnsweringSentencesTest():
@@ -31,7 +31,7 @@ def trainLDA_ModelTest():
     answeringSentences = getAnsweringSentencesfromQAFile(trainDir)
 
     ldaModelPath = fileProcess.auto_config_root(
-    ) + u'model_cache/gensim/zhongyi-lda-50000.topic'
+    ) + u'model_cache/gensim/zhongyi_lda50000.topic'
 
     start_lda = time.clock()
     lda = trainLDA_Model(sentences=answeringSentences,
@@ -42,67 +42,72 @@ def trainLDA_ModelTest():
     print(lda.num_terms)
 
 
+def trainPosLDA_ModelTest():
+
+    fileProcess.reLoadEncoding()
+
+    # load all file folder path
+    trainDir = fileProcess.auto_config_root() + u'fenke_org/zhongyi_pos_qa_all50000.txt'
+    answeringSentences = getAnsweringSentencesfromQAFile(trainDir)
+
+    ldaModelPath = fileProcess.auto_config_root(
+    ) + u'model_cache/gensim/zhongyi_pos_lda50000.topic'
+
+    start_lda = time.clock()
+    lda = trainLDA_Model(sentences=answeringSentences,
+                         modelPath=ldaModelPath, multicore=True)
+    end_lda = time.clock()
+    print('train gensim lda model with pos finish, use time: {0}'.format(
+        end_lda - start_lda))
+    print(lda.num_terms)
+
+
 def loadModelfromFileTest():
 
     ldaModelPath = fileProcess.auto_config_root(
-    ) + u'model_cache/gensim/zhongyi-lda-50000.topic'
+    ) + u'model_cache/gensim/zhongyi_pos_lda50000.topic'
     lda = loadModelfromFile(modelPath=ldaModelPath)
 
     print('number of words: {0}'.format(lda.num_terms))
 
     topics = lda.show_topics(num_topics=500, num_words=20, formatted=False)
+#     print(topics)
     for t in topics:
-        topic_tuples = t[1]
-        for tuple in topic_tuples:
-            print(tuple[0] + u': ' + str(tuple[1])),
-        print('')
+        print(t)
+#         topic_tuples = t[1]
+#         for tuple in topic_tuples:
+#             print(tuple[0] + u': ' + str(tuple[1])),
+#         print('')
 
 
-def testFiltNumeTopics():
+def getTopicsfromLDA_Test():
 
     ldaModelPath = fileProcess.auto_config_root(
-    ) + u'model_cache/gensim/zhongyi-lda-50000.topic'
+    ) + u'model_cache/gensim/zhongyi_pos_lda50000.topic'
     lda = loadModelfromFile(modelPath=ldaModelPath)
 
-    filter_pos = wordSeg.noun + wordSeg.verb + wordSeg.adj + wordSeg.adv
+    print('number of words: {0}'.format(lda.num_terms))
 
-    nb_topics = 500
-    scan_range = 100
-    res_range = 10
-
-    print(filter_pos)
-
-    topics = lda.show_topics(num_topics=nb_topics,
-                             num_words=scan_range, formatted=False)
-    filted_topics = []
-    for t in topics:
-        topic_tuples = []
-        for tuple in t[1]:
-            if len(singlePosSegEngine(tuple[0])) == 0:
-                continue
-            if singlePosSegEngine(tuple[0])[0].split('/')[1] in filter_pos:
-                print(tuple[0] + ' '),
-                topic_tuples.append((tuple[0], tuple[1]))
-            if len(topic_tuples) >= res_range:
-                break
-        print('')
-        filted_topics.append(topic_tuples)
-        
-    f = open('D:/intent-rec-file/fenke_org/zhongyi-lda-500topics.txt', 'a')
-    for topic in filted_topics:
-        s = ''
-        for tuple in topic:
-            s += (tuple[0] + ': ' + str(tuple[1]) + '\n')
-        print(s),
-        f.write(s)
-    f.close()
+    indices_topics = getTopicsfromLDA(lda=lda, scan_range=100, res_range=15)
+    
+    print(len(indices_topics.keys()))
+    for topic_index in indices_topics.keys():
+#         print(indices_topics[topic_index])
+        for t_tuple in indices_topics[topic_index]:
+            print(t_tuple[0] + ': ' + str(t_tuple[1]))
+        print('-------------------------------------')
 
 if __name__ == '__main__':
 
     #     getAnsweringSentencesTest()
 
     #     trainLDA_ModelTest()
-    #     loadModelfromFileTest()
-    testFiltNumeTopics()
+    #     trainPosLDA_ModelTest()
+#     loadModelfromFileTest()
+#     testFiltNumeTopics()
 
 #     print(WORD_POS().adv[0] == 'd')
+
+    getTopicsfromLDA_Test()
+
+

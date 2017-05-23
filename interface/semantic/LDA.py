@@ -11,7 +11,8 @@ from gensim import corpora
 from gensim.models.ldamodel import LdaModel
 from gensim.models.ldamulticore import LdaMulticore
 
-from interface import fileProcess, wordSeg
+from interface import fileProcess
+from interface.semantic import WORD_POS, STOP_WORDS
 
 
 def trainLDA_Model(sentences, modelPath, nb_topics=500, multicore=False):
@@ -39,9 +40,28 @@ def trainLDA_Model(sentences, modelPath, nb_topics=500, multicore=False):
     return lda
 
 
-def getTopicsfromLDA(lda, nb_topics=500, scan_range=50, res_range=10):
-    
-    filter_pos = wordSeg.noun
+def getTopicsfromLDA(lda, nb_topics=500, scan_range=100, res_range=15):
+
+    filter_pos = WORD_POS.noun + WORD_POS.verb + WORD_POS.adj + WORD_POS.adv
+
+    topics = lda.show_topics(num_topics=nb_topics,
+                             num_words=scan_range, formatted=False)
+    filtted_topics = []
+    for i in range(len(topics)):
+        topic_tuples = topics[i][1]
+        filtted_topic_tuples = []
+        for tuple in topic_tuples:
+            if tuple[0].split('/')[0] in STOP_WORDS.stop_words:
+                continue
+            if tuple[0].find('/') != -1 and tuple[0].split('/')[1] in filter_pos:
+                filtted_topic_tuples.append(tuple)
+            if len(filtted_topic_tuples) >= res_range:
+                break
+        filtted_topics.append(filtted_topic_tuples)
+
+    indices_topics = dict((i, t) for i, t in enumerate(filtted_topics))
+
+    return indices_topics
 
 
 def loadModelfromFile(modelPath, readOnly=False):
