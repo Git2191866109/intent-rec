@@ -78,8 +78,8 @@ def test_seq_out():
     train_y = [[6, 4, 1],
                [6, 5, 2],
                [4, 5, 3]]
-    x = tf.placeholder(tf.float32, shape=(None, 3, 5), name="input")
-    y_ = tf.placeholder(tf.int32, shape=(None, 3), name="label")
+    x = tf.placeholder(tf.float32, shape=(3, 3, 5), name="input")
+    y_ = tf.placeholder(tf.int32, shape=(3, 3), name="label")
     
     y = simple_seq2seq_core(x, y_, 5, 5)
     
