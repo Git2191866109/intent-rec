@@ -73,7 +73,7 @@ def RNN_core(w2v_dim, indices_dim, contLength=10):
     
     return model
 
-def LSTM_core(w2v_dim, indices_dim, contLength=10):
+def basic_seq2seq_core(w2v_dim, indices_dim, contLength=10):
     ''' build the model: a single LSTM '''
     
     # some parameter
@@ -121,7 +121,7 @@ def trainer(corpus_tuple, vocab, vocab_indices, w2v_model, contLength=10):
     # load tensor data
     x_train, y_train = w2v_tensorization(corpus_tuple, vocab, vocab_indices, w2v_model, contLength)
     vocab_dim = len(vocab)
-    generator = LSTM_core(w2v_dim=w2v_model.vector_size, indices_dim=vocab_dim, contLength=contLength)
+    generator = basic_seq2seq_core(w2v_dim=w2v_model.vector_size, indices_dim=vocab_dim, contLength=contLength)
     
     for _iter in range(0, nbIter):
         print('')
