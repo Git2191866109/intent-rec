@@ -14,14 +14,14 @@ import tensorlayer as tl
 
 def w2v_batchseqs_tensorization(corpus_tuple_part, vocab, vocab_indices, w2v_model, ques_token_len, ans_token_len):
     # need input word2vec model for query the word embeddings
-
+ 
     # corpus_tuple_part is the list of tuples include pair like: (ques, ans)
     #=========================================================================
     # ques_token_len and ans_token_len are the max length of
     # question sequences and answer sequences, which are setted by system
     # the length of generated answer is expected as ans_token_len
     #=========================================================================
-
+ 
     x_train = np.zeros((len(corpus_tuple_part), ques_token_len,
                         w2v_model.vector_size), dtype=np.float)
     y_train = np.zeros(
@@ -36,7 +36,7 @@ def w2v_batchseqs_tensorization(corpus_tuple_part, vocab, vocab_indices, w2v_mod
         for ans_t_index, ans_token in enumerate(ans_sentence[: ans_token_len]):
             if ans_token in vocab:
                 y_train[qa_index, ans_t_index, vocab_indices[ans_token]] = 1
-
+ 
     return x_train, y_train
 
 
