@@ -7,6 +7,23 @@ Created on 2017年5月2日
 
 from jieba import posseg
 import jieba
+import nltk
+        
+def simpleSegEngineforEng(segStr, split_sentences = False):
+    # if split_sentences == False, seg for only 1 sentences
+    # else seg for more than 1 sentences, split the sentences by NLTK firstly
+    
+    sentences = nltk.sent_tokenize(segStr)
+    
+    wordList = []
+    if split_sentences == True:
+        for sen in sentences:
+            wordList.append(nltk.word_tokenize(sen))
+    else:
+        for sen in sentences:
+            wordList.extend(nltk.word_tokenize(sen))
+            
+    return wordList
         
 def singleSegEngine(segStr, segMode='e', userDictPath=None):
     if not userDictPath == None:
