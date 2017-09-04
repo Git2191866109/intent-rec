@@ -93,7 +93,7 @@ if __name__ == '__main__':
 #     for word in segRes2:
 #         print(word)
 
-    for word in segRes2:
+    for word in segRes:
         print(word + ' '),
     print('')
     
